@@ -1,0 +1,235 @@
+<?php
+
+/**
+ * revision alpha function Simple Click to Call
+ * Versión 1.1
+ *
+ * @author Diego Mascarenhas
+ *
+ */
+ 
+function cmsSimpleClickToCallForm($username, $password, $options=null, $url=null)
+{
+	$config = array();
+	$form = null;
+	
+	$options['simple-click-to-call-dias'] = array(1, 2, 3, 4, 5, 6, 0);
+	$options['simple-click-to-call-hora-inicio'] = '00:00';
+	$options['simple-click-to-call-hora-final'] = '23:59';
+	$options['simple-click-to-call-mensaje-fuera-de-rango'] = 'El horario de atenci&oacute;n ha finalizado';
+
+	$config['simple-click-to-call-description'] = 'Ingrese su n&uacute;mero de tel&eacute;fono';
+
+	$config['simple-click-to-call-codigo-pais-mostrar'] = 0;
+	$config['simple-click-to-call-codigo-pais-text'] = 'Pa&iacute;s';
+	$config['simple-click-to-call-codigo-pais-default'] = '';
+	$config['simple-click-to-call-codigo-pais-placeholder'] = 1;
+
+	$config['simple-click-to-call-codigo-area-text'] = '&Aacute;rea';
+	$config['simple-click-to-call-codigo-area-default'] = '11';
+	$config['simple-click-to-call-codigo-area-placeholder'] = 1;
+
+	$config['simple-click-to-call-numero-text'] = 'N&uacute;mero';
+	$config['simple-click-to-call-numero-placeholder'] = 1;
+
+	$config['simple-click-to-call-submit-text'] = 'Llamenmé';
+
+	$config['simple-click-to-call-message-error'] = 'Verifique el c&oacutedigo de &aacute;rea y el n&uacute;mero de tel&eacute;fono ingresado.';
+	$config['simple-click-to-call-message-wait'] = 'Estableciendo comunicaci&oacute;n...';
+	$config['simple-click-to-call-message-comunicacion-error'] = 'Nuestros asesores no se encuentran disponibles en este momento.';
+	$config['simple-click-to-call-message-comunicacion-ok'] = 'Comunicaci&oacute;n establecida.';
+	
+
+	function inRange($days, $desde, $hasta)
+	{
+		date_default_timezone_set('America/Argentina/Buenos_Aires');
+
+		$now_time = date('H:i');
+		$now_day = date('w');
+
+		$desde_ts = strtotime($desde);
+		$hasta_ts = strtotime($hasta);
+		$now_time_ts = strtotime($now_time);
+		$now_day_ts = strtotime($now_day);
+
+		return (in_array($now_day, $days) && ($now_time_ts >= $desde_ts) && ($now_time_ts <= $hasta_ts));
+	}
+	
+
+	$form .= '<div id="simple-click-to-call">';
+
+	if (inRange($options['simple-click-to-call-dias'], $options['simple-click-to-call-hora-inicio'], $options['simple-click-to-call-hora-final']))
+	{
+		$form .= '<form action="' . $url . '" method="POST" id="simple-click-to-call-form">';
+		$form .= '<input type="hidden" name="api-accion" value="voip">';
+		$form .= '<input type="hidden" name="username" value="' . $username . '">';
+		$form .= '<input type="hidden" name="password" value="' . $password . '">';
+
+		if ($config['simple-click-to-call-codigo-pais-mostrar'] == 0) $form .= '<input type="hidden" name="codigo_pais" value="' . $config['simple-click-to-call-codigo-pais-default'] . '">';
+		
+		if (!empty($config['simple-click-to-call-description'])) $form .= '<h2 id="simple-click-to-call-description">' . $config['simple-click-to-call-description'] . '</h2>';
+
+		$form .= '<fieldset>';
+
+		if ($config['simple-click-to-call-codigo-pais-mostrar'] == 1)
+		{
+			if (!empty($config['simple-click-to-call-codigo-pais-text']) && $config['simple-click-to-call-codigo-pais-placeholder'] == 0) $form .= '<label>' . $config['simple-click-to-call-codigo-pais-text'] . '</label>';
+
+			if ($config['simple-click-to-call-codigo-pais-placeholder'] == 1)
+			{
+				$form .= '<input type="text" name="codigo_pais" minlength="2" maxlength="4" size="4" value="' . $config['simple-click-to-call-codigo-pais-default'] . '" placeholder="' . $config['simple-click-to-call-codigo-pais-text'] . '">';
+			}
+			else
+			{
+				$form .= '<input type="text" name="codigo_pais" minlength="2" maxlength="4" size="4" value="' . $config['simple-click-to-call-codigo-pais-default'] . '">';
+			}
+		}
+
+
+		if (!empty($config['simple-click-to-call-codigo-area-text']) && $config['simple-click-to-call-codigo-area-placeholder'] == 0) $form .= '<label>' . $config['simple-click-to-call-codigo-area-text'] . '</label>';
+
+
+		if ($config['simple-click-to-call-codigo-area-placeholder'] == 1)
+		{
+			$form .= '<input type="text" name="codigo_area" minlength="2" maxlength="4" size="4" value="' . $config['simple-click-to-call-codigo-area-default'] . '" placeholder="' . $config['simple-click-to-call-codigo-area-text'] . '">';
+		}
+		else
+		{
+			$form .= '<input type="text" name="codigo_area" minlength="2" maxlength="4" size="4" value="' . $config['simple-click-to-call-codigo-area-default'] . '">';
+		}
+
+		if (!empty( $config['simple-click-to-call-numero-text']) && $config['simple-click-to-call-numero-placeholder'] == 0) $form .= '<label>' . $config['simple-click-to-call-numero-text'] . '</label>';
+
+		$form .= '<input type="text" name="numero" minlength="6" maxlength="10"';
+
+		if ($config['simple-click-to-call-numero-placeholder'] == 1)
+		{
+			$form .= '<input type="text" name="numero" minlength="6" maxlength="10" placeholder="' . $config['simple-click-to-call-numero-text'] . '">';
+		}
+		else
+		{
+			$form .= '<input type="text" name="numero" minlength="6" maxlength="10">';
+		}
+
+		$form .= '</fieldset>';
+
+		$form .= '<fieldset id="simple-click-to-call-message" style="display: none;"></fieldset>';
+
+		$form .= '<input type="submit" name="simple-click-to-call-submit" id="simple-click-to-call-submit" value="' . $config['simple-click-to-call-submit-text'] . '">';
+
+		$form .= '</form>';
+
+		$form .= '
+			<script type="text/javascript">
+				jQuery(document).ready(function($) {
+				    $(\'#simple-click-to-call-form\').validate({
+						rules: {
+							\'codigo_pais\': {
+								required: true,
+								number: true
+							},
+							\'codigo_area\': {
+								required: true,
+								number: true
+							},
+							\'numero\': {
+								required: true,
+								number: true
+							}
+						},
+						showErrors: function(errorMap, errorList) {
+							if (this.numberOfInvalids() > 0) {
+								$(\'#simple-click-to-call-message\').stop().html(\'<p id="simple-click-to-call-message-error">' . $config['simple-click-to-call-message-error'] . ' </p>\').slideDown(500);
+							} else{
+								$(\'#simple-click-to-call-message\').stop().slideUp(500, function(){
+									$(this).html(\'\');
+								});
+							}
+						},
+						submitHandler: function(form) {
+							$.ajax({
+								url: $(form).attr(\'action\'),
+								type: $(form).attr(\'method\'),
+								data: $(form).serialize(),
+								dataType: \'json\',
+								beforeSend: function(){
+									$(\'#simple-click-to-call-form input\').attr(\'disabled\', true);
+									$(\'#simple-click-to-call-form input\').attr(\'readonly\', true);
+									$(\'#simple-click-to-call-message\').stop().slideUp(500, function(){
+										$(this).html(\'\');
+									});
+									$(\'#simple-click-to-call-submit\').stop().slideUp(500, function(){
+										$(\'#simple-click-to-call-message\').stop().html(\'<p id="simple-click-to-call-message-wait">' . $config['simple-click-to-call-message-wait'] . '</p>\').slideDown(500);
+									});
+								},
+								success: function(data){
+									setTimeout(function(){
+										if(!data.error){
+											$(\'#simple-click-to-call-message\').stop().slideUp(500, function(){
+												$(this).html(\'\');
+												$(this).stop().html(\'<p id="simple-click-to-call-message-comunicacion-ok">' . $config['simple-click-to-call-message-comunicacion-ok'] . '</p>\').slideDown(500);
+											});
+										} else{
+											$(\'#simple-click-to-call-message\').stop().slideUp(500, function(){
+												$(this).html(\'\');
+												$(\'#simple-click-to-call-form input\').removeAttr(\'disabled\');
+												$(\'#simple-click-to-call-form input\').removeAttr(\'readonly\');
+												$(\'#simple-click-to-call-submit\').stop().slideDown(500);
+												$(this).stop().html(\'<p id="simple-click-to-call-message-comunicacion-error">' . $config['simple-click-to-call-message-comunicacion-error'] . '</p>\').slideDown(500);
+											});
+										}
+									}, 2000);
+								}
+							});
+						}
+				    });
+
+				});
+			</script>
+		';
+
+	}
+	else
+	{
+		$form .= '<p>' . $options['simple-click-to-call-mensaje-fuera-de-rango'] . '</p>';
+	}
+
+	$form .= '</div>';
+
+	echo $form;
+}
+
+
+if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest')
+{
+	if ($_POST['api-accion'] == 'voip')
+	{
+		if (!empty($_POST['username']) && !empty($_POST['password']))
+		{
+			$request = new CMS('voip', 'POST');
+			$request->setAuthMode('voip');
+			$request->buildPostBody($_POST);
+			$request->setUsername($_POST['username']);
+			$request->setPassword($_POST['password']);
+			$request->execute();
+		
+			$data = json_decode($request->getResponseBody());
+
+	
+			if (isset($data->id))
+			{
+				$data->ok = true;
+			}
+			else
+			{
+				$data->error = true;
+			}
+		}
+		else
+		{
+			$data->error = true;
+		}
+	
+		die(json_encode($data));
+	}
+}
