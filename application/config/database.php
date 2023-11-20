@@ -1,5 +1,5 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
 /*
 | -------------------------------------------------------------------
@@ -77,12 +77,12 @@ $query_builder = TRUE;
 if (base_url() == 'https://admin.revisionalpha.es/')
 {
 	$db['default'] = array(
-		'dsn'	=> '',
-		'hostname' => 'localhost',
+		'dsn' => '',
+		'hostname' => '',
 		'port' => '3306',
-		'username' => 'revcms_root',
-		'password' => 'el22lopeP4$$',
-		'database' => 'revcms_floki',
+		'username' => '',
+		'password' => '',
+		'database' => '',
 		'dbdriver' => 'mysqli',
 		'dbprefix' => '',
 		'pconnect' => FALSE,
@@ -99,16 +99,15 @@ if (base_url() == 'https://admin.revisionalpha.es/')
 		'save_queries' => TRUE
 	);
 }
-
 else
 {
 	$db['default'] = array(
-		'dsn'	=> '',
-		'hostname' => '192.168.10.184',
-		'port' => '4006',
-		'username' => 'cms5_galera',
-		'password' => 'el22lopeP4$$',
-		'database' => 'cms5_espacio',
+		'dsn' => '',
+		'hostname' => '',
+		'port' => '3306',
+		'username' => '',
+		'password' => '',
+		'database' => '',
 		'dbdriver' => 'mysqli',
 		'dbprefix' => '',
 		'pconnect' => FALSE,
@@ -124,102 +123,13 @@ else
 		'failover' => array(),
 		'save_queries' => TRUE
 	);
-	
-	$db['nodo1'] = array(
-		'dsn'	=> '',
-		'hostname' => '192.168.10.181',
-		'username' => 'cms5_galera',
-		'password' => 'el22lopeP4$$',
-		'database' => 'cms5_espacio',
-		'dbdriver' => 'mysqli',
-		'dbprefix' => '',
-		'pconnect' => FALSE,
-		'db_debug' => (ENVIRONMENT !== 'production'),
-		'cache_on' => FALSE,
-		'cachedir' => '',
-		'char_set' => 'utf8',
-		'dbcollat' => 'utf8_general_ci',
-		'swap_pre' => '',
-		'encrypt' => FALSE,
-		'compress' => FALSE,
-		'stricton' => FALSE,
-		'failover' => array(),
-		'save_queries' => TRUE
-	);
-	
-	$db['nodo2'] = array(
-		'dsn'	=> '',
-		'hostname' => '192.168.10.182',
-		'username' => 'cms5_galera',
-		'password' => 'el22lopeP4$$',
-		'database' => 'cms5_espacio',
-		'dbdriver' => 'mysqli',
-		'dbprefix' => '',
-		'pconnect' => FALSE,
-		'db_debug' => (ENVIRONMENT !== 'production'),
-		'cache_on' => FALSE,
-		'cachedir' => '',
-		'char_set' => 'utf8',
-		'dbcollat' => 'utf8_general_ci',
-		'swap_pre' => '',
-		'encrypt' => FALSE,
-		'compress' => FALSE,
-		'stricton' => FALSE,
-		'failover' => array(),
-		'save_queries' => TRUE
-	);
-	
-	$db['nodo3'] = array(
-		'dsn'	=> '',
-		'hostname' => '192.168.10.183',
-		'username' => 'cms5_galera',
-		'password' => 'el22lopeP4$$',
-		'database' => 'cms5_espacio',
-		'dbdriver' => 'mysqli',
-		'dbprefix' => '',
-		'pconnect' => FALSE,
-		'db_debug' => (ENVIRONMENT !== 'production'),
-		'cache_on' => FALSE,
-		'cachedir' => '',
-		'char_set' => 'utf8',
-		'dbcollat' => 'utf8_general_ci',
-		'swap_pre' => '',
-		'encrypt' => FALSE,
-		'compress' => FALSE,
-		'stricton' => FALSE,
-		'failover' => array(),
-		'save_queries' => TRUE
-	);
-	
-	$db['lectura'] = array(
-		'dsn'	=> '',
-		'hostname' => '192.168.10.184',
-		'port' => '4008',
-		'username' => 'cms5_galera',
-		'password' => 'el22lopeP4$$',
-		'database' => 'cms5_espacio',
-		'dbdriver' => 'mysqli',
-		'dbprefix' => '',
-		'pconnect' => FALSE,
-		'db_debug' => (ENVIRONMENT !== 'production'),
-		'cache_on' => FALSE,
-		'cachedir' => '',
-		'char_set' => 'utf8',
-		'dbcollat' => 'utf8_general_ci',
-		'swap_pre' => '',
-		'encrypt' => FALSE,
-		'compress' => FALSE,
-		'stricton' => FALSE,
-		'failover' => array(),
-		'save_queries' => TRUE
-	);
-	
+
 	$db['wordpress'] = array(
-		'dsn'	=> '',
-		'hostname' => 'localhost',
-		'username' => 'revision_wproot',
-		'password' => '-mh&ev+]{.to',
-		'database' => 'revision_wp',
+		'dsn' => '',
+		'hostname' => '',
+		'username' => '',
+		'password' => '',
+		'database' => '',
 		'dbdriver' => 'mysqli',
 		'dbprefix' => '',
 		'pconnect' => FALSE,
@@ -235,13 +145,13 @@ else
 		'failover' => array(),
 		'save_queries' => TRUE
 	);
-	
+
 	$db['mailer'] = array(
-		'dsn'	=> '',
-		'hostname' => 'athina.revisionalpha.net:33306',
-		'username' => 'mailer_select',
-		'password' => 'el22lope',
-		'database' => 'mailer_cms6',
+		'dsn' => '',
+		'hostname' => '',
+		'username' => '',
+		'password' => '',
+		'database' => '',
 		'dbdriver' => 'mysqli',
 		'dbprefix' => '',
 		'pconnect' => FALSE,
@@ -257,13 +167,13 @@ else
 		'failover' => array(),
 		'save_queries' => TRUE
 	);
-	
+
 	$db['mailer_app'] = array(
-		'dsn'	=> '',
-		'hostname' => '192.168.10.175',
-		'username' => 'mailer_app',
-		'password' => 'laquequieras',
-		'database' => 'mailer_cms6',
+		'dsn' => '',
+		'hostname' => '',
+		'username' => '',
+		'password' => '',
+		'database' => '',
 		'dbdriver' => 'mysqli',
 		'dbprefix' => '',
 		'pconnect' => FALSE,
@@ -279,13 +189,13 @@ else
 		'failover' => array(),
 		'save_queries' => TRUE
 	);
-	
+
 	$db['pbx'] = array(
-		'dsn'	=> '',
-		'hostname' => 'pbx.profcallcenter.com.ar',
-		'username' => 'revisionalpha',
-		'password' => 'el22lope',
-		'database' => 'asteriskcdrdb',
+		'dsn' => '',
+		'hostname' => '',
+		'username' => '',
+		'password' => '',
+		'database' => '',
 		'dbdriver' => 'mysql',
 		'dbprefix' => '',
 		'pconnect' => FALSE,
@@ -301,13 +211,13 @@ else
 		'failover' => array(),
 		'save_queries' => TRUE
 	);
-	
+
 	$db['pedimosfacil'] = array(
-		'dsn'	=> '',
-		'hostname' => '192.168.10.30',
-		'username' => 'pedimosf_dev',
-		'password' => 'el22lope',
-		'database' => 'pedimosf_001',
+		'dsn' => '',
+		'hostname' => '',
+		'username' => '',
+		'password' => '',
+		'database' => '',
 		'dbdriver' => 'mysqli',
 		'dbprefix' => '',
 		'pconnect' => FALSE,
