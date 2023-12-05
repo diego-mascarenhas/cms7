@@ -969,7 +969,7 @@ class Factura_model extends CI_Model
 		$data['operacion'] = $valores['operacion'];
 		$data['numero_talonario'] = (isset($valores['numero_talonario'])) ? $valores['numero_talonario'] : $valores['punto_de_venta'];
 		$data['numero_factura'] = (!empty($valores['numero_factura'])) ? $valores['numero_factura'] : null;
-		if (($valores['id_factura_tipo'] == 5 || $valores['id_factura_tipo'] == 47) && $data['operacion'] == 'V')
+		if (($valores['id_factura_tipo'] == 5 || $valores['id_factura_tipo'] == 47 || $valores['id_factura_tipo'] == 49) && $data['operacion'] == 'V')
 			$data['numero_factura'] = $this->ultima($data['grupo'], $data['operacion'], $data['id_factura_tipo'], $data['numero_talonario']) + 1;
 		$data['fecha'] = (!empty($valores['fecha'])) ? date('Y-m-d', strtotime($valores['fecha'])) : date('Y-m-d');
 		$data['fecha_presentacion'] = (!empty($valores['presentacion'])) ? date('Y-m-d', strtotime($valores['presentacion'])) : date('Y-m', strtotime($data['fecha'])) . '-01';
