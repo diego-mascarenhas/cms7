@@ -1,4 +1,4 @@
-<?php defined('BASEPATH') or exit('No direct script access allowed');
+<?php defined('BASEPATH') or exit ('No direct script access allowed');
 
 
 class Factura_model extends CI_Model
@@ -58,7 +58,7 @@ class Factura_model extends CI_Model
 		{
 			$placeholders[] = $this->usuario->grupo;
 
-			if (isset($parametros['id_empresa']))
+			if (isset ($parametros['id_empresa']))
 			{
 				$sql .= " AND empresas.id = ?";
 				$placeholders[] = $parametros['id_empresa'];
@@ -77,15 +77,15 @@ class Factura_model extends CI_Model
 		}
 
 
-		if (!isset($res['error']))
+		if (!isset ($res['error']))
 		{
 			// filtros
-			if (!empty($parametros['estado']))
+			if (!empty ($parametros['estado']))
 			{
 				$sql .= " AND facturas.estado = ?";
 				$placeholders[] = $parametros['estado'];
 			}
-			elseif (empty($parametros['search']))
+			elseif (empty ($parametros['search']))
 			{
 				$sql .= "
 						AND (((facturas.estado = 1 OR facturas.estado = 2 OR facturas.estado = 7) AND facturas.saldo > 0) OR facturas.estado = 8)
@@ -94,13 +94,13 @@ class Factura_model extends CI_Model
 					";
 			}
 
-			if (!empty($parametros['id_empresa_fiscal']))
+			if (!empty ($parametros['id_empresa_fiscal']))
 			{
 				$sql .= " AND facturas.id_empresa_fiscal = ?";
 				$placeholders[] = $parametros['id_empresa_fiscal'];
 			}
 
-			if (!empty($parametros['pendiente']))
+			if (!empty ($parametros['pendiente']))
 			{
 				$sql .= "
 						AND facturas.saldo > 0
@@ -110,14 +110,14 @@ class Factura_model extends CI_Model
 					";
 			}
 
-			if (!empty($parametros['operacion']))
+			if (!empty ($parametros['operacion']))
 			{
 				$sql .= " AND facturas.operacion = ?";
 				$placeholders[] = $parametros['operacion'];
 			}
 
 			// busqueda
-			if (!empty($parametros['filtrar']))
+			if (!empty ($parametros['filtrar']))
 			{
 				$value = str_replace(' ', '|', trim($parametros['filtrar']));
 
@@ -126,7 +126,7 @@ class Factura_model extends CI_Model
 				$sql .= " OR empresas.empresa REGEXP '" . $value . "') ";
 			}
 
-			if (!empty($parametros['search']))
+			if (!empty ($parametros['search']))
 			{
 				$value = trim($parametros['search']);
 
@@ -139,25 +139,25 @@ class Factura_model extends CI_Model
 
 			// orden
 			$sql .= " ORDER BY";
-			$sql .= (!empty($parametros['order_by'])) ? " " . $parametros['order_by'] : " FIELD(facturas.estado,7,8,1,2), facturas.vencimiento, facturas.id";
-			$sql .= (!empty($parametros['order'])) ? " " . $parametros['order'] : " ASC";
+			$sql .= (!empty ($parametros['order_by'])) ? " " . $parametros['order_by'] : " FIELD(facturas.estado,7,8,1,2), facturas.vencimiento, facturas.id";
+			$sql .= (!empty ($parametros['order'])) ? " " . $parametros['order'] : " ASC";
 
 			// limite
 			$sql .= " LIMIT ?, ?";
-			$placeholders[] = (isset($parametros['page'])) ? ($this->config->item('use_page_numbers') == true) ? ($parametros['page'] - 1) * $this->config->item('per_page') : $parametros['page'] : 0;
-			$placeholders[] = (isset($parametros['per_page'])) ? (int) $parametros['per_page'] : $this->config->item('per_page');
+			$placeholders[] = (isset ($parametros['page'])) ? ($this->config->item('use_page_numbers') == true) ? ($parametros['page'] - 1) * $this->config->item('per_page') : $parametros['page'] : 0;
+			$placeholders[] = (isset ($parametros['per_page'])) ? (int) $parametros['per_page'] : $this->config->item('per_page');
 
 			// consulta
 			$query = $this->db->query($sql, $placeholders);
 		}
 
 
-		if (!isset($res['error']) && $query)
+		if (!isset ($res['error']) && $query)
 		{
 			$res = $query->result_array();
 		}
 
-		return (!empty($res)) ? $res : null;
+		return (!empty ($res)) ? $res : null;
 	}
 
 
@@ -245,19 +245,19 @@ class Factura_model extends CI_Model
 		}
 
 
-		if (!isset($res['error']))
+		if (!isset ($res['error']))
 		{
 			// consulta
 			$query = $this->db->query($sql, $placeholders);
 		}
 
 
-		if (!isset($res['error']) && $query)
+		if (!isset ($res['error']) && $query)
 		{
 			$res = $query->row_array();
 		}
 
-		return (!empty($res)) ? $res : null;
+		return (!empty ($res)) ? $res : null;
 	}
 
 
@@ -294,19 +294,19 @@ class Factura_model extends CI_Model
 		}
 
 
-		if (!isset($res['error']))
+		if (!isset ($res['error']))
 		{
 			// consulta
 			$query = $this->db->query($sql, $placeholders);
 		}
 
 
-		if (!isset($res['error']) && $query)
+		if (!isset ($res['error']) && $query)
 		{
 			$res = $query->result_array();
 		}
 
-		return (!empty($res)) ? $res : null;
+		return (!empty ($res)) ? $res : null;
 	}
 
 
@@ -337,27 +337,27 @@ class Factura_model extends CI_Model
 		}
 
 
-		if (!isset($res['error']))
+		if (!isset ($res['error']))
 		{
 			// consulta
 			$query = $this->db->query($sql, $placeholders);
 		}
 
 
-		if (!isset($res['error']) && $query)
+		if (!isset ($res['error']) && $query)
 		{
 			$res = $query->row_array();
 		}
 
-		return (!empty($res)) ? $res : null;
+		return (!empty ($res)) ? $res : null;
 	}
 
 
 	public function ingresarFacturaItems($valores)
 	{
-		$data['grupo'] = (!empty($valores['grupo'])) ? $valores['grupo'] : $this->usuario->grupo;
+		$data['grupo'] = (!empty ($valores['grupo'])) ? $valores['grupo'] : $this->usuario->grupo;
 		$data['id_factura'] = $valores['id_factura'];
-		if (isset($valores['id_categoria']))
+		if (isset ($valores['id_categoria']))
 			$data['id_categoria'] = $valores['id_categoria'];
 
 		$data['descripcion'] = $valores['descripcion'];
@@ -365,37 +365,37 @@ class Factura_model extends CI_Model
 		$data['valor'] = $valores['valor'];
 
 		$data['fecha_alta'] = unix_to_human(now(), true, 'eu');
-		$data['username_alta'] = (!empty($valores['username_alta'])) ? $valores['username_alta'] : $this->usuario->id;
+		$data['username_alta'] = (!empty ($valores['username_alta'])) ? $valores['username_alta'] : $this->usuario->id;
 
 
-		if (!isset($res['error']))
+		if (!isset ($res['error']))
 		{
 			$insert = $this->db->insert('facturas_items', $data);
 
 			$res = $this->db->insert_id();
 		}
 
-		return (!empty($res)) ? $res : null;
+		return (!empty ($res)) ? $res : null;
 	}
 
 
 	public function modificarFacturaItem($id, $valores)
 	{
-		if (!empty($valores['id_categoria']))
+		if (!empty ($valores['id_categoria']))
 			$data['id_categoria'] = $valores['id_categoria'];
 
-		if (isset($valores['descripcion']))
-			$data['descripcion'] = (!empty($valores['descripcion'])) ? $valores['descripcion'] : NULL;
+		if (isset ($valores['descripcion']))
+			$data['descripcion'] = (!empty ($valores['descripcion'])) ? $valores['descripcion'] : NULL;
 
-		$data['descuento'] = (!empty($valores['descuento'])) ? ($valores['descuento'] > $valores['valor']) ? $valores['valor'] : $valores['descuento'] : 0;
-		$data['valor'] = (!empty($valores['valor'])) ? $valores['valor'] : 0;
+		$data['descuento'] = (!empty ($valores['descuento'])) ? ($valores['descuento'] > $valores['valor']) ? $valores['valor'] : $valores['descuento'] : 0;
+		$data['valor'] = (!empty ($valores['valor'])) ? $valores['valor'] : 0;
 
 		$data['fecha_modificacion'] = unix_to_human(now(), true, 'eu');
 		$data['username_modificacion'] = $this->usuario->username;
 
 		$res = $this->db->update('facturas_items', $data, array('id' => $id, 'grupo' => $this->usuario->grupo));
 
-		return (!empty($res)) ? $res : null;
+		return (!empty ($res)) ? $res : null;
 	}
 
 
@@ -421,7 +421,7 @@ class Factura_model extends CI_Model
 			$res = $query->row_array()['total'];
 		}
 
-		return (!empty($res)) ? $res : null;
+		return (!empty ($res)) ? $res : null;
 	}
 
 
@@ -449,7 +449,7 @@ class Factura_model extends CI_Model
 			$res = $query->row_array()['valor'];
 		}
 
-		return (!empty($res)) ? $res : null;
+		return (!empty ($res)) ? $res : null;
 	}
 
 
@@ -457,12 +457,12 @@ class Factura_model extends CI_Model
 	{
 		$data['saldo'] = $this->getFacturaTotal($id) - $this->getFacturaMovimientos($id);
 
-		if (!isset($res['error']))
+		if (!isset ($res['error']))
 		{
 			$res = $this->db->update('facturas', $data, array('id' => $id));
 		}
 
-		return (!empty($res)) ? $res : null;
+		return (!empty ($res)) ? $res : null;
 	}
 
 
@@ -484,7 +484,7 @@ class Factura_model extends CI_Model
 		// permisos	
 		if ($this->usuario->perfil == 'reseller')
 		{
-			if (isset($parametros['id_empresa']))
+			if (isset ($parametros['id_empresa']))
 			{
 				$sql .= " AND empresas_fiscales.id_empresa = ?";
 				$placeholders[] = $parametros['id_empresa'];
@@ -509,7 +509,7 @@ class Factura_model extends CI_Model
 			$res = $query->row_array()['valor'];
 		}
 
-		return (!empty($res)) ? $res : null;
+		return (!empty ($res)) ? $res : null;
 	}
 
 
@@ -535,17 +535,17 @@ class Factura_model extends CI_Model
 
 		$query = $this->db->query($sql, array($id));
 
-		if (!isset($res['error']) && $query)
+		if (!isset ($res['error']) && $query)
 		{
 			$res = $query->row_array();
 
-			if (isset($res))
+			if (isset ($res))
 			{
 				$this->db->update('facturas', array('enviado' => unix_to_human(now(), true, 'eu')), array('id' => $res['id']));
 			}
 		}
 
-		return (!empty($res)) ? $res : null;
+		return (!empty ($res)) ? $res : null;
 	}
 
 
@@ -570,12 +570,12 @@ class Factura_model extends CI_Model
 
 		$query = $this->db->query($sql, array($limite));
 
-		if (!isset($res['error']) && $query)
+		if (!isset ($res['error']) && $query)
 		{
 			$res = $query->result_array();
 		}
 
-		return (!empty($res)) ? $res : null;
+		return (!empty ($res)) ? $res : null;
 	}
 
 
@@ -602,12 +602,12 @@ class Factura_model extends CI_Model
 
 		$query = $this->db->query($sql);
 
-		if (!isset($res['error']) && $query)
+		if (!isset ($res['error']) && $query)
 		{
 			$res = $query->result_array();
 		}
 
-		return (!empty($res)) ? $res : null;
+		return (!empty ($res)) ? $res : null;
 	}
 
 
@@ -636,12 +636,12 @@ class Factura_model extends CI_Model
 
 		$query = $this->db->query($sql, array($dias_vencidas));
 
-		if (!isset($res['error']) && $query)
+		if (!isset ($res['error']) && $query)
 		{
 			$res = $query->result_array();
 		}
 
-		return (!empty($res)) ? $res : null;
+		return (!empty ($res)) ? $res : null;
 	}
 
 
@@ -691,12 +691,12 @@ class Factura_model extends CI_Model
 
 		$query = $this->db->query($sql, array($dias));
 
-		if (!isset($res['error']) && $query)
+		if (!isset ($res['error']) && $query)
 		{
 			$res = $query->result_array();
 		}
 
-		return (!empty($res)) ? $res : null;
+		return (!empty ($res)) ? $res : null;
 	}
 
 
@@ -726,12 +726,12 @@ class Factura_model extends CI_Model
 		// consulta
 		$query = $this->db->query($sql, $placeholders);
 
-		if (!isset($res['error']) && $query)
+		if (!isset ($res['error']) && $query)
 		{
 			$res = $query->row_array()['cantidad'];
 		}
 
-		return (!empty($res)) ? $res : null;
+		return (!empty ($res)) ? $res : null;
 	}
 
 
@@ -766,7 +766,7 @@ class Factura_model extends CI_Model
 			$res = $query->row_array()['id'];
 		}
 
-		return (!empty($res)) ? $res : null;
+		return (!empty ($res)) ? $res : null;
 	}
 
 
@@ -791,7 +791,7 @@ class Factura_model extends CI_Model
 			$res = $query->row_array()['id'];
 		}
 
-		return (!empty($res)) ? $res : null;
+		return (!empty ($res)) ? $res : null;
 	}
 
 
@@ -822,13 +822,13 @@ class Factura_model extends CI_Model
 
 
 		// filtros
-		if (!empty($numero_talonario))
+		if (!empty ($numero_talonario))
 		{
 			$sql .= " AND numero_talonario = ?";
 			$placeholders[] = $numero_talonario;
 		}
 
-		if (!empty($numero_factura))
+		if (!empty ($numero_factura))
 		{
 			$sql .= " AND numero_factura = ?";
 			$placeholders[] = $numero_factura;
@@ -843,7 +843,7 @@ class Factura_model extends CI_Model
 			$res = $query->row_array()['id'];
 		}
 
-		return (!empty($res)) ? $res : null;
+		return (!empty ($res)) ? $res : null;
 	}
 
 
@@ -868,7 +868,7 @@ class Factura_model extends CI_Model
 			$res = $query->row_array()['id'];
 		}
 
-		return (!empty($res)) ? $res : null;
+		return (!empty ($res)) ? $res : null;
 	}
 
 
@@ -896,7 +896,7 @@ class Factura_model extends CI_Model
 			$res = $query->row_array()['numero_factura'];
 		}
 
-		return (!empty($res)) ? $res : null;
+		return (!empty ($res)) ? $res : null;
 	}
 
 
@@ -925,7 +925,7 @@ class Factura_model extends CI_Model
 			$res = $query->row_array()['id'];
 		}
 
-		return (!empty($res)) ? $res : null;
+		return (!empty ($res)) ? $res : null;
 	}
 
 
@@ -954,123 +954,123 @@ class Factura_model extends CI_Model
 			$res = $query->row_array()['id'];
 		}
 
-		return (!empty($res)) ? $res : null;
+		return (!empty ($res)) ? $res : null;
 	}
 
 
 	public function ingresarFactura($valores)
 	{
-		$data['grupo'] = (!empty($valores['grupo'])) ? $valores['grupo'] : $this->usuario->grupo;
+		$data['grupo'] = (!empty ($valores['grupo'])) ? $valores['grupo'] : $this->usuario->grupo;
 		$data['id_empresa_fiscal'] = $valores['id_empresa_fiscal'];
 		$data['id_factura_tipo'] = $valores['id_factura_tipo'];
 		$data['id_forma_pago'] = $valores['id_forma_pago'];
 		$data['id_moneda'] = $valores['id_moneda'];
 		$data['cambio'] = $this->getCambioMoneda($valores['id_moneda']);
 		$data['operacion'] = $valores['operacion'];
-		$data['numero_talonario'] = (isset($valores['numero_talonario'])) ? $valores['numero_talonario'] : $valores['punto_de_venta'];
-		$data['numero_factura'] = (!empty($valores['numero_factura'])) ? $valores['numero_factura'] : null;
-		if (($valores['id_factura_tipo'] == 5 || $valores['id_factura_tipo'] == 47 || $valores['id_factura_tipo'] == 49) && $data['operacion'] == 'V')
+		$data['numero_talonario'] = (isset ($valores['numero_talonario'])) ? $valores['numero_talonario'] : $valores['punto_de_venta'];
+		$data['numero_factura'] = (!empty ($valores['numero_factura'])) ? $valores['numero_factura'] : null;
+		if (($valores['id_factura_tipo'] == 5 || $valores['id_factura_tipo'] == 42 || $valores['id_factura_tipo'] == 43 || $valores['id_factura_tipo'] == 47 || $valores['id_factura_tipo'] == 49) && $data['operacion'] == 'V')
 			$data['numero_factura'] = $this->ultima($data['grupo'], $data['operacion'], $data['id_factura_tipo'], $data['numero_talonario']) + 1;
-		$data['fecha'] = (!empty($valores['fecha'])) ? date('Y-m-d', strtotime($valores['fecha'])) : date('Y-m-d');
-		$data['fecha_presentacion'] = (!empty($valores['presentacion'])) ? date('Y-m-d', strtotime($valores['presentacion'])) : date('Y-m', strtotime($data['fecha'])) . '-01';
+		$data['fecha'] = (!empty ($valores['fecha'])) ? date('Y-m-d', strtotime($valores['fecha'])) : date('Y-m-d');
+		$data['fecha_presentacion'] = (!empty ($valores['presentacion'])) ? date('Y-m-d', strtotime($valores['presentacion'])) : date('Y-m', strtotime($data['fecha'])) . '-01';
 
-		if (isset($valores['vencimiento']))
+		if (isset ($valores['vencimiento']))
 		{
-			$data['vencimiento'] = (!empty($valores['vencimiento'])) ? date('Y-m-d', strtotime($valores['vencimiento'])) : null;
+			$data['vencimiento'] = (!empty ($valores['vencimiento'])) ? date('Y-m-d', strtotime($valores['vencimiento'])) : null;
 		}
-		elseif (isset($valores['vencimiento_dias']))
+		elseif (isset ($valores['vencimiento_dias']))
 		{
 			$data['vencimiento'] = date('Y-m-d', strtotime('+' . $valores['vencimiento_dias'] . ' DAY', strtotime($data['fecha'])));
 		}
 
 		$data['condicion'] = 'C';
 
-		if (isset($valores['padre']))
+		if (isset ($valores['padre']))
 			$data['padre'] = $valores['padre'];
 
-		if (isset($valores['estado']))
-			$data['estado'] = (!empty($valores['estado'])) ? $valores['estado'] : 1;
+		if (isset ($valores['estado']))
+			$data['estado'] = (!empty ($valores['estado'])) ? $valores['estado'] : 1;
 
 		// valores sin calcular
-		if (isset($valores['bruto']))
-			$data['bruto'] = (!empty($valores['bruto'])) ? $valores['bruto'] : 0;
-		if (isset($valores['SUBTOTAL105']))
-			$data['SUBTOTAL105'] = (!empty($valores['SUBTOTAL105'])) ? $valores['SUBTOTAL105'] : 0;
-		if (isset($valores['IMP105']))
-			$data['IMP105'] = (!empty($valores['IMP105'])) ? $valores['IMP105'] : 0;
-		if (isset($valores['NO_GRAVADOS105']))
-			$data['NO_GRAVADOS105'] = (!empty($valores['NO_GRAVADOS105'])) ? $valores['NO_GRAVADOS105'] : 0;
-		if (isset($valores['SUBTOTAL210']))
-			$data['SUBTOTAL210'] = (!empty($valores['SUBTOTAL210'])) ? $valores['SUBTOTAL210'] : null;
-		if (isset($valores['IMP210']))
-			$data['IMP210'] = (!empty($valores['IMP210'])) ? $valores['IMP210'] : 0;
-		if (isset($valores['NO_GRAVADOS210']))
-			$data['NO_GRAVADOS210'] = (!empty($valores['NO_GRAVADOS210'])) ? $valores['NO_GRAVADOS210'] : 0;
-		if (isset($valores['SUBTOTAL270']))
-			$data['SUBTOTAL270'] = (!empty($valores['SUBTOTAL270'])) ? $valores['SUBTOTAL270'] : 0;
-		if (isset($valores['IMP270']))
-			$data['IMP270'] = (!empty($valores['IMP270'])) ? $valores['IMP270'] : 0;
-		if (isset($valores['NO_GRAVADOS270']))
-			$data['NO_GRAVADOS270'] = (!empty($valores['NO_GRAVADOS270'])) ? $valores['NO_GRAVADOS270'] : 0;
-		if (isset($valores['EXENTO']))
-			$data['EXENTO'] = (!empty($valores['EXENTO'])) ? $valores['EXENTO'] : 0;
-		if (isset($valores['RETENCION_IVA']))
-			$data['RETENCION_IVA'] = (!empty($valores['RETENCION_IVA'])) ? $valores['RETENCION_IVA'] : 0;
-		if (isset($valores['RETENCION_IIBB']))
-			$data['RETENCION_IIBB'] = (!empty($valores['RETENCION_IIBB'])) ? $valores['RETENCION_IIBB'] : 0;
-		if (isset($valores['RETENCIONES_GENERALES']))
-			$data['RETENCIONES_GENERALES'] = (!empty($valores['RETENCIONES_GENERALES'])) ? $valores['RETENCIONES_GENERALES'] : 0;
-		if (isset($valores['PERCEPCION_IIBB']))
-			$data['PERCEPCION_IIBB'] = (!empty($valores['PERCEPCION_IIBB'])) ? $valores['PERCEPCION_IIBB'] : 0;
-		if (isset($valores['descuento']))
-			$data['descuento'] = (!empty($valores['descuento'])) ? $valores['descuento'] : 0;
-		if (isset($valores['total_neto']))
-			$data['total_neto'] = (!empty($valores['total_neto'])) ? $valores['total_neto'] : 0;
-		$data['saldo'] = (!empty($valores['saldo'])) ? $valores['saldo'] : $data['total_neto'];
+		if (isset ($valores['bruto']))
+			$data['bruto'] = (!empty ($valores['bruto'])) ? $valores['bruto'] : 0;
+		if (isset ($valores['SUBTOTAL105']))
+			$data['SUBTOTAL105'] = (!empty ($valores['SUBTOTAL105'])) ? $valores['SUBTOTAL105'] : 0;
+		if (isset ($valores['IMP105']))
+			$data['IMP105'] = (!empty ($valores['IMP105'])) ? $valores['IMP105'] : 0;
+		if (isset ($valores['NO_GRAVADOS105']))
+			$data['NO_GRAVADOS105'] = (!empty ($valores['NO_GRAVADOS105'])) ? $valores['NO_GRAVADOS105'] : 0;
+		if (isset ($valores['SUBTOTAL210']))
+			$data['SUBTOTAL210'] = (!empty ($valores['SUBTOTAL210'])) ? $valores['SUBTOTAL210'] : null;
+		if (isset ($valores['IMP210']))
+			$data['IMP210'] = (!empty ($valores['IMP210'])) ? $valores['IMP210'] : 0;
+		if (isset ($valores['NO_GRAVADOS210']))
+			$data['NO_GRAVADOS210'] = (!empty ($valores['NO_GRAVADOS210'])) ? $valores['NO_GRAVADOS210'] : 0;
+		if (isset ($valores['SUBTOTAL270']))
+			$data['SUBTOTAL270'] = (!empty ($valores['SUBTOTAL270'])) ? $valores['SUBTOTAL270'] : 0;
+		if (isset ($valores['IMP270']))
+			$data['IMP270'] = (!empty ($valores['IMP270'])) ? $valores['IMP270'] : 0;
+		if (isset ($valores['NO_GRAVADOS270']))
+			$data['NO_GRAVADOS270'] = (!empty ($valores['NO_GRAVADOS270'])) ? $valores['NO_GRAVADOS270'] : 0;
+		if (isset ($valores['EXENTO']))
+			$data['EXENTO'] = (!empty ($valores['EXENTO'])) ? $valores['EXENTO'] : 0;
+		if (isset ($valores['RETENCION_IVA']))
+			$data['RETENCION_IVA'] = (!empty ($valores['RETENCION_IVA'])) ? $valores['RETENCION_IVA'] : 0;
+		if (isset ($valores['RETENCION_IIBB']))
+			$data['RETENCION_IIBB'] = (!empty ($valores['RETENCION_IIBB'])) ? $valores['RETENCION_IIBB'] : 0;
+		if (isset ($valores['RETENCIONES_GENERALES']))
+			$data['RETENCIONES_GENERALES'] = (!empty ($valores['RETENCIONES_GENERALES'])) ? $valores['RETENCIONES_GENERALES'] : 0;
+		if (isset ($valores['PERCEPCION_IIBB']))
+			$data['PERCEPCION_IIBB'] = (!empty ($valores['PERCEPCION_IIBB'])) ? $valores['PERCEPCION_IIBB'] : 0;
+		if (isset ($valores['descuento']))
+			$data['descuento'] = (!empty ($valores['descuento'])) ? $valores['descuento'] : 0;
+		if (isset ($valores['total_neto']))
+			$data['total_neto'] = (!empty ($valores['total_neto'])) ? $valores['total_neto'] : 0;
+		$data['saldo'] = (!empty ($valores['saldo'])) ? $valores['saldo'] : $data['total_neto'];
 
 		$data['fecha_alta'] = unix_to_human(now(), true, 'eu');
-		$data['username_alta'] = (!empty($valores['username_alta'])) ? $valores['username_alta'] : $this->usuario->id;
+		$data['username_alta'] = (!empty ($valores['username_alta'])) ? $valores['username_alta'] : $this->usuario->id;
 
 
-		if (!isset($res['error']))
+		if (!isset ($res['error']))
 		{
 			$insert = $this->db->insert('facturas', $data);
 
 			$res = $this->db->insert_id();
 		}
 
-		return (!empty($res)) ? $res : null;
+		return (!empty ($res)) ? $res : null;
 	}
 
 
 	public function modificarFactura($id, $valores)
 	{
-		if (isset($valores['id_forma_pago']))
-			$data['id_forma_pago'] = (!empty($valores['id_forma_pago'])) ? $valores['id_forma_pago'] : null;
-		if (isset($valores['numero_talonario']))
-			$data['numero_talonario'] = (!empty($valores['numero_talonario'])) ? $valores['numero_talonario'] : null;
-		if (isset($valores['numero_factura']))
-			$data['numero_factura'] = (!empty($valores['numero_factura'])) ? $valores['numero_factura'] : null;
-		if (isset($valores['cae_numero']))
-			$data['cae_numero'] = (!empty($valores['cae_numero'])) ? $valores['cae_numero'] : null;
-		if (isset($valores['cae_vencimiento']))
+		if (isset ($valores['id_forma_pago']))
+			$data['id_forma_pago'] = (!empty ($valores['id_forma_pago'])) ? $valores['id_forma_pago'] : null;
+		if (isset ($valores['numero_talonario']))
+			$data['numero_talonario'] = (!empty ($valores['numero_talonario'])) ? $valores['numero_talonario'] : null;
+		if (isset ($valores['numero_factura']))
+			$data['numero_factura'] = (!empty ($valores['numero_factura'])) ? $valores['numero_factura'] : null;
+		if (isset ($valores['cae_numero']))
+			$data['cae_numero'] = (!empty ($valores['cae_numero'])) ? $valores['cae_numero'] : null;
+		if (isset ($valores['cae_vencimiento']))
 			$data['cae_vencimiento'] = date('Ymd', strtotime($valores['cae_vencimiento']));
 
-		if (isset($valores['error']))
-			$data['error'] = (!empty($valores['error'])) ? $valores['error'] : null;
-		if (isset($valores['estado']))
-			$data['estado'] = (!empty($valores['estado'])) ? $valores['estado'] : null;
+		if (isset ($valores['error']))
+			$data['error'] = (!empty ($valores['error'])) ? $valores['error'] : null;
+		if (isset ($valores['estado']))
+			$data['estado'] = (!empty ($valores['estado'])) ? $valores['estado'] : null;
 
 		$data['fecha_modificacion'] = unix_to_human(now(), true, 'eu');
-		$data['username_modificacion'] = (!empty($valores['username_modificacion'])) ? $valores['username_modificacion'] : $this->usuario->id;
+		$data['username_modificacion'] = (!empty ($valores['username_modificacion'])) ? $valores['username_modificacion'] : $this->usuario->id;
 
 
-		if (!isset($res['error']))
+		if (!isset ($res['error']))
 		{
 			$res = $this->db->update('facturas', $data, array('id' => $id));
 		}
 
-		return (!empty($res)) ? $res : null;
+		return (!empty ($res)) ? $res : null;
 	}
 
 
@@ -1088,12 +1088,12 @@ class Factura_model extends CI_Model
 
 		$query = $this->db->query($sql, array($id_afip, $cuit, $this->usuario->grupo));
 
-		if (!isset($res['error']) && $query)
+		if (!isset ($res['error']) && $query)
 		{
 			$res = $query->row_array()['id'];
 		}
 
-		return (!empty($res)) ? $res : null;
+		return (!empty ($res)) ? $res : null;
 	}
 
 
@@ -1101,7 +1101,7 @@ class Factura_model extends CI_Model
 	{
 		$factura = $this->getFacturaDetalleRaw($id);
 
-		if (isset($factura['id']) && $factura['total_neto'] == $factura['saldo'])
+		if (isset ($factura['id']) && $factura['total_neto'] == $factura['saldo'])
 		{
 			$this->db->trans_begin();
 
@@ -1157,11 +1157,11 @@ class Factura_model extends CI_Model
 
 
 			// Items
-			if (!empty($factura['padre']))
+			if (!empty ($factura['padre']))
 			{
 				$factura['items'] = $this->getFacturaItems($factura['padre']);
 
-				if (!empty($factura['items']))
+				if (!empty ($factura['items']))
 				{
 					foreach ($factura['items'] as $item)
 					{
@@ -1197,18 +1197,19 @@ class Factura_model extends CI_Model
 			}
 		}
 
-		return (!empty($res)) ? $res : null;
+		return (!empty ($res)) ? $res : null;
 	}
 
 
 	public function confeccionarFactura($id)
 	{
 		$sql = "
-				SELECT SUM(facturas_items.valor) AS valor, SUM(facturas_items.descuento) AS descuento, facturas_tipo.impuesto
+				SELECT SUM(facturas_items.valor) AS valor, SUM(facturas_items.descuento) AS descuento, facturas_tipo.impuesto, empresas_fiscales.id_condicion_iva
 				
 				FROM facturas_items
 				LEFT JOIN facturas ON facturas_items.id_factura = facturas.id
 				LEFT JOIN facturas_tipo ON facturas.id_factura_tipo = facturas_tipo.id
+				LEFT JOIN empresas_fiscales ON facturas.id_empresa_fiscal = empresas_fiscales.id
 				
 				WHERE facturas_items.id_factura = ?
 			";
@@ -1226,21 +1227,30 @@ class Factura_model extends CI_Model
 
 		$data['bruto'] = $row['valor'];
 		$data['descuento'] = $row['descuento'];
-		$data['SUBTOTAL210'] = $data['bruto'] - $row['descuento'];
-		$data['IMP210'] = $row['impuesto'] * ($data['SUBTOTAL210']) / 100;
-		$data['total_neto'] = $data['SUBTOTAL210'] + $data['IMP210'];
+
+		if ($row['id_condicion_iva'] != 4)
+		{
+			$data['SUBTOTAL210'] = $data['bruto'] - $row['descuento'];
+			$data['IMP210'] = $row['impuesto'] * ($data['SUBTOTAL210']) / 100;
+			$data['total_neto'] = $data['SUBTOTAL210'] + $data['IMP210'];
+		}
+		else
+		{
+			$data['total_neto'] = $data['bruto'] - $row['descuento'];
+		}
+
 		$data['saldo'] = $data['total_neto'];
 
 		$data['estado'] = 1;
 
-		if (!isset($res['error']))
+		if (!isset ($res['error']))
 		{
 			$data['update'] = $this->db->update('facturas', $data, array('id' => $id));
 
 			$data['id'] = $id;
 		}
 
-		return (!empty($data)) ? $data : null;
+		return (!empty ($data)) ? $data : null;
 	}
 
 
@@ -1259,12 +1269,12 @@ class Factura_model extends CI_Model
 
 		$query = $this->db->query($sql, array($intervalo, $limite));
 
-		if (!isset($res['error']) && $query)
+		if (!isset ($res['error']) && $query)
 		{
 			$res = $query->result_array();
 		}
 
-		return (!empty($res)) ? $res : null;
+		return (!empty ($res)) ? $res : null;
 	}
 
 
@@ -1297,7 +1307,7 @@ class Factura_model extends CI_Model
 			$res = $query->result_array();
 		}
 
-		return (!empty($res)) ? $res : null;
+		return (!empty ($res)) ? $res : null;
 	}
 
 
@@ -1379,7 +1389,7 @@ class Factura_model extends CI_Model
 		}
 
 
-		if (!isset($res['error']))
+		if (!isset ($res['error']))
 		{
 			// filtros
 			$placeholders[] = $periodo;
@@ -1396,7 +1406,7 @@ class Factura_model extends CI_Model
 			$res = $this->db->query($sql, $placeholders);
 		}
 
-		return (!empty($res)) ? $res : null;
+		return (!empty ($res)) ? $res : null;
 	}
 
 
@@ -1423,7 +1433,7 @@ class Factura_model extends CI_Model
 		{
 			$placeholders[] = $this->usuario->grupo;
 
-			if (isset($parametros['id_empresa']))
+			if (isset ($parametros['id_empresa']))
 			{
 				$sql .= " AND empresas_fiscales.id_empresa = ?";
 				$placeholders[] = $parametros['id_empresa'];
@@ -1442,24 +1452,24 @@ class Factura_model extends CI_Model
 		}
 
 
-		if (!isset($res['error']))
+		if (!isset ($res['error']))
 		{
 			// orden
 			$sql .= " ORDER BY";
-			$sql .= (!empty($parametros['order_by'])) ? " " . $parametros['order_by'] : " facturas.fecha";
-			$sql .= (!empty($parametros['order'])) ? " " . $parametros['order'] : " ASC";
+			$sql .= (!empty ($parametros['order_by'])) ? " " . $parametros['order_by'] : " facturas.fecha";
+			$sql .= (!empty ($parametros['order'])) ? " " . $parametros['order'] : " ASC";
 
 			// consulta
 			$query = $this->db->query($sql, $placeholders);
 		}
 
 
-		if (!isset($res['error']) && $query)
+		if (!isset ($res['error']) && $query)
 		{
 			$row = $query->result_array();
 		}
 
-		if (!empty($row))
+		if (!empty ($row))
 		{
 			$res[] = '--- Selecciona una opción ---';
 
@@ -1469,7 +1479,7 @@ class Factura_model extends CI_Model
 			}
 		}
 
-		return (!empty($res)) ? $res : null;
+		return (!empty ($res)) ? $res : null;
 	}
 
 
@@ -1498,24 +1508,24 @@ class Factura_model extends CI_Model
 		}
 
 
-		if (!isset($res['error']))
+		if (!isset ($res['error']))
 		{
 			// orden
 			$sql .= " ORDER BY";
-			$sql .= (!empty($parametros['order_by'])) ? " " . $parametros['order_by'] : " facturas_tipo.factura_tipo";
-			$sql .= (!empty($parametros['order'])) ? " " . $parametros['order'] : " ASC";
+			$sql .= (!empty ($parametros['order_by'])) ? " " . $parametros['order_by'] : " facturas_tipo.factura_tipo";
+			$sql .= (!empty ($parametros['order'])) ? " " . $parametros['order'] : " ASC";
 
 			// consulta
 			$query = $this->db->query($sql, $placeholders);
 		}
 
 
-		if (!isset($res['error']) && $query)
+		if (!isset ($res['error']) && $query)
 		{
 			$row = $query->result_array();
 		}
 
-		if (!empty($row))
+		if (!empty ($row))
 		{
 			$res[] = '--- Selecciona una opción ---';
 
@@ -1525,7 +1535,7 @@ class Factura_model extends CI_Model
 			}
 		}
 
-		return (!empty($res)) ? $res : null;
+		return (!empty ($res)) ? $res : null;
 	}
 
 
@@ -1538,12 +1548,12 @@ class Factura_model extends CI_Model
 		// consulta
 		$query = $this->db->get();
 
-		if (!isset($res['error']) && $query)
+		if (!isset ($res['error']) && $query)
 		{
 			$res = $query->row_array()['cambio'];
 		}
 
-		return (!empty($res)) ? $res : null;
+		return (!empty ($res)) ? $res : null;
 	}
 
 
@@ -1551,7 +1561,7 @@ class Factura_model extends CI_Model
 	{
 		$res = $this->db->update('facturas', array('estado' => $estado), array('id' => $id));
 
-		return (!empty($res)) ? $res : null;
+		return (!empty ($res)) ? $res : null;
 	}
 
 
@@ -1559,7 +1569,7 @@ class Factura_model extends CI_Model
 	{
 		$res = $this->db->delete('facturas_items', array('id' => $id, 'grupo' => $this->usuario->grupo));
 
-		return (!empty($res)) ? $res : null;
+		return (!empty ($res)) ? $res : null;
 	}
 
 
