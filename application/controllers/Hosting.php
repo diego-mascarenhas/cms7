@@ -503,29 +503,25 @@ class Hosting extends MY_Controller {
 	}
 	
 	
+/*
 	public function cpanel_password_reset($id)
 	{
 		if ($this->is_logged_in('reseller') || $this->is_logged_in('admin'))
 		{
-			// models
 			$this->load->model('hosting_model');
 			
-			// helpers and libraries
 			$this->load->helper('form');
 			$this->load->library('form_validation');
 			$this->config->set_item('language', $this->usuario->idioma);
 			
-			// set validation rules
 			$this->form_validation->set_rules('id', 'ID', 'required');
 			
 			if ($this->form_validation->run() === false)
 			{
-				// form values
 				$data['detalle'] = $this->hosting_model->getPlanDetalle($id);
 			}
 			else
 			{
-				// models
 				$this->load->model('sys_model');
 
 				if ($this->sys_model->verificarPropiedad($this->input->post('id_servicio'), 'servicios'))
@@ -533,7 +529,6 @@ class Hosting extends MY_Controller {
 					$data['detalle'] = $this->hosting_model->getPlanDetalle($id);
 					$data['detalle']['password'] = substr(md5(uniqid()), 0, 6) . '*2002!';
 					
-					// helpers and libraries
 					$config = $this->hosting_model->getCredenciales($this->hosting_model->getServerIdFromUser($data['detalle']['user']));
 					$this->load->library('Cpanel', $config);
 					
@@ -558,32 +553,29 @@ class Hosting extends MY_Controller {
 			redirect(base_url('user/login'));
 		}
 	}
+*/
 	
 	
+/*
 	public function email_password_reset($id, $user_email, $domain)
 	{
 		if ($this->is_logged_in('reseller') || $this->is_logged_in('admin'))
 		{
-			// models
 			$this->load->model('hosting_model');
 			
-			// helpers and libraries
 			$this->load->helper('form');
 			$this->load->library('form_validation');
 			$this->config->set_item('language', $this->usuario->idioma);
 			
-			// set validation rules
 			$this->form_validation->set_rules('id', 'ID', 'required');
 			
 			if ($this->form_validation->run() === false)
 			{
-				// form values
 				$data['detalle'] = $this->hosting_model->getPlanDetalle($id);
 				$data['detalle']['email'] = $user_email . '@' . $domain;
 			}
 			else
 			{
-				// models
 				$this->load->model('sys_model');
 
 				if ($this->sys_model->verificarPropiedad($this->input->post('id_servicio'), 'servicios'))
@@ -593,7 +585,6 @@ class Hosting extends MY_Controller {
 					$data['detalle']['email'] = $user_email . '@' . $domain;
 					$data['detalle']['password'] = substr(md5(uniqid()), 0, 6) . '*2002!';
 					
-					// helpers and libraries
 					$config = $this->hosting_model->getCredenciales($this->hosting_model->getServerIdFromUser($data['detalle']['user']));
 					$this->load->library('Cpanel', $config);
 					
@@ -618,6 +609,7 @@ class Hosting extends MY_Controller {
 			redirect(base_url('user/login'));
 		}
 	}
+*/
 	
 	
 	public function probar_alerta($agente)

@@ -117,12 +117,10 @@ class CmsV2 extends REST_Controller {
     //Fin Modulo Agenda
 
     //Modulo Sitio Web OBA
-    public function configuraciondos_get()
+    public function configuraciondos_get($id = null)
     {
-	    // models
         $this->load->model('cms-v2/configuracion_model');
-        
-		$data = $this->configuracion_model->detalleConfiguracionDos();		
+		$data = $this->configuracion_model->detalleConfiguracionDos($id);		
 		
 		if (isset($data['error']))
         {
@@ -145,12 +143,10 @@ class CmsV2 extends REST_Controller {
         }
     }
 
-    public function secciones_get()
+    public function secciones_get($padre = null)
     {
-	    // models
 		$this->load->model('cms-v2/paginas_model');
-		
-		$data = $this->paginas_model->menu();
+		$data = $this->paginas_model->menu($padre);
 		if (isset($data['error']))
         {
 	        $this->response([
@@ -176,9 +172,12 @@ class CmsV2 extends REST_Controller {
     {
 	    // models
 		$this->load->model('cms-v2/paginas_model');
+		$parametros['id'] = $id_contenido;
+		$parametros['id_tipo'] = $id_categoria;
+		$parametros['idioma'] = $idioma;
 		$parametros['estado'] = 3;
 
-		$data = $this->paginas_model->getContenidoAdicionalIdioma($id_contenido,$id_categoria, $idioma,$parametros);
+		$data = $this->paginas_model->getContenidoAdicionalIdioma($parametros);
 		if (isset($data['error']))
         {
 	        $this->response([
@@ -202,7 +201,6 @@ class CmsV2 extends REST_Controller {
 
     public function encabezado_get($id_contenido, $idioma = null, $id_imagen)
     {
-	    // models
 		$this->load->model('cms-v2/paginas_model');
 		$parametros['estado'] = 3;
 		
@@ -235,6 +233,153 @@ class CmsV2 extends REST_Controller {
 		$parametros['estado'] = 3;
 		
 		$data = $this->paginas_model->getPaginaDetalleIdioma($id_contenido,$idioma,$parametros);
+		if (isset($data['error']))
+        {
+	        $this->response([
+                'status' => false,
+                'message' => $data['error']
+            ], REST_Controller::HTTP_FORBIDDEN);
+            
+        }
+        elseif (isset($data))
+        {
+            $this->response($data, REST_Controller::HTTP_OK);
+        }
+        else
+        {
+            $this->response([
+                'status' => false,
+                'message' => 'No se encontraron registros'
+            ], REST_Controller::HTTP_NOT_FOUND);
+        }
+    }
+
+    public function contenidourl_get($url, $idioma = null)
+    {
+	    // models
+		$this->load->model('cms-v2/paginas_model');
+		$parametros['estado'] = 3;
+		
+		$data = $this->paginas_model->getPaginaDetalleUrlIdioma($url,$idioma,$parametros);
+		if (isset($data['error']))
+        {
+	        $this->response([
+                'status' => false,
+                'message' => $data['error']
+            ], REST_Controller::HTTP_FORBIDDEN);
+            
+        }
+        elseif (isset($data))
+        {
+            $this->response($data, REST_Controller::HTTP_OK);
+        }
+        else
+        {
+            $this->response([
+                'status' => false,
+                'message' => 'No se encontraron registros'
+            ], REST_Controller::HTTP_NOT_FOUND);
+        }
+    }
+
+    public function contenidoadicionalurl_get($url, $idioma = null)
+    {
+	    // models
+		$this->load->model('cms-v2/paginas_model');
+		$parametros['url'] = $url;
+		$parametros['idioma'] = $idioma;
+		$parametros['estado'] = 3;
+		
+		$data = $this->paginas_model->getContenidoAdicionalUrlIdioma($parametros);
+		if (isset($data['error']))
+        {
+	        $this->response([
+                'status' => false,
+                'message' => $data['error']
+            ], REST_Controller::HTTP_FORBIDDEN);
+            
+        }
+        elseif (isset($data))
+        {
+            $this->response($data, REST_Controller::HTTP_OK);
+        }
+        else
+        {
+            $this->response([
+                'status' => false,
+                'message' => 'No se encontraron registros'
+            ], REST_Controller::HTTP_NOT_FOUND);
+        }
+    }
+
+    public function contenidoadicional_get($id_contenido, $idioma)
+    {
+	    // models
+		$this->load->model('cms-v2/paginas_model');
+		$parametros['estado'] = 3;
+		$parametros['id_contendio'] = $id_contenido;
+		$parametros['idioma'] = $idioma;
+		
+		$data = $this->paginas_model->getDetalleAdicionalIdioma($parametros);
+		if (isset($data['error']))
+        {
+	        $this->response([
+                'status' => false,
+                'message' => $data['error']
+            ], REST_Controller::HTTP_FORBIDDEN);
+            
+        }
+        elseif (isset($data))
+        {
+            $this->response($data, REST_Controller::HTTP_OK);
+        }
+        else
+        {
+            $this->response([
+                'status' => false,
+                'message' => 'No se encontraron registros'
+            ], REST_Controller::HTTP_NOT_FOUND);
+        }
+    }
+    
+    public function encabezadoadicional_get($id, $id_contenido, $idioma = null, $id_imagen)
+    {
+	    // models
+		$this->load->model('cms-v2/paginas_model');
+		$parametros['id'] = $id;
+		$parametros['id_contenido'] = $id_contenido;
+		$parametros['idioma'] = $idioma;
+		$parametros['id_imagen'] = $id_imagen;
+		$parametros['estado'] = 3;
+		
+		$data = $this->paginas_model->getEncabezadoAdicional($parametros);
+		if (isset($data['error']))
+        {
+	        $this->response([
+                'status' => false,
+                'message' => $data['error']
+            ], REST_Controller::HTTP_FORBIDDEN);
+            
+        }
+        elseif (isset($data))
+        {
+            $this->response($data, REST_Controller::HTTP_OK);
+        }
+        else
+        {
+            $this->response([
+                'status' => false,
+                'message' => 'No se encontraron registros'
+            ], REST_Controller::HTTP_NOT_FOUND);
+        }
+    }
+
+    public function archivoinformacion_get($id, $idioma)
+    {
+		$this->load->model('cms-v2/paginas_model');
+		
+		$data = $this->Paginas_model->getArchivo($id, $idioma);
+
 		if (isset($data['error']))
         {
 	        $this->response([
@@ -327,7 +472,7 @@ class CmsV2 extends REST_Controller {
 */
     }
         
-    public function noticias_get($id_tipo, $idioma, $categoria=null, $limit = null)
+    public function noticias_get($id_tipo, $idioma, $categoria=null, $limit = null, $start = null)
     {
 	    // models
 		$this->load->model('cms-v2/informacion_model');
@@ -340,6 +485,11 @@ class CmsV2 extends REST_Controller {
 			$parametros['categoria'] = $categoria;
 		}
 
+		if($start)
+		{
+			$parametros['start'] = $start;
+		}
+		
 		if($limit)
 		{
 			$parametros['limit'] = $limit;
@@ -369,14 +519,14 @@ class CmsV2 extends REST_Controller {
 */
     }
 
-    public function destacados_get($id_tipo, $idioma)
+    public function destacados_get($id_tipo, $idioma, $limit = null)
     {
 	    // models
 		$this->load->model('cms-v2/informacion_model');
 		$parametros['tipo'] = $id_tipo;
 		$parametros['idioma'] = $idioma;
 		$parametros['estado'] = 3;
-		$parametros['limit'] = 3;
+		$parametros['limit'] = $limit;
 		$parametros['destacado'] = 1;
 		
 		$data = $this->informacion_model->getContenidosPublic($parametros);
@@ -434,17 +584,14 @@ class CmsV2 extends REST_Controller {
         }
     }
 
-    public function eventos_get($idioma, $imagen=null)
+    public function eventos_get($idioma, $imagen, $destacado=null)
     {
 	    // models
 		$this->load->model('cms-v2/eventos_model');
 		$parametros['idioma'] = $idioma;
 		$parametros['estado'] = 3;
-		
-		if($imagen)
-		{
-			$parametros['imagen'] = 1;
-		}
+		if($imagen == 1) { $parametros['imagen'] = 1; }
+		if($destacado == 1) { $parametros['destacado'] = 1; }
 
 		$data = $this->eventos_model->getEventosPublic($parametros);
 		if (isset($data['error']))
@@ -504,6 +651,33 @@ class CmsV2 extends REST_Controller {
 		$this->load->model('cms-v2/informacion_model');
 		
 		$data = $this->informacion_model->getDetallePublic($idioma, $url);
+		if (isset($data['error']))
+        {
+	        $this->response([
+                'status' => false,
+                'message' => $data['error']
+            ], REST_Controller::HTTP_FORBIDDEN);
+            
+        }
+        elseif (isset($data))
+        {
+            $this->response($data, REST_Controller::HTTP_OK);
+        }
+        else
+        {
+            $this->response([
+                'status' => false,
+                'message' => 'No se encontraron registros'
+            ], REST_Controller::HTTP_NOT_FOUND);
+        }
+    }
+
+    public function imageninformacion_get($id, $idioma, $tipo)
+    {
+	    // models
+		$this->load->model('cms-v2/informacion_model');
+		
+		$data = $this->informacion_model->getMedia($id, $idioma, $tipo, 3);
 		if (isset($data['error']))
         {
 	        $this->response([
@@ -1649,4 +1823,409 @@ class CmsV2 extends REST_Controller {
 		}
 		$this->response($data);
 	}
+	
+	//LISTADO SERVICIOS
+    public function listadoservicios_get($seccion, $idioma = null, $padre = null, $id_tipo = null)
+    {
+	    // models
+		$this->load->model('cms-v2/servicios/servicios_model');
+		$parametros['seccion'] = $seccion;
+		$parametros['idioma'] = $idioma;
+		$parametros['estado'] = 3;
+		$parametros['id_tipo'] = $id_tipo;
+		if($padre > 0)
+		{
+			$parametros['padre'] = $padre;
+		}
+		
+		$data = $this->servicios_model->getServicios($parametros);
+		if (isset($data['error']))
+        {
+	        $this->response([
+                'status' => false,
+                'message' => $data['error']
+            ], REST_Controller::HTTP_FORBIDDEN);
+            
+        }
+        elseif (isset($data))
+        {
+            $this->response($data, REST_Controller::HTTP_OK);
+        }
+        else
+        {
+            $this->response([
+                'status' => false,
+                'message' => 'No se encontraron registros'
+            ], REST_Controller::HTTP_NOT_FOUND);
+        }
+    }
+
+	//DETALLE SERVICIOS
+    public function servicio_get($id_servicio, $idioma = null)
+    {
+	    // models
+		$this->load->model('cms-v2/servicios/servicios_model');
+		$parametros['id'] = $id_servicio;
+		$parametros['idioma'] = $idioma;
+		$parametros['estado'] = 3;
+		
+		$data = $this->servicios_model->getServicioDetalleIdioma($parametros);
+		if (isset($data['error']))
+        {
+	        $this->response([
+                'status' => false,
+                'message' => $data['error']
+            ], REST_Controller::HTTP_FORBIDDEN);
+            
+        }
+        elseif (isset($data))
+        {
+            $this->response($data, REST_Controller::HTTP_OK);
+        }
+        else
+        {
+            $this->response([
+                'status' => false,
+                'message' => 'No se encontraron registros'
+            ], REST_Controller::HTTP_NOT_FOUND);
+        }
+    }
+
+	//DETALLE SERVICIOS
+    public function serviciofiltro_get($filtro1, $filtro2 = null, $idioma = null)
+    {
+		$this->load->model('cms-v2/servicios/servicios_model');
+		$parametros['filtro1'] = $filtro1;
+		$parametros['filtro2'] = $filtro2;
+		$parametros['estado'] = 3;
+		
+		$data = $this->servicios_model->getServicioDetalleFiltros($parametros);
+		if (isset($data['error']))
+        {
+	        $this->response([
+                'status' => false,
+                'message' => $data['error']
+            ], REST_Controller::HTTP_FORBIDDEN);
+            
+        }
+        elseif (isset($data))
+        {
+            $this->response($data, REST_Controller::HTTP_OK);
+        }
+        else
+        {
+            $this->response([
+                'status' => false,
+                'message' => 'No se encontraron registros'
+            ], REST_Controller::HTTP_NOT_FOUND);
+        }
+    }
+
+	//SERVICIOS DESTACADOS
+    public function serviciosdestacados_get($limit, $idioma)
+    {
+	    // models
+		$this->load->model('cms-v2/servicios/servicios_model');
+		$parametros['idioma'] = $idioma;
+		$parametros['estado'] = 3;
+		$parametros['limit'] = 3;
+
+		$data = $this->servicios_model->getServiciosDestacados($parametros);
+		if (isset($data['error']))
+        {
+	        $this->response([
+                'status' => false,
+                'message' => $data['error']
+            ], REST_Controller::HTTP_FORBIDDEN);
+            
+        }
+        elseif (isset($data))
+        {
+            $this->response($data, REST_Controller::HTTP_OK);
+        }
+        else
+        {
+            $this->response([
+                'status' => false,
+                'message' => 'No se encontraron registros'
+            ], REST_Controller::HTTP_NOT_FOUND);
+        }
+    }
+
+	//SERVICIOS IMAGEN
+    public function serviciosimagen_get($id, $id_tipo, $idioma)
+    {
+		$this->load->model('cms-v2/servicios/servicios_model');
+		$parametros['id'] = $id;
+		$parametros['id_tipo'] = $id_tipo;
+		$parametros['idioma'] = $idioma;
+		
+		$data = $this->servicios_model->getMedia($parametros);
+		if (isset($data['error']))
+        {
+	        $this->response([
+                'status' => false,
+                'message' => $data['error']
+            ], REST_Controller::HTTP_FORBIDDEN);
+            
+        }
+        elseif (isset($data))
+        {
+            $this->response($data, REST_Controller::HTTP_OK);
+        }
+        else
+        {
+            $this->response([
+                'status' => false,
+                'message' => 'No se encontraron registros'
+            ], REST_Controller::HTTP_NOT_FOUND);
+        }
+    }
+
+ 	//SERVICIOS ARCHIVO
+    public function serviciosarchivo_get($id, $idioma)
+    {
+		$this->load->model('cms-v2/servicios/servicios_model');
+		$parametros['id'] = $id;
+		$parametros['idioma'] = $idioma;
+		
+		$data = $this->servicios_model->getArchivo($parametros);
+		if (isset($data['error']))
+        {
+	        $this->response([
+                'status' => false,
+                'message' => $data['error']
+            ], REST_Controller::HTTP_FORBIDDEN);
+            
+        }
+        elseif (isset($data))
+        {
+            $this->response($data, REST_Controller::HTTP_OK);
+        }
+        else
+        {
+            $this->response([
+                'status' => false,
+                'message' => 'No se encontraron registros'
+            ], REST_Controller::HTTP_NOT_FOUND);
+        }
+    }
+
+   public function listadosserviciosadicionales_get($id_contenido, $id_categoria = null, $idioma = null)
+   {
+		$this->load->model('cms-v2/servicios/servicios_model');
+		$parametros['id'] = $id_contenido;
+		$parametros['id_tipo'] = $id_categoria;
+		$parametros['idioma'] = $idioma;
+		$parametros['estado'] = 3;
+
+		$data = $this->servicios_model->getServicioAdicionalIdioma($parametros);
+		if (isset($data['error']))
+        {
+	        $this->response([
+                'status' => false,
+                'message' => $data['error']
+            ], REST_Controller::HTTP_FORBIDDEN);
+            
+        }
+        elseif (isset($data))
+        {
+            $this->response($data, REST_Controller::HTTP_OK);
+        }
+        else
+        {
+            $this->response([
+                'status' => false,
+                'message' => 'No se encontraron registros'
+            ], REST_Controller::HTTP_NOT_FOUND);
+        }
+    }
+
+	//LISTADO CONTENIDOS 
+    public function listadopaginas_get($padre, $idioma)
+    {
+	    // models
+		$this->load->model('cms-v2/paginas_model');
+		$parametros['padre'] = $padre;
+		$parametros['idioma'] = $idioma;
+		
+		$data = $this->paginas_model->getPaginasPublic($parametros);
+		if (isset($data['error']))
+        {
+	        $this->response([
+                'status' => false,
+                'message' => $data['error']
+            ], REST_Controller::HTTP_FORBIDDEN);
+            
+        }
+        elseif (isset($data))
+        {
+            $this->response($data, REST_Controller::HTTP_OK);
+        }
+        else
+        {
+            $this->response([
+                'status' => false,
+                'message' => 'No se encontraron registros'
+            ], REST_Controller::HTTP_NOT_FOUND);
+        }
+    }
+
+    public function listadointernas_get($padre, $imagen_tipo, $idioma)
+    {
+		$this->load->model('cms-v2/paginas_model');
+		$parametros['padre'] = $padre;
+		$parametros['idioma'] = $idioma;
+		$parametros['imagen_tipo'] = $imagen_tipo;
+		
+		$data = $this->paginas_model->getPaginasInternas($parametros);
+		if (isset($data['error']))
+        {
+	        $this->response([
+                'status' => false,
+                'message' => $data['error']
+            ], REST_Controller::HTTP_FORBIDDEN);
+            
+        }
+        elseif (isset($data))
+        {
+            $this->response($data, REST_Controller::HTTP_OK);
+        }
+        else
+        {
+            $this->response([
+                'status' => false,
+                'message' => 'No se encontraron registros'
+            ], REST_Controller::HTTP_NOT_FOUND);
+        }
+    }
+
+    public function relserviciosadicionales_get($id, $idioma)
+    {
+    	$this->load->model('cms-v2/servicios/servicios_model');
+		$parametros['id'] = $id;
+		$parametros['idioma'] = $idioma;
+		$parametros['estado'] = 3;
+    	
+    	$data = $this->servicios_model->listadoRelacionadosAdicionales($parametros);
+		
+		if (isset($data['error']))
+        {
+	        $this->response([
+                'status' => false,
+                'message' => $data['error']
+            ], REST_Controller::HTTP_FORBIDDEN);
+            
+        }
+        elseif (isset($data))
+        {
+            $this->response($data, REST_Controller::HTTP_OK);
+        }
+        else
+        {
+            $this->response(null, REST_Controller::HTTP_NO_CONTENT);
+        }
+    }    
+
+    public function relsinformacionadicionales_get($id, $idioma)
+    {
+    	$this->load->model('cms-v2/paginas_model');
+		$parametros['id'] = $id;
+		$parametros['idioma'] = $idioma;
+		$parametros['estado'] = 3;
+    	
+		$data = $this->paginas_model->getInformacionRelacionados($parametros);
+		
+		if (isset($data['error']))
+        {
+	        $this->response([
+                'status' => false,
+                'message' => $data['error']
+            ], REST_Controller::HTTP_FORBIDDEN);
+            
+        }
+        elseif (isset($data))
+        {
+            $this->response($data, REST_Controller::HTTP_OK);
+        }
+        else
+        {
+            $this->response(null, REST_Controller::HTTP_NO_CONTENT);
+        }
+    }    
+
+    public function paises_get($estado = null)
+    {
+    	$this->load->model('cms-v2/paginas_model');
+    	
+		$data = $this->paginas_model->comboPaises($estado);
+		
+		if (isset($data['error']))
+        {
+	        $this->response([
+                'status' => false,
+                'message' => $data['error']
+            ], REST_Controller::HTTP_FORBIDDEN);
+            
+        }
+        elseif (isset($data))
+        {
+            $this->response($data, REST_Controller::HTTP_OK);
+        }
+        else
+        {
+            $this->response(null, REST_Controller::HTTP_NO_CONTENT);
+        }
+    }    
+
+    public function provincias_get($pais)
+    {
+    	$this->load->model('sys_model');
+    	
+		$data = $this->sys_model->comboProvincias($pais);
+		
+		if (isset($data['error']))
+        {
+	        $this->response([
+                'status' => false,
+                'message' => $data['error']
+            ], REST_Controller::HTTP_FORBIDDEN);
+            
+        }
+        elseif (isset($data))
+        {
+            $this->response($data, REST_Controller::HTTP_OK);
+        }
+        else
+        {
+            $this->response(null, REST_Controller::HTTP_NO_CONTENT);
+        }
+    }    
+    
+    public function imagencontenido_get($id, $idioma, $tipo)
+    {
+	    // models
+		$this->load->model('cms-v2/paginas_model');
+		
+		$data = $this->paginas_model->getMedia($id, $idioma, $tipo);
+		if (isset($data['error']))
+        {
+	        $this->response([
+                'status' => false,
+                'message' => $data['error']
+            ], REST_Controller::HTTP_FORBIDDEN);
+            
+        }
+        elseif (isset($data))
+        {
+            $this->response($data, REST_Controller::HTTP_OK);
+        }
+        else
+        {
+            $this->response([
+                'status' => false,
+                'message' => 'No se encontraron registros'
+            ], REST_Controller::HTTP_NOT_FOUND);
+        }
+    }
 }

@@ -16,7 +16,7 @@
             </div>
             <div class="col-xs-4 col-sm-4 col-md-6 col-lg-6">
                 <div class="title-action">
-                    <a href="<?php echo base_url('tienda/categorias/ingresar'); ?>" class="btn btn-primary btn-sm">Ingresar Categoría</a>
+                    <?php if($tienda['bruler_id'] <= 0) { ?><a href="<?php echo base_url('tienda/categorias/ingresar'); ?>" class="btn btn-primary btn-sm">Ingresar Categoría </a><?php } ?>
                 </div>
             </div>
         </div>
@@ -32,11 +32,12 @@
 			                    <thead>
 			                    <tr>
 			                        <th>Imagen</th>
+			                        <th>ID</th>
 			                        <th>Categoría</th>
 			                        <th>Observaciones</th>
 			                        <th>Orden</th>
 			                        <th>Estado</th>
-			                        <th>Acciones</th>
+			                        <?php if($tienda['bruler_id'] <= 0) { echo '<th>Acciones</th>'; }?>
 			                    </tr>
 			                    </thead>
 			                    <tbody>
@@ -45,15 +46,18 @@
 									<?php foreach($listado as $lista) { ?>	
 				                   		<tr class="gradeX">
 											<td><img src="<?php echo ($lista['imagen']) ? base_url('/multimedia/thumbs/'.$lista['imagen']) : 'https://app.pedimosfacil.com/v2/assets/images/no-disponible.jpg';?>" title="" alt="" class="listados_miniatura"></td>
+											<td><?php echo $lista['id']; ?></td>
 											<td><?php echo $lista['categoria']; ?></td>
 											<td><?php echo $lista['observaciones']; ?></td>
 											<td><?php echo $lista['orden']; ?></td>
 											<td><?php echo ($lista['estado'] == 3) ? 'Activa' : 'Inactiva'; ?></td>
+											<?php if($tienda['bruler_id'] <= 0) { ?>
 											<td>
 					                        	<a href="<?php echo base_url('tienda/categorias/modificar/' . $lista['id']); ?>" title="Modificar" class="btn btn-primary btn-sm"><i class="fa fa-pencil"></i> Modificar</a> 
 					                        	<a href="<?php echo base_url('tienda/categorias/ordenar/' . $lista['id']); ?>" title="Ordenar" class="btn btn-primary btn-sm"><i class="fa fa-sort"></i> Ordenar</a> 
 						                        <a title="Eliminar" id="item" href="#" data-toggle="modal" data-seccion='<?php echo $lista['categoria'];?>' data-id="<?php echo $lista['id'];?>" data-estado='<?php echo $lista['estado'];?>' data-target="#myModal" class="sepV_a btn btn-primary btn-sm"><i class="fa fa-minus-circle"></i> Eliminar</a>
 						                    </td>
+  						                    <?php } ?> 
 				                    	</tr>
 									<?php } ?>	
 								<?php } ?>

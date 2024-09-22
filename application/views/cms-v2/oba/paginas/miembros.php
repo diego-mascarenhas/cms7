@@ -117,7 +117,10 @@
 							                	<a title="Ingresar" id="item" href="#" data-toggle="modal" data-seccion="<?php echo $detalle['seccion']; ?>" data-id_contenido="<?php echo $detalle['id'];?>" data-idioma="<?php echo $idioma['extension'];?>" data-target="#myModalIngresarInformacion" class="sepV_a btn btn-primary btn-sm red pull-right"><i class="fa fa-plus-circle"></i> Ingresar</a></h3>
 
 							                <?php 
-												$miembros= $CI->Paginas_model->getContenidoAdicionalIdioma($detalle['id'],$categoria['id'], $idioma['extension']);
+												$parametros['id'] = $detalle['id'];
+												$parametros['idioma'] = $idioma['extension'];
+												$parametros['id_tipo'] = $categoria['id'];
+												$miembros= $CI->Paginas_model->getContenidoAdicionalIdioma($parametros);
 
 								               if(!empty($miembros)) {
 												foreach($miembros as $miembro) { ?>	

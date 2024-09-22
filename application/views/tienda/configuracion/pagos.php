@@ -71,28 +71,44 @@ pre code { white-space: pre-line; }
 	                    </div>
 
 	                    <div class="ibox-content form_tienda">
-						<?php if(!empty($medios)) { foreach($medios as $lista) { ?>	
-							<div class="form-group m-b-md pull-left full-width m-t-xs">
-                               <div class="col-sm-4">
+						<?php if(!empty($medios)) { ?>	
+	                        <div class="table-responsive">
+			                    <table class="table table-striped table-bordered table-hover">
+	                    	<thead>
+	                    		<tr>
+		                    		<th>Medio de pago</th>
+		                    		<th>Recargo/Descuento</th>
+		                    		<th>Porcentaje (%)</th>
+		                    		<?php if($item['bruler_id'] > 0) { ?>
+		                    		<th>ID Bruler</th>
+		                    		<?php } ?>
+	                    		</tr>
+	                    	</thead>
+	                    	<?php foreach($medios as $lista) { ?>	
+	                    	<tr>
+	                    		<td>
 				                    <input id="checkbox<?php echo $lista['id'];?>" type="checkbox" name="relaciones[]" value="<?php echo $lista['id'];?>" <?php if(isset($item['id'])) { foreach($mediosrelacionados as $rela) { if($lista['id'] == $rela['id']) {echo ' checked';} } }?>>
                                     <label for="checkbox<?php echo $lista['id'];?>"><?php echo $lista['forma_pago']; ?></label>
-			                    </div>
-                               <div class="col-sm-5">
-                                  <label class="col-md-6 control-label">Recargo/Descuento</label>
-                               <div class="col-md-4">
+			                    </td>
+	                    		<td>
 				                   <select name="tipo<?php echo $lista['id'];?>" class="form-control">
 				                    	<option value="0">-- Tipo --</option>
 				                    	<option value="20"<?php if(isset($item['id'])) { foreach($mediosrelacionados as $rela) { if( ($lista['id'] == $rela['id']) && ($rela['tipo'] == 20)) { echo ' selected'; }} }?>>Descuento</option>
 				                    	<option value="21"<?php if(isset($item['id'])) { foreach($mediosrelacionados as $rela) { if( ($lista['id'] == $rela['id']) && ($rela['tipo'] == 21)) { echo ' selected'; }} }?>>Recargo</option>
 				                   </select>
-                               </div>
-                               </div>
-                               <div class="col-sm-3">
-                                <label>Porcentaje (%)</label>
-			                    <input id="porcentaje<?php echo $lista['id'];?>" type="text" name="porcentaje<?php echo $lista['id'];?>" value="<?php if(isset($item['id'])) { foreach($mediosrelacionados as $rela) { if($lista['id'] == $rela['id']) { if($rela['descuento'] > 0) { $rela['porcentaje'] = $rela['descuento']; } elseif($rela['recargo'] > 0) { $rela['porcentaje'] = $rela['recargo']; } else {$rela['porcentaje'] = ''; } echo $rela['porcentaje'];} } }?>">
-			                    </div>
-							</div>
-			           <?php } } else { echo 'No se encontraron resultados';} ?>	
+			                    </td>
+	                    		<td>
+				                    <input id="porcentaje<?php echo $lista['id'];?>" type="text" name="porcentaje<?php echo $lista['id'];?>" value="<?php if(isset($item['id'])) { foreach($mediosrelacionados as $rela) { if($lista['id'] == $rela['id']) { if($rela['descuento'] > 0) { $rela['porcentaje'] = $rela['descuento']; } elseif($rela['recargo'] > 0) { $rela['porcentaje'] = $rela['recargo']; } else {$rela['porcentaje'] = ''; } echo $rela['porcentaje'];} } }?>">
+			                    </td>
+			                    <?php if($item['bruler_id'] > 0) { ?>
+	                    		<td>
+				                    <input id="id_bruler<?php echo $lista['id'];?>" type="text" name="id_bruler<?php echo $lista['id'];?>" value="<?php if(isset($item['id'])) { foreach($mediosrelacionados as $rela) { if($lista['id'] == $rela['id'])  { echo $rela['id_bruler']; } } } ?>">
+			                    </td>
+			                    <?php } ?>
+							</tr>
+			           <?php } ?> 
+			           </table>
+			           <?php } else { echo 'No se encontraron resultados';} ?>	
 
 			           <div class="form-group m-b-md pull-left full-width m-t-lg">
 					        <label class="col-sm-2 control-label">Email para PayPal</label>

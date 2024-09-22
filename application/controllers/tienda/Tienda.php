@@ -219,46 +219,6 @@ class Tienda extends MY_Controller {
 		}
 	}
 
-	//Duplicar Tienda
-	public function duplicar($id = null)
-	{
-		if ($this->is_logged_in())
-		{
-			$this->load->helper('form');
-			$this->load->library('form_validation');
-			$this->form_validation->set_rules('origen', 'Tienda origen', 'required|is_natural_no_zero', array('required' => 'Debe seleccionar una tienda de origen.', 'is_natural_no_zero' => 'Debe seleccionar una tienda de origen.'));
-			$this->form_validation->set_rules('destino', 'Tienda destino', 'required|is_natural_no_zero', array('required' => 'Debe seleccionar una tienda de destino.', 'is_natural_no_zero' => 'Debe seleccionar una tienda de destino.'));
-			
-			if ($this->form_validation->run() === false)
-			{				
-				$data['listado'] = $this->tienda_model->comboTiendas();
-				
-				$this->load->view('header');
-				$this->load->view('tienda/configuracion/duplicar-tienda', $data);
-				$this->load->view('footer');
-			}
-			else
-			{
-				if ($data = $this->tienda_model->duplicarTienda($this->input->post()))
-		        {
-				    $this->session->set_flashdata('tipo', 1);
-				    $this->session->set_flashdata('mensaje', 'La tienda fue copiada correctamente.');
-					redirect(base_url('tienda/tienda/duplicar'));
-		        }
-		        else
-		        {
-				    $this->session->set_flashdata('tipo', 0);
-				    $this->session->set_flashdata('mensaje', 'Se produjo un error y la tienda no pudo ser copiada.');
-					redirect(base_url('tienda/tienda/duplicar'));
-		        }
-			}
-		}
-		else
-		{
-			redirect(base_url('user/login/'));
-		}
-	}
-	
 	//Ingresar imagen 
 	public function upload($id, $imagen, $nombre, $tipo)
 	{

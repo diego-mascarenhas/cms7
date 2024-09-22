@@ -47,7 +47,7 @@
 	                            <h2>Datos del evento</h2>
 	                            <div class="form-group pull-left full-width">
 		                            <label class="col-sm-2 control-label">T&iacute;tulo</label>
-				                    <div class="col-sm-3"><input type="text" name="titulo" class="form-control" value="<?php echo (isset($detalle['titulo'])) ? $detalle['titulo']: $this->input->post('titulo'); ?>"></div>
+				                    <div class="col-sm-3"><input type="text" name="titulo" class="form-control" value="<?php echo (isset($detalle['titulo'])) ? html_escape($detalle['titulo']): $this->input->post('titulo'); ?>"></div>
 		                            <label class="col-sm-2 control-label">Subt&iacute;tulo</label>
 				                    <div class="col-sm-3"><input type="text" name="subtitulo" class="form-control" value="<?php echo (isset($detalle['subtitulo'])) ? $detalle['subtitulo']: $this->input->post('subtitulo'); ?>"></div>
 	                            </div>

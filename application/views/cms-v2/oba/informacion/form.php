@@ -30,6 +30,11 @@
 
             <?php echo form_open_multipart(null, array('class'=>'form-horizontal')); ?>
 			<input type="hidden" name="id" value="<?php echo (!empty($detalle['id'])) ? $detalle['id'] : null; ?>">
+			<input type="hidden" name="sin_texto" value="1">
+			<input type="hidden" name="medidas_slides" value="1200x400">
+			<input type="hidden" name="id_tipo_imagen2" value="19">
+			<input type="hidden" name="medidas_imagen2" value="860x380">
+			<input type="hidden" name="medidas_miniatura_imagen2" value="380x240">
 			<?php if (!empty($detalle['id'])) { ?>
 			<input type="hidden" name="fecha_alta" value="<?php echo $detalle['fecha_alta'];?>">
 			<?php } ?>
@@ -147,7 +152,12 @@
 									$item = $this->Informacion_model->getContenidoDetalleIdioma($detalle['id'], $idioma['extension']);
 									if($item['id_item'])
 									{
-										$imagen = $this->Informacion_model->getMedia($detalle['id'], $idioma['extension']);
+										$imagen = $this->Informacion_model->getMedia($detalle['id'], $idioma['extension'], 18);
+										if(!$imagen)
+										{
+											$imagen= $this->Informacion_model->getMedia($detalle['id'], $idioma['extension'], 14);
+										}
+										$imagen2 = $this->Informacion_model->getMedia($detalle['id'], $idioma['extension'], 14);
 										$archivo = $this->Informacion_model->getArchivo($detalle['id'], $idioma['extension']);
 										$slide = $this->Informacion_model->getContenidoRelacionado($item['id_item'], $idioma['extension']);
 										if($slide)
@@ -181,17 +191,35 @@
 					                <div class="col-lg-6 p-xxs">
 										<?php if((isset($item['titulo'])) && $imagen['archivo']) { ?>
 											<div class="form-group m-b-md pull-left full-width m-t-md">
-			                            		<label class="text-right col-sm-4 control-label">Imagen Actual</label>
+			                            		<label class="text-right col-sm-4 control-label">Imagen Actual Slide</label>
 			                            		<div class="col-sm-8">
 				                            		<input type="hidden" name="imagen_slide_<?php echo $idioma['extension'];?>" value="<?php echo $imagen['archivo'];?>">
 			                            			<img src="<?php echo base_url('/multimedia/thumbs/'.$imagen['archivo']);?>" style="height:auto;width:250px;float: left;padding-bottom: 24px;padding-right: 25px;"/></div>
 											</div>
 										<?php } ?>
 											<div class="form-group m-b-md pull-left full-width m-t-md">
-		                            		<label class="text-right col-sm-4 control-label">Imagen</label>
+		                            		<label class="text-right col-sm-4 control-label">Imagen Slide</label>
 							                <div class="col-sm-8">
 		                                        <div class="input-group">
-			                                       <input type="file" name="imagen_<?php echo $idioma['extension'];?>" class="form-control"><span class="input-group-btn"><button type="button" class="btn btn-primary m-l-md" data-toggle="tooltip" data-placement="top" data-original-title="Si la información se va a publicar en el slide principal, debe tener 1200x400 píxeles o proporcionales mayores. En caso de que no se publique en ese slideshow, puede tener un tamaño proporcional a ese menor." title=""> <i class="fa fa-question"></i></button>
+			                                       <input type="file" name="imagen_<?php echo $idioma['extension'];?>" class="form-control"><span class="input-group-btn"><button type="button" class="btn btn-primary m-l-md" data-toggle="tooltip" data-placement="top" data-original-title="Debe tener 1200x400 píxeles o proporcionales mayores. Extensión .jpg, .png o .gif." title=""> <i class="fa fa-question"></i></button>
+			                                    </div>
+							                </div>
+										</div>
+									</div>
+
+					                <div class="col-lg-6 p-xxs">
+										<?php if((isset($item['titulo'])) && $imagen2['archivo']) { ?>
+											<div class="form-group m-b-md pull-left full-width m-t-md">
+			                            		<label class="text-right col-sm-4 control-label">Imagen Actual</label>
+			                            		<div class="col-sm-8">
+			                            			<img src="<?php echo base_url('/multimedia/thumbs/'.$imagen2['archivo']);?>" style="height:auto;width:250px;float: left;padding-bottom: 24px;padding-right: 25px;"/></div>
+											</div>
+										<?php } ?>
+											<div class="form-group m-b-md pull-left full-width m-t-md">
+		                            		<label class="text-right col-sm-4 control-label">Imagen Miniatura/Detalle</label>
+							                <div class="col-sm-8">
+		                                        <div class="input-group">
+			                                       <input type="file" name="imagen2_<?php echo $idioma['extension'];?>" class="form-control"><span class="input-group-btn"><button type="button" class="btn btn-primary m-l-md" data-toggle="tooltip" data-placement="top" data-original-title="Debe tener 860x380 píxeles o proporcionales. Obligatoria, de esta imagen se generan las miniaturas de destacados del home, miniaturas de listado y la imagen detalle de la nota. Extensión .jpg, .png o .gif." title=""> <i class="fa fa-question"></i></button>
 			                                    </div>
 							                </div>
 										</div>

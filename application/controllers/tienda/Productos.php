@@ -29,6 +29,152 @@ class Productos extends MY_Controller {
 		}
 	}
 
+	//EXPORTAR
+	public function exportar()
+	{
+		$this->load->dbutil();
+		$this->load->helper('download');
+		$data['tienda'] = $this->tienda_model->detalleConfiguracion(null, null, $this->usuario->id_empresa);
+		$archivo = 'LISTADO_DE_PRODUCTOS.csv';
+		$productos = $this->tienda_model->getProductosExportar($data['tienda']['id']);
+		$data = ltrim($this->dbutil->csv_from_result($productos, ';', "\r\n"));
+		force_download($archivo, $data);
+	}
+
+	//IMPORTAR
+	public function importar()
+	{
+		if ($this->is_logged_in())
+		{
+			$this->load->helper('text');
+			$this->load->helper('file');
+			$this->load->helper('form');
+			$this->load->library('form_validation');
+			
+			if(empty($_FILES['archivo']['name']))
+			{
+				$this->form_validation->set_rules('archivo', 'Archivo', 'required', array('required' => 'Debe subir un archivo.'));
+				
+				if ($this->form_validation->run() === false)
+				{
+					$data['tienda'] = $this->tienda_model->detalleConfiguracion(null, null, $this->usuario->id_empresa);
+					$data['categorias'] = $this->tienda_model->listadoCategoriasUser($data['tienda']['id']);
+					$data['listado'] = $this->tienda_model->getProductos($data['tienda']['id']);
+		
+					$this->load->view('header');
+					$this->load->view('tienda/productos/importar', $data);
+					$this->load->view('footer');
+				}
+			}
+			else
+			{
+			 if($_FILES["archivo"]['type'] == 'text/csv')
+			 {
+			     $fname = $_FILES['archivo']['name'];
+			     $chk_ext = explode(".",$fname);
+			     
+			     if(strtolower(end($chk_ext)) == "csv")
+			     {
+					//Damos permisos de lectura para subir
+					$filename = $_FILES['archivo']['tmp_name'];
+					$handle = fopen($filename, "r");
+					if(strpos(fgets($handle), ';'))
+					{
+						$separador = ';';
+					}
+					else
+					{
+						$separador = ',';
+					}
+
+					while (($data = fgetcsv($handle, 1000, $separador)) !== FALSE)
+					{ 
+						$tienda = $this->tienda_model->detalleConfiguracion(null, null, $this->usuario->id_empresa);
+						$importar = $this->tienda_model->importarProducto($data, $tienda['id']);
+					}
+					$this->session->set_flashdata('resultado', 'ok');
+			        $this->session->set_flashdata('mensaje', 'El archivo fue subido correctamente.');
+				}
+				else
+				{
+			        $this->session->set_flashdata('resultado', 'error');
+			        $this->session->set_flashdata('mensaje', 'El archivo es incorrecto. Recuerde subir un archivo CSV.');
+				}
+			 }
+			 else
+			 {
+			    $this->session->set_flashdata('resultado', 'error');
+			    $this->session->set_flashdata('mensaje', 'El archivo es incorrecto. Recuerde subir un archivo CSV.');
+			 }
+			 
+			 redirect(base_url('tienda/productos/'));
+			}
+		}
+		else
+		{
+			redirect(base_url('user/login/'));
+		}
+	}
+	
+	//BRULER SUBIR ARCHIVO
+	public function bruler()
+	{
+		if ($this->is_logged_in())
+		{
+			$this->load->helper('form');
+
+			$data['tienda'] = $this->tienda_model->detalleConfiguracion(null, null, $this->usuario->id_empresa);
+			$data['categorias'] = $this->tienda_model->listadoCategoriasUser($data['tienda']['id']);
+			$data['listado'] = $this->tienda_model->getProductos($data['tienda']['id']);
+
+			$this->load->view('header');
+			$this->load->view('tienda/productos/bruler', $data);
+			$this->load->view('footer');
+		}
+		else
+		{
+			redirect(base_url('user/login/'));
+		}
+	}
+
+	//BRULER IMPORTAR
+	public function bruler_importar()
+	{
+		if ($this->is_logged_in())
+		{
+			$data['tienda'] = $this->tienda_model->detalleConfiguracion(null, null, $this->usuario->id_empresa);
+			$productos = $this->tienda_model->listadoProductosBruler($data['tienda']['id']);
+
+			if($productos)
+			{
+				$productos_data = json_decode($productos['data'],true);
+	
+				foreach($productos_data as $producto)
+				{
+					$this->tienda_model->importarProductoBruler($producto, $data['tienda']['id']);
+				}
+	
+				$this->tienda_model->modificarProductosBruler($productos['id']);
+
+			    $this->session->set_flashdata('resultado', 'ok');
+			    $this->session->set_flashdata('mensaje', 'Los productos se importaron.');
+			    redirect(base_url('tienda/productos/'));
+			    die();
+			}
+			else
+			{
+			    $this->session->set_flashdata('resultado', 'error');
+			    $this->session->set_flashdata('mensaje', 'No hay productos para importar.');
+			    redirect(base_url('tienda/productos/'));
+			    die();
+			}
+		}
+		else
+		{
+			redirect(base_url('user/login/'));
+		}
+	}
+
 	//EDICION MASIVA
 	public function editar()
 	{
@@ -144,6 +290,7 @@ class Productos extends MY_Controller {
 			$this->load->helper('form');
 			$this->load->library('form_validation');
 			$this->form_validation->set_rules('titulo', 'Titulo', 'required', array('required' => 'Debe ingresar un titulo.'));
+/*             if(!empty($this->input->post('codigo'))) { $this->form_validation->set_rules('codigo', 'Código', 'callback_codigo_producto'); }  */
 			
 			if ($this->form_validation->run() === false)
 			{
@@ -568,4 +715,40 @@ class Productos extends MY_Controller {
 			redirect(base_url('user/login/'));
 		}
 	}
+
+	//VALIDAR CODIGO
+    public function codigo_producto()
+    {
+        $response = array();
+        $str = $this->input->post('codigo');
+        $producto = $this->input->post('id_producto');
+
+		$data['tienda'] = $this->tienda_model->detalleConfiguracion(null, null, $this->usuario->id_empresa);
+/* 		$data['codigo'] = $this->tienda_model->verificarCodigo($str, $producto, $data['tienda']['id']); */
+
+		$sql = "SELECT id, codigo FROM tienda_productos";
+		$sql .= " WHERE id_tienda = ".$data['tienda']['id'];
+		$sql .= " AND codigo = '".$str."'";
+		$sql .= " AND estado >= 0";
+		if(!empty($producto))
+		{
+			$sql .= " AND id != $producto";
+		}		
+		$query = $this->db->query($sql);
+		$codigo = $query->row_array();
+
+        if ($str === $codigo['codigo'])
+        {
+            echo(json_encode("El código ya existe, ingrese otro")); 
+/*
+            $this->form_validation->set_message('codigo_producto', 'El código ya existe, ingrese otro.');
+            return FALSE;
+*/
+        }
+        else
+        {
+            echo(json_encode(true)); 
+/*             return TRUE; */
+        }
+    }
 }

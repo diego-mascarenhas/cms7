@@ -43,30 +43,34 @@
                     </div>
                     <div class="ibox float-e-margins">
                         <div class="ibox-content">
-							<?php if ($detalle['tipo'] == 'video') { ?>
-								<script type="text/javascript" src="//player.wowza.com/player/latest/wowzaplayer.min.js"></script>
+							<?php if ($detalle['mime'] == 'application/octet-stream') { ?>
+								<div style="padding:56.25% 0 0 0;position:relative;"><iframe src="<?php echo $detalle['archivo']; ?>" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style="position:absolute;top:0;left:0;width:100%;height:100%;" title="<?php echo $detalle['nombre']; ?>"></iframe></div><script src="https://player.vimeo.com/api/player.js"></script>
+								
+							<?php } elseif ($detalle['tipo'] == 'video') { ?>
+								<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/wowza-player-js-api@1.0.0/wowzaplayer.min.js"></script>
 								<script type="text/javascript">
 								WowzaPlayer.create('playerElement',
-								    {
-								    "license":"PLAY1-jrUYJ-nfkDV-kf7xx-dMH4Q-7x6xD",
-								    "title":"",
-								    "description":"",
-								    "sourceURL":"<?php echo $detalle['video']; ?>",
-								    "autoPlay":false,
-								    "volume":"75",
-								    "mute":false,
-								    "loop":false,
-								    "audioOnly":false,
-								    "uiShowQuickRewind":true,
-								    "uiQuickRewindSeconds":"10",
-									"uiShowFullscreen":false,
-									"uiShowBitrateSelector":true,
-									"posterFrameURL":"<?php echo $detalle['thumb']; ?>",
-									"abrStartingBitrate":"lowest"
-								    }
+									{
+										"license":"PLAY1-jrUYJ-nfkDV-kf7xx-dMH4Q-7x6xD",
+										"title":"",
+										"description":"",
+										"sourceURL":"<?php echo $detalle['video']; ?>",
+										"autoPlay":false,
+										"volume":"75",
+										"mute":false,
+										"loop":false,
+										"audioOnly":false,
+										"uiShowQuickRewind":true,
+										"uiQuickRewindSeconds":"10",
+										"uiShowFullscreen":false,
+										"uiShowBitrateSelector":true,
+										"posterFrameURL":"<?php echo $detalle['thumb']; ?>",
+										"abrStartingBitrate":"lowest"
+									}
 								);
 								</script>
 								<div id="playerElement" style="width:100%; height:0; padding:0 0 56.25% 0"></div>
+								
 								
 							<?php } elseif ($detalle['tipo'] == 'audio') { ?>
 								<audio controls>
@@ -107,7 +111,7 @@
                             <p><i class="fa fa-clock-o"></i> Fecha: <?php echo formatear_fecha($detalle['fecha_alta'], 'd-m-Y H:i', ' hs', $this->usuario->timezone); ?></p>
                             
                             
-                            <?php if ($detalle['tipo'] == 'video')
+                            <?php if ($detalle['tipo'] == 'video' && $detalle['mime'] != 'application/octet-stream')
 	                            	{
 		                            	$procesando = (file_exists(FCPATH . 'multimedia/procesar/' . preg_replace('/.[^.]*$/', '', $detalle['archivo']))) ? true : false;
 		                            	
@@ -132,14 +136,18 @@
 	                        	<p><i class="fa fa-file-o"></i> Tipo: <?php echo $detalle['mime']; ?></p>
 	                        <?php } ?>
 	                        
-	                        <p><i class="fa fa-hdd-o"></i> Tamaño: <?php echo byte_format($detalle['peso']*1024); ?></p>
+							<?php if ($detalle['mime'] == 'application/octet-stream') { ?>
+	                        	<p><i class="fa fa-globe"></i> Archivo: <a href="<?php echo $detalle['archivo']; ?>" target="_blank"><?php echo $detalle['archivo']; ?></a>
+							<?php } else { ?>
+								<p><i class="fa fa-hdd-o"></i> Tamaño: <?php echo byte_format($detalle['peso']*1024); ?></p>
+								
+								<p><i class="fa fa-file"></i> Archivo: <a href="<?php echo base_url('multimedia/' . $detalle['grupo'] . '/' . $detalle['id_empresa'] . '/' . $detalle['archivo']); ?>" target="_blank"><?php echo $detalle['archivo']; ?></a>
+									<br>
+									<small><?php echo base_url('multimedia/' . $detalle['grupo'] . '/' . $detalle['id_empresa'] . '/' . $detalle['archivo']); ?></small>
+								</p>
+							<?php } ?>
 	                        
-                            <p><i class="fa fa-file"></i> Archivo: <a href="<?php echo base_url('multimedia/' . $detalle['grupo'] . '/' . $detalle['id_empresa'] . '/' . $detalle['archivo']); ?>" target="_blank"><?php echo $detalle['archivo']; ?></a>
-	                            <br>
-	                            <small><?php echo base_url('multimedia/' . $detalle['grupo'] . '/' . $detalle['id_empresa'] . '/' . $detalle['archivo']); ?></small>
-	                        </p>
-	                        
-							<?php if ($detalle['id_estado'] == 3) { ?>
+							<?php if ($detalle['id_estado'] == 3 && $detalle['mime'] != 'application/octet-stream') { ?>
 							<p><i class="fa fa-link"></i> Link público: 
 	                            <a href="<?php echo base_url('multimedia/share/' . $detalle['uid']); ?>" target="_blank">
 	                            <?php echo $detalle['uid']; ?>
@@ -168,12 +176,14 @@
                             <?php } ?>
                             
                             <div class="row m-t-md">
-								<a href="<?php echo base_url('multimedia/download/' . $detalle['uid']); ?>" title="Descargar" class="btn btn-primary btn-sm pull-left" style="margin-left: 25px;"><i class="fa fa-download"></i> Descargar</a>
-								<?php if ($this->usuario->perfil == 'reseller' && isset($detalle['preview'])) { ?> 
-				                	<a href="<?php echo base_url('multimedia/download-preview/' . $detalle['uid']); ?>" title="Descargar preview" class="btn btn-primary btn-sm pull-left" style="margin-left: 25px;"><i class="fa fa-download"></i> Descargar preview (<?php echo byte_format($detalle['preview']['size']); ?>)</a>
-								<?php } ?>
-								<?php if ($detalle['stream'] > 1 && $procesando != true) { ?>
-									<a href="<?php echo base_url('multimedia/share/' . $detalle['uid']); ?>" target="_blank" title="Visualizar" class="btn btn-primary btn-sm pull-left" style="margin-left: 25px;"><i class="fa fa-eye"></i> Visualizar</a>
+								<?php if ($detalle['mime'] != 'application/octet-stream') { ?>
+									<a href="<?php echo base_url('multimedia/download/' . $detalle['uid']); ?>" title="Descargar" class="btn btn-primary btn-sm pull-left" style="margin-left: 25px;"><i class="fa fa-download"></i> Descargar</a>
+									<?php if ($this->usuario->perfil == 'reseller' && isset($detalle['preview'])) { ?> 
+				                		<a href="<?php echo base_url('multimedia/download-preview/' . $detalle['uid']); ?>" title="Descargar preview" class="btn btn-primary btn-sm pull-left" style="margin-left: 25px;"><i class="fa fa-download"></i> Descargar preview (<?php echo byte_format($detalle['preview']['size']); ?>)</a>
+									<?php } ?>
+									<?php if ($detalle['stream'] > 1 && $procesando != true) { ?>
+										<a href="<?php echo base_url('multimedia/share/' . $detalle['uid']); ?>" target="_blank" title="Visualizar" class="btn btn-primary btn-sm pull-left" style="margin-left: 25px;"><i class="fa fa-eye"></i> Visualizar</a>
+									<?php } ?>
 								<?php } ?>
 							<?php if ($this->usuario->perfil == 'admin') { ?> 
 				                <a title="Asociar" href="<?php echo base_url('/multimedia/asociar/' . $detalle['id']); ?>" class="btn btn-sm btn-danger pull-right" style="margin-right: 25px;"><i class="fa fa-link"></i> Asociar</a>

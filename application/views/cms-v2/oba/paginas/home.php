@@ -69,7 +69,11 @@
 									$CI->load->model("Paginas_model");
 									$item = $this->Paginas_model->getPaginaDetalleIdioma($detalle['id'], $idioma['extension']);
 									$imagen = $this->Paginas_model->getMedia($detalle['id'], $idioma['extension'], 12);
-									$slides= $this->Paginas_model->getContenidoAdicionalIdioma($detalle['id'], 8, $idioma['extension']);
+
+									$parametros1['id'] = $detalle['id'];
+									$parametros1['idioma'] = $idioma['extension'];
+									$parametros1['id_tipo'] = 8;
+									$slides= $this->Paginas_model->getContenidoAdicionalIdioma($parametros1);
 								}
 							?>
 	                            <div class="panel-body">

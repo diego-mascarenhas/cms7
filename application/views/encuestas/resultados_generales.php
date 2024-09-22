@@ -63,7 +63,6 @@
 													<p><?php 
 														foreach($respuestas as $respuesta) 
 														{ 
-															$total['total'] = 490;
 															if($respuesta['votos'] > 0) { $porcentaje = $respuesta['votos']/$total['total']*100; } else { $porcentaje = 0;} 
 													?>	
 														- <?php echo $respuesta['titulo'].', Votos: '.$respuesta['votos'].' ('.round($porcentaje, 2).'%)'; ?>

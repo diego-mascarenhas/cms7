@@ -470,9 +470,10 @@ class Evento_model extends CI_Model {
 		$data['id_empresa'] = $this->usuario->id_empresa;
 		$data['titulo'] = $valores['titulo'];
 		if(isset($valores['subtitulo'])) { $data['subtitulo'] = $valores['subtitulo']; }
-		$data['fecha_vencimiento'] = date('Y-m-d', strtotime($this->input->post('fecha_vencimiento')));
+		if(isset($valores['fecha_vencimiento'])) { $data['fecha_vencimiento'] = date('Y-m-d', strtotime($this->input->post('fecha_vencimiento'))); }
+/* 		$data['fecha_vencimiento'] = date('Y-m-d', strtotime($this->input->post('fecha_vencimiento'))); */
 		$data['codigo'] = $valores['codigo'];
-		$data['estado'] = $valores['estado'];
+		if(isset($valores['estado'])) { $data['estado'] = $valores['estado']; } else { $data['estado'] = 1;}
 		$data['fecha_alta'] = now();
 		$data['username_alta'] = $this->usuario->id;
 		$insert = $this->db->insert('eventos', $data);
@@ -525,12 +526,64 @@ class Evento_model extends CI_Model {
 		$data['titulo'] = $item['titulo'].'-copy';
 		$data['subtitulo'] = $item['subtitulo'];
 		$data['fecha_vencimiento'] = $item['fecha_vencimiento'];
-		$data['codigo'] = $item['codigo'];
+		$data['codigo'] = $item['codigo'].'-copy';
+		$data['id_media'] = $item['id_media'];
 		$data['estado'] = 1;
 		$data['fecha_alta'] = now();
 		$data['username_alta'] = $this->usuario->id;
 		$res = $this->db->insert('eventos', $data);
+		$evento = $this->db->insert_id();
 		
+		//PREGUNTAS
+		$sqlp = "SELECT * FROM eventos_preguntas WHERE grupo = ? AND id_empresa = ? AND id_evento = ? AND estado > 0";
+		$placeholdersp[] = $this->usuario->grupo;
+		$placeholdersp[] = $this->usuario->id_empresa;
+		$placeholdersp[] = $id;
+
+		$queryp = $this->db->query($sqlp, $placeholdersp);
+		$preguntas = $queryp->result_array();
+				
+		foreach($preguntas as $pregunta)
+		{
+			$datap['grupo'] = $pregunta['grupo'];
+			$datap['id_empresa'] = $pregunta['id_empresa'];
+			$datap['id_evento'] = $evento;
+			$datap['titulo'] = $pregunta['titulo'].'-copy';
+			$datap['subtitulo'] = $pregunta['subtitulo'];
+			if(isset($pregunta['para_certificar'])) { $datap['para_certificar'] = $pregunta['para_certificar']; } else { $datap['para_certificar'] = null; }
+			if(isset($pregunta['obligatoria'])) { $datap['obligatoria'] = $pregunta['obligatoria']; } else { $datap['obligatoria'] = null; }
+			if(isset($pregunta['anonima'])) { $datap['anonima'] = $pregunta['anonima']; } else { $datap['anonima'] = null; }
+			if(isset($pregunta['cantidad_respuestas'])) { $datap['cantidad_respuestas'] = $pregunta['cantidad_respuestas']; } else { $datap['cantidad_respuestas'] = null; }
+			$datap['orden'] = $pregunta['orden'];
+			$datap['estado'] = $pregunta['estado'];
+			$datap['fecha_alta'] = now();
+			$datap['username_alta'] = $this->usuario->id;
+			$insert = $this->db->insert('eventos_preguntas', $datap);
+			$resp = $this->db->insert_id();
+		
+			//INGRESO RESPUESTAS ASOCIADAS
+			if($resp)
+			{
+				$sql = "SELECT * FROM eventos_respuestas WHERE id_pregunta = ".$pregunta['id'];
+				$query = $this->db->query($sql);
+				$respuestas = $query->result_array();
+				
+				foreach($respuestas as $respuesta)
+				{
+					$data2['grupo'] = $respuesta['grupo'];
+					$data2['id_empresa'] = $respuesta['id_empresa'];
+					$data2['id_pregunta'] = $resp;
+					$data2['titulo'] = $respuesta['titulo'];
+					$data2['subtitulo'] = $respuesta['subtitulo'];
+					$data2['correcta'] = $respuesta['correcta'];
+					$data2['orden'] = $respuesta['orden'];
+					$data2['estado'] = $respuesta['estado'];
+					$data2['fecha_alta'] = now();
+					$data2['username_alta'] = $this->usuario->id;
+					$res2 = $this->db->insert('eventos_respuestas', $data2);
+				}
+			}
+		}
 		return (!empty($res)) ? $res : null;
 	}
 
@@ -675,7 +728,7 @@ class Evento_model extends CI_Model {
 	//LISTADO CONTACTOS
 	public function getContactos($parametros = null)
 	{
-		$sql = "SELECT eventos_contactos.* FROM eventos_contactos
+		$sql = "SELECT eventos_contactos.*, eventos_rel_evento_contactos.certificado FROM eventos_contactos
 				LEFT JOIN eventos_rel_evento_contactos ON eventos_rel_evento_contactos.id_contacto = eventos_contactos.id
 				WHERE eventos_contactos.grupo = ?";
 			
@@ -1105,6 +1158,54 @@ class Evento_model extends CI_Model {
 		$where = "id = ".$this->input->post('id');
 		$res = $this->db->update($tabla, $data, $where);
 
+		return (!empty($res)) ? $res : null;
+	}
+
+	public function eliminarContacto($variables)
+	{
+		//BORRO LA RELACION ANTERIOR
+		$sql = "SELECT id FROM eventos_rel_evento_contactos";
+		$sql .= " WHERE grupo = ?";
+		$sql .= " AND id_empresa = ?";
+		$sql .= " AND id_evento = ?";
+		$sql .= " AND id_contacto = ?";
+		$sql .= " AND certificado = 0";
+		$placeholders[] = $this->usuario->grupo;
+		$placeholders[] = $this->usuario->id_empresa;
+		$placeholders[] = $variables['id_evento'];
+		$placeholders[] = $variables['id'];
+		$query = $this->db->query($sql, $placeholders);
+		$contactos = $query->result_array();
+		
+		foreach ($contactos as $contacto)
+		{
+			$this->db->where('id', $contacto['id']);
+			$this->db->delete('eventos_rel_evento_contactos'); 
+		}
+		
+		//VERIFICO RELACIONES
+		$sql1 = "SELECT id FROM eventos_rel_evento_contactos";
+		$sql1 .= " WHERE grupo = ?";
+		$sql1 .= " AND id_empresa = ?";
+		$sql1 .= " AND id_contacto = ?";
+		$placeholders1[] = $this->usuario->grupo;
+		$placeholders1[] = $this->usuario->id_empresa;
+		$placeholders1[] = $variables['id'];
+		$query1 = $this->db->query($sql1, $placeholders1);
+		$relaciones = $query1->result_array();
+		
+		if(!isset($relaciones))
+		{
+			$data['estado'] = '-'.$variables['estado'];
+			$data['fecha_modificacion'] = now();
+			$data['username_modificacion'] = $this->usuario->id;
+			$where = "id = ".$variables['id'];
+			$res = $this->db->update('eventos_contactos', $data, $where);
+		}
+		else
+		{
+			$res = $contactos;
+		}
 		return (!empty($res)) ? $res : null;
 	}
 

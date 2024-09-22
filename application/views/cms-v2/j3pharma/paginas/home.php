@@ -72,7 +72,11 @@
 									$CI->load->model("Paginas_model");
 									$item = $this->Paginas_model->getPaginaDetalleIdioma($detalle['id'], $idioma['extension']);
 									$imagen = $this->Paginas_model->getMedia($detalle['id'], $idioma['extension'], 12);
-									$slides= $this->Paginas_model->getContenidoAdicionalIdioma($detalle['id'], 8, $idioma['extension']);
+
+									$parametros1['id'] = $detalle['id'];
+									$parametros1['idioma'] = $idioma['extension'];
+									$parametros1['id_tipo'] = 8;
+									$slides= $this->Paginas_model->getContenidoAdicionalIdioma($parametros1);
 								}
 							?>
 	                            <div class="panel-body">
@@ -173,7 +177,10 @@
 							                	<h3 class="bg-muted p-xs pull-left full-width"><?php echo $categoria['seccion']; ?><a title="Ordenar" href="<?php echo base_url('cms-v2/paginas/ordenar/'.$detalle['id'].'/'.$categoria['id'].'/'.$idioma['extension']);?>" class="sepV_a btn btn-primary btn-sm red pull-right m-l-sm"><i class="fa fa-sort-circle"></i> Ordenar</a> 
 							                	<a title="Ingresar" id="item" href="#" data-toggle="modal" data-seccion="<?php echo $detalle['seccion']; ?>" data-id_contenido="<?php echo $detalle['id'];?>" data-idioma="<?php echo $idioma['extension'];?>" data-target="#myModalIngresarInformacion" class="sepV_a btn btn-primary btn-sm red pull-right"><i class="fa fa-plus-circle"></i> Ingresar</a></h3>
 							                <?php 
-												$miembros= $CI->Paginas_model->getContenidoAdicionalIdioma($detalle['id'],$categoria['id'], $idioma['extension']);
+												$parametros['id'] = $detalle['id'];
+												$parametros['idioma'] = $idioma['extension'];
+												$parametros['id_tipo'] = $categoria['id'];
+												$miembros= $CI->Paginas_model->getContenidoAdicionalIdioma($parametros);
 								               if(!empty($miembros)) {
 												foreach($miembros as $miembro) { ?>	
 								                <div class="col-md-6 col-lg-3 box-items">

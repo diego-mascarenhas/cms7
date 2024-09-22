@@ -3,10 +3,11 @@
 .tooltip-inner {max-width: 250px;width: 250px;}
 pre  { border:1px solid #5402b2; background:#ebdff9; font-size:10px;}
 pre code { white-space: pre-line; }
-.valor_pd { width:80px;}
+.valor_pd { width:70px;}
 @media(max-width:768px) {
 .valor_pd { width:auto; margin-top:10px;}
-</style>          
+}
+</style>       
               
 <link href="<?php echo base_url('assets/css/tienda.css'); ?>" rel="stylesheet" type="text/css">
 		<div class="row wrapper border-bottom white-bg page-heading">
@@ -67,36 +68,58 @@ pre code { white-space: pre-line; }
 	                        <h5>Selección opciones para envíos</h5>
 	                    </div>
 
-	                    <div class="ibox-content pull-left">
-                            <?php if(!empty($envios)) { foreach($envios as $listaenvios) { ?>	
-						 	<div class="form-group m-b-md pull-left full-width m-t-xs">
-                                <div class="col-sm-2">
+	                    <div class="ibox-content form_tienda">
+						<?php if(!empty($envios)) { ?>	
+							<div class="table-responsive">
+								<table class="table table-striped table-bordered table-hover">
+								<thead>
+		                    		<tr>
+			                    		<th>Tipo</th>
+			                    		<th>Observación</th>
+			                    		<th>Recargo/Descuento</th>
+			                    		<th>Valor</th>
+			                    		<th>Monto mínimo</th>
+			                    		<?php if($item['bruler_id'] > 0) { ?>
+			                    		<th>ID Bruler</th>
+			                    		<?php } ?>
+		                    		</tr>
+		                    	</thead>
+
+                            <?php foreach($envios as $listaenvios) { ?>	
+	                    	<tr>
+	                    		<td>
 									<div class="checkbox checkbox-primary">
 					                    <input id="checkbox<?php echo $listaenvios['id'];?>" type="checkbox" name="relacionesenvios[]" value="<?php echo $listaenvios['id'];?>" <?php if(isset($item['id'])) { foreach($enviosrelacionados as $relaenvios) { if($listaenvios['id'] == $relaenvios['id']) {echo ' checked';} } }?>>
                                         <label for="checkbox<?php echo $listaenvios['id'];?>"><?php echo $listaenvios['medio_envio']; ?></label>
 									</div>
-								</div>
-                               <div class="col-sm-4">
-                                  <label class="col-md-6 control-label">Recargo / Descuento</label>
-	                               <div class="col-md-6">
-					                   <select name="envio<?php echo $listaenvios['id'];?>" class="form-control">
-					                    	<option value="0">-- Tipo --</option>
-					                    	<option value="20"<?php if(isset($item['id'])) { foreach($enviosrelacionados as $relaenvios) { if( ($listaenvios['id'] == $relaenvios['id']) && ($relaenvios['tipo'] == 20)) { echo ' selected'; }} }?>>Descuento</option>
-					                    	<option value="21"<?php if(isset($item['id'])) { foreach($enviosrelacionados as $relaenvios) { if( ($listaenvios['id'] == $relaenvios['id']) && ($relaenvios['tipo'] == 21)) { echo ' selected'; }} }?>>Recargo</option>
-					                   </select>
-	                               </div>
-                               </div>
-                               <div class="col-sm-2">
+								</td>
+	                    		<td>
+	                                <input type="text" name="observaciones<?php echo $listaenvios['id'];?>" value="<?php if(isset($item['id'])){ foreach($enviosrelacionados as $relaenvios) { if($listaenvios['id'] == $relaenvios['id']) { echo ($relaenvios['observaciones']) ? $relaenvios['observaciones'] : null ; } } }?>">
+                                </td>
+	                    		<td>
+				                   <select name="envio<?php echo $listaenvios['id'];?>" class="form-control" style="width:100px;">
+				                    	<option value="0">-- Tipo --</option>
+				                    	<option value="20"<?php if(isset($item['id'])) { foreach($enviosrelacionados as $relaenvios) { if( ($listaenvios['id'] == $relaenvios['id']) && ($relaenvios['tipo'] == 20)) { echo ' selected'; }} }?>>Descuento</option>
+				                    	<option value="21"<?php if(isset($item['id'])) { foreach($enviosrelacionados as $relaenvios) { if( ($listaenvios['id'] == $relaenvios['id']) && ($relaenvios['tipo'] == 21)) { echo ' selected'; }} }?>>Recargo</option>
+				                   </select>
+                                </td>
+	                    		<td>
                                  <label><?php echo ($listaenvios['id'] == 1) ? 'Porcentaje(%) ' : 'Valor en $ ';?></label>
 			                     <input class="valor_pd" id="valor<?php echo $listaenvios['id'];?>" type="text" name="valor<?php echo $listaenvios['id'];?>" value="<?php if(isset($item['id'])) { foreach($enviosrelacionados as $relaenvios) { if($listaenvios['id'] == $relaenvios['id']) { if($relaenvios['descuento'] > 0) { $relaenvios['valor'] = $relaenvios['descuento']; } elseif($relaenvios['recargo'] > 0) { $relaenvios['valor'] = $relaenvios['recargo']; } else {$relaenvios['valor'] = ''; } echo $relaenvios['valor'];} } }?>">
-			                    </div>
-                               <div class="col-sm-3">
-                                 <label>Monto mínimo</label>
+	                    		<td>
 			                     <input class="valor_pd" id="mmc<?php echo $listaenvios['id'];?>" type="text" name="mmc<?php echo $listaenvios['id'];?>" value="<?php if(isset($item['id'])) { foreach($enviosrelacionados as $relaenvios) { if($listaenvios['id'] == $relaenvios['id']) { echo($relaenvios['mmc']) ? $relaenvios['mmc']: null;} } }?>">
-                            </div>
-			                <?php } } else { echo 'No se encontraron resultados';} ?>	
+			                    </td>
+			                   <?php if($item['bruler_id'] > 0) { ?>
+                               <td>
+				                    <input id="id_bruler<?php echo $listaenvios['id'];?>" type="text" name="id_bruler<?php echo $listaenvios['id'];?>" value="<?php if(isset($item['id'])) { foreach($enviosrelacionados as $rela) { if($listaenvios['id'] == $rela['id'])  { echo $rela['id_bruler']; } } } ?>">
+                               </td>
+			                   <?php } ?>
+							</tr>
+			           <?php } ?> 
+			           </table>
+			           <?php } else { echo 'No se encontraron resultados';} ?>	
 
-							<div class="col-lg-12 p-xxs">
+						<div class="col-lg-12 p-xxs">
 							<div class="form-group">
 								<div class="col-sm-4">
 									<a class="btn btn-white" type="submit" href="javascript:window.history.go(-1);">Cancelar</a>
@@ -110,5 +133,5 @@ pre code { white-space: pre-line; }
                     </div>
                 </div>
             </div>
-            </div>
+        </div>
 <!-- Fin Contenido -->

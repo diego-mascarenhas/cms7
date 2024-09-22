@@ -76,9 +76,11 @@ class Pedidos extends MY_Controller {
 		{
 			$data['tienda'] = $this->tienda_model->detalleConfiguracion(null, null, $this->usuario->id_empresa);
 			$data['detalle'] = $this->tienda_model->detallePedido($id);
+			if($data['detalle']['id_contacto']) { $data['contacto'] = $this->tienda_model->getContactoAdicionales($data['detalle']['id_contacto']); }
 			$data['items'] = $this->tienda_model->detallePedidoItems($id);
 			$data['cantidaditems'] = $this->tienda_model->cantidadPedidoItems($id);
 			$data['cupones'] = $this->tienda_model->listadoCuponesPedido($id);
+			$data['sucursal'] = $this->tienda_model->detalleSucursal($data['detalle']['id_sucursal']);
 			
 			$this->load->view('header');
 			$this->load->view('tienda/pedidos/detalle', $data);

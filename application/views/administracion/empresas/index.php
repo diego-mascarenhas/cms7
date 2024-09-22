@@ -14,7 +14,6 @@
 	            </div>
 	            <div class="col-xs-4 col-sm-4 col-md-6 col-lg-6">
                     <div class="title-action">
-                        <?php if($this->usuario->grupo == 513) { ?> <a href="<?php echo base_url('tienda/tienda/duplicar/'); ?>" class="btn btn-primary btn-sm">Duplicar Tienda</a><?php } ?>
                         <a href="<?php echo base_url('administracion/empresas/ingresar/'); ?>" class="btn btn-primary btn-sm">Ingresar empresa</a>
                     </div>
                 </div>

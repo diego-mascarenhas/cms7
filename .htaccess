@@ -26,17 +26,16 @@ RewriteRule \.(csv|doc|gif|pdf|ppt|swf|txt|xls|mp3|mp4|mov|avi|aif|aiff|wav|tif|
 # Manual editing of this file may result in unexpected behavior.
 # To make changes to this file, use the cPanel MultiPHP INI Editor (Home >> Software >> MultiPHP INI Editor)
 # For more information, read our documentation (https://go.cpanel.net/EA4ModifyINI)
-<IfModule php5_module>
+<IfModule php7_module>
    php_flag display_errors Off
    php_value max_execution_time 3600
    php_value max_input_time -1
    php_value max_input_vars 2000000
    php_value memory_limit 2048M
-   php_value session.save_path "tmp"
-   php_value upload_max_filesize 999999999M
-   php_flag asp_tags Off
+   php_value post_max_size 2048M
    php_value session.gc_maxlifetime 2880
-   php_value post_max_size 999999999M
+   php_value session.save_path "tmp"
+   php_value upload_max_filesize 2048M
    php_flag zlib.output_compression Off
 </IfModule>
 <IfModule lsapi_module>
@@ -45,11 +44,10 @@ RewriteRule \.(csv|doc|gif|pdf|ppt|swf|txt|xls|mp3|mp4|mov|avi|aif|aiff|wav|tif|
    php_value max_input_time -1
    php_value max_input_vars 2000000
    php_value memory_limit 2048M
-   php_value session.save_path "tmp"
-   php_value upload_max_filesize 999999999M
-   php_flag asp_tags Off
+   php_value post_max_size 2048M
    php_value session.gc_maxlifetime 2880
-   php_value post_max_size 999999999M
+   php_value session.save_path "tmp"
+   php_value upload_max_filesize 2048M
    php_flag zlib.output_compression Off
 </IfModule>
 # END cPanel-generated php ini directives, do not edit

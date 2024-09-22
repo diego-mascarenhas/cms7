@@ -29,7 +29,7 @@
                         <div class="ibox-content">
 
 				            <?php echo form_open_multipart(null, array('id'=>'form', 'class'=>'form-horizontal wizard-big')); ?>
-							<input type="hidden" name="id" value="<?php echo (!empty($item['id'])) ? $item['id'] : null; ?>">
+							<input type="hidden" name="id" id="id" value="<?php echo (!empty($item['id'])) ? $item['id'] : null; ?>">
 							<input type="hidden" name="id_tienda" value="<?php echo $tienda['id']; ?>">
 			
 								<h1>Categorías</h1>
@@ -71,10 +71,18 @@
 										 	<div class="form-group m-b-md pull-left full-width m-t-sm">
 											 	<label class="col-md-2 control-label">Observaciones </label>
 											 	<div class="col-sm-4">
-													<input type="text" name="contenido1" class="form-control" value="<?php echo (isset($item['contenido1'])) ? $item['contenido1']: null; ?>"></div>
-											 	<label class="col-md-2 control-label">C&oacute;digo (SKU) </label>
-											 	<div class="col-sm-4">
-													<input type="text" name="codigo" class="form-control" value="<?php echo (isset($item['contenido1'])) ? $item['codigo']: null; ?>"></div>
+													<textarea name="contenido1" class="form-control" style="white-space: inherit;" rows="5">
+													<?php echo (isset($item['contenido1'])) ? trim($item['contenido1']): null; ?>
+													</textarea>
+													</div>
+											 	<div class="col-sm-6">
+												 	<div class="row">
+												 		<label class="col-md-4 control-label">C&oacute;digo (SKU) </label>
+												 		<div class="col-sm-8"><input type="text" name="codigo" id="codigo" class="form-control" value="<?php echo (isset($item['codigo'])) ? $item['codigo']: null; ?>"></div>
+												 		<label class="col-md-4 control-label m-t-sm">Link </label>
+												 		<div class="col-sm-8 m-t-sm"><input type="text" name="contenido2" id="contenido2" class="form-control" value="<?php echo (isset($item['contenido2'])) ? $item['contenido2']: null; ?>"></div>
+												 	</div>
+											 	</div>
                                             </div>
 
 										 	<div class="form-group m-b-md pull-left full-width m-t-sm">
@@ -98,16 +106,9 @@
 					                            </div>
                                             </div>
 
-										 	<div class="form-group m-b-md pull-left full-width m-t-sm">
-					                            <label class="col-sm-2 control-label">Imagen Producto</label>
-							                    <div class="col-sm-4">
-						                            <?php if(!empty($item['imagen'])) { ?>
-					                            	<img src="<?php echo base_url('/multimedia/thumbs/'.$item['imagen']);?>" title="<?php echo $item['titulo'];?>" alt="<?php echo $item['titulo'];?>" style="height:70px;float: left;padding-bottom: 24px;padding-right: 25px;"/>
-					                            <?php } ?>
-												       <input type="file" name="imagen" class="form-control" />
-							                    </div>
+										 	<div class="form-group m-b-sm pull-left full-width">
 					                            <label class="col-sm-2 control-label">Mostrar Galería *</label>
-					                            <div class="col-sm-2">
+					                            <div class="col-sm-4">
 						                            <div class="radio radio-inline radio-primary">
 					                                	<input type="radio" name="galeria" value="1" <?php if (isset($item['galeria']) && $item['galeria'] == '1') echo 'checked="checked"'; ?>> <label> Sí </label>
 						                            </div>
@@ -115,6 +116,25 @@
 			                                        	<input type="radio" name="galeria" value="0" <?php if ((!isset($item['galeria'])) || (isset($item['galeria']) && $item['galeria'] == '0')) echo 'checked="checked"'; ?>><label> No </label>
 						                            </div>
 					                            </div>
+					                            <label class="col-sm-2 control-label">Consultar por otro producto *</label>
+					                            <div class="col-sm-4">
+						                            <div class="radio radio-inline radio-primary">
+					                                	<input type="radio" name="consultar" value="1" <?php if ((!isset($item['consultar'])) || (isset($item['consultar']) && $item['consultar'] == '1')) echo 'checked="checked"'; ?>> <label> Sí </label>
+						                            </div>
+						                            <div class="radio radio-inline radio-primary">
+			                                        	<input type="radio" name="consultar" value="0" <?php if (isset($item['consultar']) && $item['consultar'] == '0') echo 'checked="checked"'; ?>><label> No </label>
+						                            </div>
+					                            </div>
+										 	</div>
+										 	
+										 	<div class="form-group m-b-sm pull-left full-width">
+					                            <label class="col-sm-2 control-label">Imagen Producto</label>
+							                    <div class="col-sm-4">
+						                            <?php if(!empty($item['imagen'])) { ?>
+					                            	<img src="<?php echo base_url('/multimedia/thumbs/'.$item['imagen']);?>" title="<?php echo $item['titulo'];?>" alt="<?php echo $item['titulo'];?>" style="height:70px;float: left;padding-bottom: 24px;padding-right: 25px;"/>
+					                            <?php } ?>
+												       <input type="file" name="imagen" class="form-control" />
+							                    </div>
 										 	</div>
                                         </div>
                                     </div>
@@ -158,6 +178,7 @@
 
     <script>
         $(document).ready(function(){
+
             $("#form").steps({
                 bodyTag: "fieldset",
                 enableCancelButton: false,
@@ -231,21 +252,33 @@
                     form.submit();
                 }
 
-            }).validate({
-                        errorPlacement: function (error, element)
-                        {
-                            element.before(error);
-                        },
-						rules:
-				        {
-				          destacado:{ required:true }
-				        },
-				        messages: {
-							required:"Este campo es obligatorio.",
-							titulo: "Ingrese un nombre",
-							precio: "Ingrese un precio"
+            })
+            
+            .validate({
+                errorPlacement: function (error, element)
+                {
+                    element.before(error);
+                },
+				rules:
+		        {
+		          destacado:{ required:true },
+		          codigo: { remote: {
+						url: "<?php echo base_url('tienda/productos/codigo_producto');?>",
+						type: "post",
+						data: {
+							codigo: function() {return $( "#codigo" ).val(); },
+						    id_producto: function() { return $( "#id" ).val(); }
 						}
-				});
+					}
+				  }		          
+
+		        },
+		        messages: {
+					required:"Este campo es obligatorio.",
+					titulo: "Ingrese un nombre",
+					precio: "Ingrese un precio"
+				}
+			});
 				
        });
     </script>               

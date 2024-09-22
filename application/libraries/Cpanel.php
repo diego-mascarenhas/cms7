@@ -169,6 +169,7 @@ class Cpanel
 	}
 	
 	
+/*
 	function passwd($user, $valores)
 	{
 		// https://hostname.example.com:2087/cpsess##########/json-api/passwd?api.version=1&user=username&password=12345luggage&enabledigest=1
@@ -188,6 +189,7 @@ class Cpanel
 		
 		return (!empty($res)) ? $res : null;
 	}
+*/
 	
 	
 	function passwdpop($user, $valores)

@@ -96,6 +96,12 @@ class Multimedia_model extends CI_Model {
 				$placeholders[] = $parametros['tipo'];
 			}
 			
+			if (!empty($parametros['padre']))
+			{
+				$sql .= " AND media_proyectos.padre = ?";
+				$placeholders[] = $parametros['padre'];
+			}
+			
 			if (!empty($parametros['proyecto']))
 			{
 				$sql .= " AND media_rel_proyectos.id_proyecto = ?";
@@ -163,7 +169,7 @@ class Multimedia_model extends CI_Model {
 		if (isset($parametros['modo']) && $parametros['modo'] == 'raw')
 		{
 			$sql = " 	
-				SELECT media.*, media_tipo.tipo, (SELECT media_thumbs.archivo FROM media_thumbs WHERE media_thumbs.referencia = media.id AND media_thumbs.id_tipo = 3 LIMIT 1) AS thumb,
+				SELECT media.*, media_tipo.tipo, media_tipo.mime, (SELECT media_thumbs.archivo FROM media_thumbs WHERE media_thumbs.referencia = media.id AND media_thumbs.id_tipo = 3 LIMIT 1) AS thumb,
 				
 				(SELECT GROUP_CONCAT(tag SEPARATOR ', ')
 					FROM sys_tags
@@ -911,6 +917,12 @@ class Multimedia_model extends CI_Model {
 			{
 				$sql .= " AND media_proyectos.id IN (SELECT id_referencia FROM sys_rel_tags WHERE id_tipo = 71 AND id_tag = ?)";
 				$placeholders[] = $parametros['tag'];
+			}
+			
+			if (!empty($parametros['padre']))
+			{
+				$sql .= " AND media_proyectos.padre = ?";
+				$placeholders[] = $parametros['padre'];
 			}
 			
 			// orden

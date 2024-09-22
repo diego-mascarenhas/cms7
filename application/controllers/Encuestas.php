@@ -219,8 +219,16 @@ class Encuestas extends MY_Controller {
 					//si es correcto, entonces damos permisos de lectura para subir
 					$filename = $_FILES['archivo']['tmp_name'];
 					$handle = fopen($filename, "r");
-					
-					while (($data = fgetcsv($handle, 1000, ',')) !== FALSE)
+					if(strpos(fgets($handle), ';'))
+					{
+						$separador = ';';
+					}
+					else
+					{
+						$separador = ',';
+					}
+
+					while (($data = fgetcsv($handle, 1000, $separador)) !== FALSE)
 					{ 
 						//INGRESO EN CONTACTOS
 						$valores['grupo'] = $this->usuario->grupo;
@@ -598,6 +606,28 @@ class Encuestas extends MY_Controller {
 		        $data = 'Error';
 				$this->load->view('/header', array('buscador'=>true));
 				$this->load->view('encuestas/ingresar_pregunta', $data);
+				$this->load->view('/footer');
+	        }
+		}
+		else
+		{
+			redirect(base_url('user/login/'));
+		}
+	}				
+
+	public function eliminar_contacto($id = NULL)
+	{
+		if ($this->is_logged_in())
+		{
+			if ($datos = $this->evento_model->eliminarContacto($this->input->post()))
+	        {
+	            redirect(base_url('encuestas/contactos/'.$this->input->post('id_evento')));
+	        }
+	        else
+	        {
+		        $data = 'Error';
+				$this->load->view('/header', array('buscador'=>true));
+				$this->load->view('encuestas', $data);
 				$this->load->view('/footer');
 	        }
 		}

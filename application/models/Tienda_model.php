@@ -261,11 +261,11 @@ class Tienda_model extends CI_Model {
 	{
 		if($menu == 1)
 		{
-			$sql = "SELECT tienda_productos.id, tienda_productos.titulo, tienda_productos.id_categoria, tienda_productos.contenido1, tienda_productos.stock, tienda_productos.codigo, tienda_productos.cantidad, tienda_productos.precio_local as precio, tienda_productos.precio_local_oferta as precio_oferta, tienda_productos.descuento, tienda_productos.imagen, tienda_productos_categorias.categoria";
+			$sql = "SELECT tienda_productos.id, tienda_productos.titulo, tienda_productos.id_categoria, tienda_productos.contenido1, tienda_productos.contenido2, tienda_productos.stock, tienda_productos.codigo, tienda_productos.cantidad, tienda_productos.precio_local as precio, tienda_productos.precio_local_oferta as precio_oferta, tienda_productos.descuento, tienda_productos.imagen, tienda_productos.consultar, tienda_productos_categorias.categoria";
 		}
 		else
 		{
-			$sql = "SELECT tienda_productos.id, tienda_productos.titulo, tienda_productos.id_categoria, tienda_productos.contenido1, tienda_productos.stock, tienda_productos.codigo, tienda_productos.cantidad, tienda_productos.precio, tienda_productos.precio_oferta, tienda_productos.descuento, tienda_productos.imagen, tienda_productos_categorias.categoria";
+			$sql = "SELECT tienda_productos.id, tienda_productos.titulo, tienda_productos.id_categoria, tienda_productos.contenido1, tienda_productos.contenido2, tienda_productos.stock, tienda_productos.codigo, tienda_productos.cantidad, tienda_productos.precio, tienda_productos.precio_oferta, tienda_productos.descuento, tienda_productos.imagen, tienda_productos.consultar, tienda_productos_categorias.categoria";
 		}
 		$sql .= " FROM tienda_productos";
 		$sql .= " LEFT JOIN tienda_productos_categorias ON tienda_productos_categorias.id = tienda_productos.id_categoria";
@@ -322,7 +322,7 @@ class Tienda_model extends CI_Model {
 		
 	public function getProductosPublicPedido($tienda, $id_categoria, $id_pedido)
 	{
-		$sql = "SELECT tienda_productos.id, tienda_productos.titulo, tienda_productos.id_categoria, tienda_productos.contenido1, tienda_productos.stock, tienda_productos.codigo, tienda_productos.cantidad, tienda_productos.precio, tienda_productos.precio_oferta, tienda_productos.descuento, tienda_productos.imagen, tienda_productos_categorias.categoria, (SELECT tienda_pedidos_items.cantidad FROM tienda_pedidos_items WHERE tienda_pedidos_items.id_producto = tienda_productos.id AND tienda_pedidos_items.id_pedido = $id_pedido) AS cantidad";
+		$sql = "SELECT tienda_productos.id, tienda_productos.titulo, tienda_productos.id_categoria, tienda_productos.contenido1, tienda_productos.contenido2, tienda_productos.stock, tienda_productos.codigo, tienda_productos.cantidad, tienda_productos.precio, tienda_productos.precio_oferta, tienda_productos.descuento, tienda_productos.imagen, tienda_productos_categorias.categoria, (SELECT tienda_pedidos_items.cantidad FROM tienda_pedidos_items WHERE tienda_pedidos_items.id_producto = tienda_productos.id AND tienda_pedidos_items.id_pedido = $id_pedido) AS cantidad";
 		$sql .= " FROM tienda_productos";
 		$sql .= " LEFT JOIN tienda_productos_categorias ON tienda_productos_categorias.id = tienda_productos.id_categoria";
 		$sql .= " LEFT JOIN tienda_configuracion ON tienda_configuracion.id = tienda_productos_categorias.id_tienda";
@@ -370,13 +370,32 @@ class Tienda_model extends CI_Model {
 		return (!empty($res)) ? $res : null;
 	}
 	
-	public function getDestacadosPublic($tienda)
+	public function getDestacadosPublic($tienda, $menu = null)
 	{
+		if($menu == 1)
+		{
+			$sql = "SELECT tienda_productos.id, tienda_productos.titulo, tienda_productos.imagen, tienda_productos.descuento, tienda_productos.precio_local as precio, tienda_productos.precio_local_oferta as precio_oferta, tienda_productos.id_categoria, tienda_productos_categorias.categoria";
+			$sql .= " FROM tienda_productos";
+			$sql .= " LEFT JOIN tienda_productos_categorias ON tienda_productos_categorias.id = tienda_productos.id_categoria";
+			$sql .= " LEFT JOIN tienda_configuracion ON tienda_configuracion.id = tienda_productos_categorias.id_tienda";
+			$sql .= " WHERE tienda_configuracion.grupo = ?";
+		}
+		else
+		{
+			$sql = "SELECT tienda_productos.id, tienda_productos.titulo, tienda_productos.imagen, tienda_productos.descuento, tienda_productos.precio, tienda_productos.precio_oferta, tienda_productos.precio_local, tienda_productos.precio_local_oferta, tienda_productos.id_categoria, tienda_productos_categorias.categoria";
+			$sql .= " FROM tienda_productos";
+			$sql .= " LEFT JOIN tienda_productos_categorias ON tienda_productos_categorias.id = tienda_productos.id_categoria";
+			$sql .= " LEFT JOIN tienda_configuracion ON tienda_configuracion.id = tienda_productos_categorias.id_tienda";
+			$sql .= " WHERE tienda_configuracion.grupo = ?";
+		}
+
+/*
 		$sql = "SELECT tienda_productos.id, tienda_productos.titulo, tienda_productos.imagen, tienda_productos.descuento, tienda_productos.precio, tienda_productos.precio_local_oferta, tienda_productos.id_categoria, tienda_productos_categorias.categoria";
 		$sql .= " FROM tienda_productos";
 		$sql .= " LEFT JOIN tienda_productos_categorias ON tienda_productos_categorias.id = tienda_productos.id_categoria";
 		$sql .= " LEFT JOIN tienda_configuracion ON tienda_configuracion.id = tienda_productos_categorias.id_tienda";
 		$sql .= " WHERE tienda_configuracion.grupo = ?";
+*/
 
 		// permisos
 		if ($this->usuario->perfil == 'reseller')
@@ -620,7 +639,7 @@ class Tienda_model extends CI_Model {
 						case 'py': $sql .= " AND servicios.id_categoria = 2105"; break; //PARAGUAY 
 						case 'pe': $sql .= " AND servicios.id_categoria = 2106"; break; //PERU 
 						case 'ec': $sql .= " AND servicios.id_categoria = 2108"; break; //ECUADOR 
-			 			case 'cl': $sql .= " AND servicios.id_categoria = 2107"; break; //CHILE 
+						 case 'cl': $sql .= " AND servicios.id_categoria = 2107"; break; //CHILE 
 						case 'co': $sql .= " AND servicios.id_categoria = 2109"; break; //COLOMBIA 
 						case 'mx': $sql .= " AND servicios.id_categoria = 2110"; break; //MEXICO 
 						case 'es': $sql .= " AND servicios.id_categoria = 2119"; break; //ESPANA 
@@ -636,7 +655,7 @@ class Tienda_model extends CI_Model {
 						case 'py': $sql .= " AND servicios.id_categoria = 2113"; break; //PARAGUAY 
 						case 'pe': $sql .= " AND servicios.id_categoria = 2114"; break; //PERU 
 						case 'ec': $sql .= " AND servicios.id_categoria = 2116"; break; //ECUADOR 
-			 			case 'cl': $sql .= " AND servicios.id_categoria = 2115"; break; //CHILE 
+						 case 'cl': $sql .= " AND servicios.id_categoria = 2115"; break; //CHILE 
 						case 'co': $sql .= " AND servicios.id_categoria = 2117"; break; //COLOMBIA 
 						case 'mx': $sql .= " AND servicios.id_categoria = 2118"; break; //MEXICO 
 						case 'es': $sql .= " AND servicios.id_categoria = 2120"; break; //ESPANA 
@@ -933,7 +952,7 @@ class Tienda_model extends CI_Model {
 		}
 		
 		$sql .= " AND tienda_opciones_grupos.id_tienda = ".$parametros['tienda'];
- 		$sql .= " AND tienda_opciones_grupos.estado > ".$parametros['estado'];
+		 $sql .= " AND tienda_opciones_grupos.estado > ".$parametros['estado'];
 		$sql .= " ORDER BY tienda_opciones_grupos.orden ASC";
 		
 		// consulta
@@ -1047,7 +1066,7 @@ class Tienda_model extends CI_Model {
 			case 4: $sql .= " AND (id = 2105 OR id = 2113 OR id = 3100)";break; //PARAGUAY 
 			case 5: $sql .= " AND (id = 2106 OR id = 2114 OR id = 3102)";break; //PERU 
 			case 6: $sql .= " AND (id = 2108 OR id = 2116 OR id = 3106)";break; //ECUADOR 
- 			case 7: $sql .= " AND (id = 2107 OR id = 2115 OR id = 3104)";break; //CHILE 
+			 case 7: $sql .= " AND (id = 2107 OR id = 2115 OR id = 3104)";break; //CHILE 
 			case 8: $sql .= " AND (id = 2109 OR id = 2117 OR id = 3108)";break; //COLOMBIA 
 			case 9: $sql .= " AND (id = 2110 OR id = 2118 OR id = 3110)";break; //MEXICO 
 			case 10: $sql .= " AND (id = 2119 OR id = 2120 OR id = 3094)";break; //ESPANA 
@@ -1061,7 +1080,7 @@ class Tienda_model extends CI_Model {
 
 	public function listadoCuponesPedido($id_pedido)
 	{
-		$sql = "SELECT tienda_rel_cupones_pedidos.*, tienda_cupones.cupon ";
+		$sql = "SELECT tienda_rel_cupones_pedidos.*, tienda_cupones.cupon, tienda_cupones.aplica_oferta";
 		$sql .= " FROM tienda_rel_cupones_pedidos";
 		$sql .= " LEFT JOIN tienda_cupones ON tienda_cupones.id = tienda_rel_cupones_pedidos.id_cupon";
 		$sql .= " WHERE tienda_rel_cupones_pedidos.id_pedido = $id_pedido";
@@ -1088,7 +1107,7 @@ class Tienda_model extends CI_Model {
 
 	public function listadoFormasPago($id_tienda)
 	{
-		$sql = "SELECT tienda_formas_pago.*, tienda_rel_forma_pago_tienda.tipo, tienda_rel_forma_pago_tienda.descuento, tienda_rel_forma_pago_tienda.recargo";
+		$sql = "SELECT tienda_formas_pago.*, tienda_rel_forma_pago_tienda.tipo, tienda_rel_forma_pago_tienda.id_bruler, tienda_rel_forma_pago_tienda.descuento, tienda_rel_forma_pago_tienda.recargo";
 		$sql .= " FROM tienda_formas_pago";
 		$sql .= " LEFT JOIN tienda_rel_forma_pago_tienda ON tienda_rel_forma_pago_tienda.id_forma_pago = tienda_formas_pago.id";
 		$sql .= " WHERE tienda_rel_forma_pago_tienda.id_tienda = $id_tienda";
@@ -1114,7 +1133,7 @@ class Tienda_model extends CI_Model {
 
 	public function listadoEnviosTienda($id_tienda)
 	{
-		$sql = "SELECT tienda_medios_envios.*, tienda_rel_envios_tienda.tipo, tienda_rel_envios_tienda.descuento, tienda_rel_envios_tienda.mmc,  tienda_rel_envios_tienda.recargo, tienda_rel_envios_tienda.orden";
+		$sql = "SELECT tienda_medios_envios.*, tienda_rel_envios_tienda.tipo, tienda_rel_envios_tienda.id_bruler, tienda_rel_envios_tienda.descuento, tienda_rel_envios_tienda.recargo, tienda_rel_envios_tienda.observaciones, tienda_rel_envios_tienda.mmc, tienda_rel_envios_tienda.orden";
 		$sql .= " FROM tienda_medios_envios";
 		$sql .= " LEFT JOIN tienda_rel_envios_tienda ON tienda_rel_envios_tienda.id_envio = tienda_medios_envios.id";
 		$sql .= " WHERE tienda_rel_envios_tienda.id_tienda = $id_tienda";
@@ -1171,6 +1190,7 @@ class Tienda_model extends CI_Model {
 				case 'semanal': $sql .= " AND tienda_pedidos.fecha_alta < '$tomorrow' AND tienda_pedidos.fecha_alta > '$week'"; break;
 				case 'mensual': $sql .= " AND MONTH(tienda_pedidos.fecha_alta) = '$mes'"; break;
 			}
+			$sql .= " AND YEAR(tienda_pedidos.fecha_alta)= YEAR(CURDATE())";
 		}
 
 		if($estado)
@@ -1200,6 +1220,7 @@ class Tienda_model extends CI_Model {
 		$sql = "SELECT sum(total) as total";
 		$sql .= " FROM tienda_pedidos";
 		$sql .= " WHERE MONTH(fecha_alta) = '$mes'";
+		$sql .= " AND YEAR(fecha_alta)= YEAR(CURDATE())";
 		$sql .= " AND tienda_pedidos.id_tienda = $id_tienda";
 		if($estado)
 		{
@@ -1217,13 +1238,51 @@ class Tienda_model extends CI_Model {
 	
 	public function porcentajesFacturasMes($mes, $id_tienda)
 	{
-		$yesterday = date('m', strtotime('-1 month'));
-
+		$yesterday = date('m-Y', strtotime('-1 month'));
 		$anterior = $this->totalFacturacionMes($yesterday, $id_tienda);
 		$actual = $this->totalFacturacionMes($mes, $id_tienda);
+		if($anterior['total'] > 0) { $anterior['total'] = $anterior['total']; } else { $anterior['total'] = 0; }
+		if($actual['total'] > 0) { $actual['total'] = $actual['total']; } else { $actual['total'] = 0; }
 		$porcentaje = $actual['total']-$anterior['total'];		
-		$porcentaje = round($porcentaje*$anterior['total']/100, 2);
-		return($porcentaje);
+		if($porcentaje > 0)
+		{
+			$porcentaje = round($porcentaje*100/$anterior['total'], 2);
+			return ($porcentaje>0) ? $porcentaje : null;
+		}
+	}
+
+	public function listadoPedidosDia($mes, $id_tienda)
+	{
+		$sql = "SELECT DAY(tienda_pedidos.fecha_alta) as dia,";
+		$sql .= " COUNT(id) as pedidos"; 
+		$sql .= " FROM tienda_pedidos";
+		$sql .= " WHERE MONTH(fecha_alta) = $mes";
+		$sql .= " AND YEAR(fecha_alta)= YEAR(CURDATE())";
+		$sql .= " AND tienda_pedidos.fecha_alta > 1";
+		$sql .= " AND tienda_pedidos.estado > 1";
+		$sql .= " AND tienda_pedidos.id_tienda = $id_tienda";
+		$sql .= " GROUP BY dia";
+
+		$query = $this->db->query($sql);
+		$pedidos = $query->result_array();
+		return($pedidos);
+
+
+
+
+/*
+		$sql = "SELECT tienda_pedidos.id as total, fecha_alta";
+		$sql .= " FROM tienda_pedidos";
+		$sql .= " WHERE MONTH(fecha_alta) = '$mes'";
+		$sql .= " AND YEAR(fecha_alta) = '$anio'";
+		$sql .= " AND tienda_pedidos.estado > 1";
+		$sql .= " AND tienda_pedidos.id_tienda = $id_tienda";
+*/
+
+/*
+		$query = $this->db->query($sql);
+		$res = $query->result_array();
+*/
 	}
 
 	public function totalPedidosMes($fecha, $id_tienda)
@@ -1231,6 +1290,7 @@ class Tienda_model extends CI_Model {
 		$sql = "SELECT COUNT(*) as total, fecha_alta";
 		$sql .= " FROM tienda_pedidos";
 		$sql .= " WHERE MONTH(fecha_alta) = '$fecha'";
+		$sql .= " AND YEAR(fecha_alta)= YEAR(CURDATE())";
 		$sql .= " AND tienda_pedidos.estado > 1";
 		$sql .= " AND tienda_pedidos.id_tienda = $id_tienda";
 
@@ -1245,6 +1305,7 @@ class Tienda_model extends CI_Model {
 		$sql .= " FROM tienda_pedidos";
 		$sql .= " WHERE estado = $estado";
 		$sql .= " AND MONTH(fecha_alta) = '$fecha'";
+		$sql .= " AND YEAR(fecha_alta)= YEAR(CURDATE())";
 		$sql .= " AND tienda_pedidos.id_tienda = $id_tienda";
 
 		
@@ -1258,6 +1319,7 @@ class Tienda_model extends CI_Model {
 		$sql = "SELECT COUNT(*) as total, fecha_alta";
 		$sql .= " FROM tienda_pedidos";
 		$sql .= " WHERE DATE(fecha_alta) = '$fecha'";
+		$sql .= " AND YEAR(fecha_alta)= YEAR(CURDATE())";
 		$sql .= " AND tienda_pedidos.estado > 1";
 		$sql .= " AND tienda_pedidos.id_tienda = $id_tienda";
 		
@@ -1327,6 +1389,7 @@ class Tienda_model extends CI_Model {
 	
 	public function totalClientesMes($fecha, $id_tienda)
 	{
+		$anio = date('Y');
 		$sql = "SELECT COUNT(*) as total";
 		$sql .= " FROM contactos";
 		$sql .= " LEFT JOIN tienda_configuracion ON tienda_configuracion.id_empresa = contactos.id_empresa";
@@ -1334,6 +1397,7 @@ class Tienda_model extends CI_Model {
 		$sql .= " AND contactos.id_empresa = ?";
 		$sql .= " AND contactos.area_privada = 5";
 		$sql .= " AND MONTH(contactos.fecha_alta) = '$fecha'";
+		$sql .= " AND YEAR(contactos.fecha_alta)= YEAR(CURDATE())";
 		$sql .= " AND contactos.estado > 0";
 		$sql .= " AND tienda_configuracion.id = $id_tienda";
 		$placeholders[] = $this->usuario->grupo;
@@ -1348,11 +1412,11 @@ class Tienda_model extends CI_Model {
 	{
 		if($menu == 1)
 		{
-			$sql = "SELECT tienda_productos.id, tienda_productos.imagen, tienda_productos.titulo, tienda_productos.uri, tienda_productos.contenido1, tienda_productos.contenido2, tienda_productos.stock, tienda_productos.cantidad, tienda_productos.codigo, tienda_productos.estado,tienda_productos.precio_local as precio, tienda_productos.precio_local_oferta as precio_oferta, tienda_productos.cantidad, tienda_productos.orden, tienda_productos.galeria, tienda_productos.destacado, tienda_productos_categorias.id as id_categoria, tienda_productos_categorias.categoria";
+			$sql = "SELECT tienda_productos.id, tienda_productos.imagen, tienda_productos.titulo, tienda_productos.uri, tienda_productos.contenido1, tienda_productos.contenido2, tienda_productos.stock, tienda_productos.cantidad, tienda_productos.codigo, tienda_productos.estado,tienda_productos.precio_local as precio, tienda_productos.precio_local_oferta as precio_oferta, tienda_productos.cantidad, tienda_productos.orden, tienda_productos.galeria, tienda_productos.consultar, tienda_productos.destacado, tienda_productos_categorias.id as id_categoria, tienda_productos_categorias.categoria";
 		}
 		else
 		{
-			$sql = "SELECT tienda_productos.id, tienda_productos.imagen, tienda_productos.titulo, tienda_productos.uri, tienda_productos.contenido1, tienda_productos.contenido2, tienda_productos.stock, tienda_productos.cantidad, tienda_productos.codigo, tienda_productos.estado, tienda_productos.precio, tienda_productos.precio_oferta, tienda_productos.precio_local, tienda_productos.precio_local_oferta, tienda_productos.cantidad, tienda_productos.orden, tienda_productos.galeria, tienda_productos.destacado,tienda_productos_categorias.id as id_categoria, tienda_productos_categorias.categoria";
+			$sql = "SELECT tienda_productos.id, tienda_productos.imagen, tienda_productos.titulo, tienda_productos.uri, tienda_productos.contenido1, tienda_productos.contenido2, tienda_productos.stock, tienda_productos.cantidad, tienda_productos.codigo, tienda_productos.estado, tienda_productos.precio, tienda_productos.precio_oferta, tienda_productos.precio_local, tienda_productos.precio_local_oferta, tienda_productos.cantidad, tienda_productos.orden, tienda_productos.galeria, tienda_productos.consultar, tienda_productos.destacado,tienda_productos_categorias.id as id_categoria, tienda_productos_categorias.categoria";
 		}
 		$sql .= " FROM tienda_productos";
 		$sql .= " LEFT JOIN tienda_productos_categorias ON tienda_productos_categorias.id = tienda_productos.id_categoria";
@@ -1430,7 +1494,7 @@ class Tienda_model extends CI_Model {
 
 	public function detallePedidoItems($id_pedido)
 	{
-		$sql = "SELECT tienda_pedidos_items.id, tienda_pedidos_items.id_producto, tienda_pedidos_items.detalle, tienda_pedidos_items.cantidad, tienda_pedidos_items.subtotal, tienda_pedidos_items.username_alta, tienda_productos.precio, tienda_productos.precio_local, tienda_productos.titulo, tienda_productos.codigo, tienda_productos.contenido1, tienda_productos.imagen";
+		$sql = "SELECT tienda_pedidos_items.id, tienda_pedidos_items.id_producto, tienda_pedidos_items.detalle, tienda_pedidos_items.cantidad, tienda_pedidos_items.subtotal, tienda_pedidos_items.username_alta, tienda_productos.precio, tienda_productos.id_bruler, tienda_productos.precio_local, tienda_productos.titulo, tienda_productos.codigo, tienda_productos.contenido1, tienda_productos.contenido2, tienda_productos.imagen";
 		$sql .= " FROM tienda_pedidos_items";
 		$sql .= " LEFT JOIN tienda_productos ON tienda_productos.id = tienda_pedidos_items.id_producto";
 		$sql .= " WHERE tienda_pedidos_items.id_pedido = $id_pedido";
@@ -1833,6 +1897,7 @@ class Tienda_model extends CI_Model {
 			$datos['id_producto'] = $variables['id_producto'];
 			$datos['cantidad'] = $variables['cantidad'];
 			$datos['subtotal'] = $variables['precio']*$variables['cantidad'];
+/* 			$datos['subtotal'] = $variables['precio']*$variables['cantidad']; */
 			$datos['estado'] = 3;
 			$datos['fecha_alta'] = now();
 			$datos['username_alta'] = $variables['tienda'];
@@ -1844,9 +1909,17 @@ class Tienda_model extends CI_Model {
 			{
 				foreach($variables['opciones'] as $opcion)
 				{
+					$sql = "SELECT precio, id";
+					$sql .= " FROM tienda_opciones";
+					$sql .= " WHERE id = ".$opcion['opcion'];
+					$query = $this->db->query($sql);
+					$subtotal = $query->row_array();
+
 					$opciones['id_pedido_item'] = $id_item;
 					$opciones['id_opcion'] = $opcion['opcion'];
 					$opciones['id_grupo'] = $opcion['id_opcion_grupo'];
+					$opciones['cantidad'] = $opcion['cantidad'];
+					$opciones['precio'] = $opcion['cantidad']*$subtotal['precio'];
 			
 					$insert = $this->db->insert('tienda_rel_pedidos_item_opcion', $opciones);
 				}
@@ -1856,13 +1929,19 @@ class Tienda_model extends CI_Model {
 				$sql .= " FROM tienda_opciones";
 				$sql .= " LEFT JOIN tienda_rel_pedidos_item_opcion ON tienda_rel_pedidos_item_opcion.id_opcion = tienda_opciones.id";
 				$sql .= " WHERE tienda_rel_pedidos_item_opcion.id_pedido_item = $id_item";
-		
 				$query = $this->db->query($sql);
 				$detalleitem = $query->result_array();
-
 				$ids = array_column($detalleitem, 'detalle');
 				$item['detalle'] = implode(',', $ids);
 
+				//INGRESO PRECIO FINAL DEL ITEM
+				$sql2 = "SELECT SUM(tienda_rel_pedidos_item_opcion.precio) as opciones_total";
+				$sql2 .= " FROM tienda_rel_pedidos_item_opcion";
+				$sql2 .= " WHERE tienda_rel_pedidos_item_opcion.id_pedido_item = $id_item";
+				$query2 = $this->db->query($sql2);
+				$total = $query2->row_array();
+				$item['subtotal'] = $datos['subtotal']+$total['opciones_total'];
+				
 				$where = "id = $id_item";
 				$modifcar = $this->db->update('tienda_pedidos_items', $item, $where);
 			}
@@ -1887,57 +1966,84 @@ class Tienda_model extends CI_Model {
 		$sql .= " AND tienda_cupones.fecha_vencimiento > NOW()";
 		$sql .= " AND tienda_cupones.estado = 3";
 		$sql .= " AND tienda_cupones.cantidad > 0";
-
 		$query = $this->db->query($sql);
 		$res = $query->row_array();
 		
 		if($res['id'])
 		{
 			//INGRESO RELACION DE CUPONES
-			$sql = "SELECT id, id_cupon";
+			$sql = "SELECT tienda_rel_cupones_pedidos.id, tienda_rel_cupones_pedidos.id_cupon, tienda_cupones.aplica_oferta";
 			$sql .= " FROM tienda_rel_cupones_pedidos";
-			$sql .= " WHERE id_cupon = ".$res['id'];
-			$sql .= " AND id_pedido = ".$variables['id_pedido'];
+			$sql .= " LEFT JOIN tienda_cupones ON tienda_cupones.id = tienda_rel_cupones_pedidos.id_cupon";
+			$sql .= " WHERE tienda_rel_cupones_pedidos.id_cupon = ".$res['id'];
+			$sql .= " AND tienda_rel_cupones_pedidos.id_pedido = ".$variables['id_pedido'];
 			$query = $this->db->query($sql);
 			$res2 = $query->row_array();
 			
 			if(!$res2['id'])
 			{
-				//CAMBIO STOCK
-				$datos10['cantidad'] = $res['cantidad']-1;
-				$where10 = "id = ".$res['id'];
-				$res10 = $this->db->update('tienda_cupones', $datos10, $where10);
-
-				//INSERTO DESCUENTOS
-				$datos1['id_cupon'] = $res['id'];
-				$datos1['id_pedido'] = $variables['id_pedido'];
-				$res3 = $this->db->insert('tienda_rel_cupones_pedidos', $datos1);
-
-				$sql = "SELECT SUM(tienda_pedidos_items.subtotal) as subtotal";
-				$sql .= " FROM tienda_pedidos_items";
-				$sql .= " WHERE tienda_pedidos_items.id_pedido = ".$variables['id_pedido'];
+				//TOTAL ITEMS CON Y SIN OFERTA
+				$sql = "SELECT SUM(
+						CASE 
+							WHEN tienda_productos.precio_oferta > 0 THEN precio_oferta
+							ELSE tienda_productos.precio
+						END) AS total_pedido";
+				$sql .= " FROM tienda_productos";
+				$sql .= " LEFT JOIN tienda_pedidos_items ON tienda_pedidos_items.id_producto = tienda_productos.id";
+				$sql .= " WHERE tienda_productos.estado = 3";
+				$sql .= " AND tienda_pedidos_items.id_pedido = ".$variables['id_pedido'];
 				$sql .= " AND tienda_pedidos_items.estado = 3";
 				$query = $this->db->query($sql);
-				$subtotal = $query->row_array();
-				
-				$sql = "SELECT SUM(tienda_cupones.descuento) as descuento_total";
-				$sql .= " FROM tienda_cupones";
-				$sql .= " LEFT JOIN tienda_rel_cupones_pedidos ON tienda_rel_cupones_pedidos.id_cupon = tienda_cupones.id";
-				$sql .= " WHERE tienda_rel_cupones_pedidos.id_pedido = ".$variables['id_pedido'];
-				$query = $this->db->query($sql);
-				$descuento_total = $query->row_array();
+				$total = $query->row_array();
 
-				if($descuento_total['descuento_total'])
+				if($res2['aplica_oferta'] == 0)
 				{
-					$datos['subtotal'] = $subtotal['subtotal'];
-					$datos['descuento'] = ($datos['subtotal']*$descuento_total['descuento_total'])/100;
-					//$datos['descuento_items'] = 10.00;
-					$datos['total'] = $datos['subtotal']-$datos['descuento_items']-$datos['descuento'];
-					$datos['fecha_modificacion'] = now();
-					$datos['username_modificacion'] = $variables['tienda'];
-					$where = "id = ".$variables['id_pedido'];
-					$res3 = $this->db->update('tienda_pedidos', $datos, $where);
+					//TOTAL ITEMS SIN OFERTA
+					$sql = "SELECT SUM(tienda_productos.precio) as precio";
+					$sql .= " FROM tienda_productos";
+					$sql .= " LEFT JOIN tienda_pedidos_items ON tienda_pedidos_items.id_producto = tienda_productos.id";
+					$sql .= " WHERE tienda_productos.estado = 3";
+					$sql .= " AND tienda_pedidos_items.id_pedido = ".$variables['id_pedido'];
+					$sql .= " AND tienda_pedidos_items.estado = 3";
+					$sql .= " AND tienda_productos.precio_oferta <= 0";
+					$query = $this->db->query($sql);
+					$precio_descuento = $query->row_array();
+				}
+				else
+				{
+					//TOTAL ITEMS CON Y SIN OFERTA
+					$precio_descuento['precio'] = $total['total_pedido'];
+				}
+					
+				if($precio_descuento['precio'])
+				{
+					//CAMBIO STOCK
+					$datos10['cantidad'] = $res['cantidad']-1;
+					$where10 = "id = ".$res['id'];
+					$res10 = $this->db->update('tienda_cupones', $datos10, $where10);
+	
+					//INSERTO DESCUENTOS
+					$datos1['id_cupon'] = $res['id'];
+					$datos1['id_pedido'] = $variables['id_pedido'];
+					$res3 = $this->db->insert('tienda_rel_cupones_pedidos', $datos1);
 
+					$sql = "SELECT SUM(tienda_cupones.descuento) as descuento_total";
+					$sql .= " FROM tienda_cupones";
+					$sql .= " LEFT JOIN tienda_rel_cupones_pedidos ON tienda_rel_cupones_pedidos.id_cupon = tienda_cupones.id";
+					$sql .= " WHERE tienda_rel_cupones_pedidos.id_pedido = ".$variables['id_pedido'];
+					$query = $this->db->query($sql);
+					$descuento_total = $query->row_array();
+	
+					if($descuento_total['descuento_total'])
+					{
+						$datos['descuento'] = ($precio_descuento['precio']*$descuento_total['descuento_total'])/100;
+						$datos['total'] = $total['total_pedido']-$datos['descuento'];
+						$datos['fecha_modificacion'] = now();
+						$datos['username_modificacion'] = $variables['tienda'];
+						$where = "id = ".$variables['id_pedido'];
+						$res3 = $this->db->update('tienda_pedidos', $datos, $where);
+	
+					}
 				}
 			}
 		}
@@ -1946,7 +2052,7 @@ class Tienda_model extends CI_Model {
 	
 	public function finalizarPedido($variables)
 	{
-		$sql = "SELECT tienda_pedidos.id, tienda_pedidos.id_sucursal, tienda_pedidos.subtotal, tienda_pedidos.descuento, tienda_pedidos.total";
+		$sql = "SELECT tienda_pedidos.id, tienda_pedidos.id_tienda, tienda_pedidos.id_sucursal, tienda_pedidos.subtotal, tienda_pedidos.descuento, tienda_pedidos.total";
 		$sql .= " FROM tienda_pedidos";
 		$sql .= " WHERE tienda_pedidos.id = ".$variables['pedido'];
 		$sql .= " AND tienda_pedidos.estado = 1";
@@ -1974,7 +2080,227 @@ class Tienda_model extends CI_Model {
 			$datos['fecha_modificacion'] = now();
 			$datos['username_modificacion'] = $variables['tienda'];
 			$where = "id = ".$variables['pedido'];
-		    $res2 = $this->db->update('tienda_pedidos', $datos, $where);
+			$res2 = $this->db->update('tienda_pedidos', $datos, $where);
+
+			if($res2)
+			{
+				$sql_tienda = "SELECT bruler_id, bruler_client_id, titulo";
+				$sql_tienda .= " FROM tienda_configuracion";
+				$sql_tienda .= " WHERE id = ".$res['id_tienda'];
+				$sql_tienda .= " AND estado = 3";
+				$query = $this->db->query($sql_tienda);
+				$res_tienda = $query->row_array();
+
+				//INGRESO EN BRULER PEDIDOS
+				if($res_tienda['bruler_id'] > 0)
+				{
+					//SELECCION ID DE BRULER DE FORMAS DE ENVIO
+					$envio = "SELECT id, id_bruler";
+					$envio .= " FROM tienda_rel_envios_tienda";
+					$envio .= " WHERE id_tienda = ".$res['id_tienda'];
+					$envio .= " AND id_envio = ".$variables['id_medio_envio'];
+					$query = $this->db->query($envio);
+					$res_envio = $query->row_array();
+					if($res_envio['id_bruler']) { $tipo_envio = $res_envio['id_bruler']; } else { $tipo_envio = $variables['id_medio_envio']; }
+
+					//SELECCION ID DE BRULER DE FORMAS DE PAGO
+					$pago = "SELECT id, id_bruler";
+					$pago .= " FROM tienda_rel_forma_pago_tienda";
+					$pago .= " WHERE id_tienda = ".$res['id_tienda'];
+					$pago .= " AND id_forma_pago = ".$variables['id_forma_pago'];
+					$query = $this->db->query($pago);
+					$res_pago = $query->row_array();
+					if($res_pago['id_bruler']) { $tipo_pago = $res_pago['id_bruler']; } else { $tipo_pago = $variables['id_forma_pago']; }
+
+					$data['detalle'] = $this->detallePedido($variables['pedido']);
+					$data['items'] = $this->detallePedidoItems($variables['pedido']);
+
+					$data_pedido['Fecha'] = $data['detalle']['fecha_alta'];
+					$data_pedido['ClienteId'] = $res_tienda['bruler_client_id'];
+					$data_pedido['RemoteId'] = $res_tienda['bruler_id'];
+/*
+					$data_pedido['TipoPedido'] = $tipo_envio;
+					$data_pedido['FormaPago'] = $tipo_pago;
+*/
+					$data_pedido['TipoPedido'] = array("TipoPedidoId" => $tipo_envio);
+					$data_pedido['FormaPago'] = array("FormaPagoId" => $tipo_pago);
+					$data_pedido['Direccion'] = array("Direccion" => $data['detalle']['domicilio'], "CodigoPostal" => null, "Ciudad" => null, "Localidad" => null, "Provincia" => null, "Pais" => 'Argentina', "Observaciones" => $data['detalle']['observaciones']);
+					$data_pedido['Cliente'] = array("Apellido" => $data['detalle']['nombre'], "Nombre" => $data['detalle']['nombre'], "Telefono" => $data['detalle']['celular'], "Email" => $data['detalle']['email']);
+					
+					foreach($data['items'] as $item)
+					{	
+						$data['adicionales'] = $this->getProductosOpcionesBruler($item['id']);
+						$articulo = array("ArticuloId" => $item['id_bruler'], "Articulo" => $item['titulo'], "Precio" => $item['subtotal'], "ListAdicionales" => $data['adicionales'], "Cantidad" => $item['cantidad'], "PrecioUnitario" => $item['precio'], "Observaciones" => $item['detalle']);
+					
+						$data_pedido['Items'][] = array("Articulo" => $articulo);
+					}
+		
+					$data_pedido['Total'] = $data['detalle']['total'];
+					$data_pedido['IsDevelopment'] = true;
+					$data_pedido['LocalId'] = 1;
+					$data_pedido_json = json_encode($data_pedido, JSON_OBJECT_AS_ARRAY);			    
+
+					$data_bruler['type'] = 'orders';
+					$data_bruler['bruler_id_tienda'] = $res_tienda['bruler_id'];
+					$data_bruler['bruler_client_id'] = $res_tienda['bruler_client_id'];
+					$data_bruler['id_pedido'] = $variables['pedido'];
+					$data_bruler['data'] = $data_pedido_json;
+					$data_bruler['created_at'] = unix_to_human(now(), true, 'eu');
+
+					
+					// Hardcoded
+					// $data_bruler['data'] = '{
+					// 		"Fecha": "2023-10-13 08:55",
+					// 		"ClienteId": 7,
+					// 		"RemoteId": 300,
+					// 		"TipoPedido": {
+					// 			"TipoPedidoId": 1
+					// 		},
+					// 		"FormaPago": {
+					// 			"FormaPagoId": 1
+					// 		},
+					// 		"Direccion": {
+					// 			"Direccion": "Calle s/nro",
+					// 			"CodigoPostal": "1258",
+					// 			"Ciudad": "CABA",
+					// 			"Localidad": "CABA",
+					// 			"Provincia": "CABA",
+					// 			"Pais": "Argentida",
+					// 			"Observaciones": "Prueba"
+					// 		},
+					// 		"Cliente": {
+					// 			"Apellido": "Perez",
+					// 			"Nombre": "Juan",
+					// 			"Telefono": "1123456789",
+					// 			"Email": ""
+					// 		},
+					// 		"Items": [
+					// 			{
+					// 				"Articulo": {
+					// 					"ArticuloId": "417",
+					// 					"Articulo": "DOCENA EMPANADAS",
+					// 					"Precio": 4200,
+					// 					"ListAdicionales": [
+					// 						{
+					// 							"AdicionalId": "59",
+					// 							"Adicional": "carne cortada a cuchillo",
+					// 							"Precio": 0,
+					// 							"Cantidad": 4
+					// 						},
+					// 						{
+					// 							"AdicionalId": "61",
+					// 							"Adicional": "jamon y queso",
+					// 							"Precio": 0,
+					// 							"Cantidad": 4
+					// 						},
+					// 						{
+					// 							"AdicionalId": "63",
+					// 							"Adicional": "verdura",
+					// 							"Precio": 0,
+					// 							"Cantidad": 4
+					// 						}
+					// 					]
+					// 				},
+					// 				"Cantidad": 1,
+					// 				"PrecioUnitario": 4200,
+					// 				"Observaciones": ""
+					// 			}
+					// 		],
+					// 		"Total": 4200,
+					// 		"IsDevelopment": true,
+					// 		"LocalId": 1
+					// 	}';
+						
+						
+					// Auth Bruler
+					$curl = curl_init();
+
+					curl_setopt_array($curl, array(
+						CURLOPT_URL => 'https://brulerapi.ar/api/authmdw/login/',
+						CURLOPT_RETURNTRANSFER => true,
+						CURLOPT_ENCODING => '',
+						CURLOPT_MAXREDIRS => 10,
+						CURLOPT_TIMEOUT => 0,
+						CURLOPT_FOLLOWLOCATION => true,
+						CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+						CURLOPT_CUSTOMREQUEST => 'POST',
+						CURLOPT_POSTFIELDS =>'{
+							"usuario":"bruler_pedimosfacil",
+							"password":"Bruler.PedimosFacil.2024"
+						}
+
+						',
+						CURLOPT_HTTPHEADER => array(
+							'API_KEY: F2PVc01qDR97hna24Lt8Bw611pfGe258',
+							'Content-Type: application/json'
+						),
+					));
+
+					$json_response = curl_exec($curl);
+
+					curl_close($curl);
+
+					$response_data = json_decode($json_response, true);
+
+					if (isset($response_data['Data']['Token']))
+					{
+						$token = $response_data['Data']['Token'];
+						echo "Token: " . $token;
+					}
+					else
+					{
+						echo "No se pudo obtener el token";
+					}
+
+					
+					// Send order to Bruler
+					$curl = curl_init();
+
+					curl_setopt_array($curl, array(
+						CURLOPT_URL => 'https://brulerapi.ar/api/pedimosfacilmdw/ordenes/add',
+						CURLOPT_RETURNTRANSFER => true,
+						CURLOPT_ENCODING => '',
+						CURLOPT_MAXREDIRS => 10,
+						CURLOPT_TIMEOUT => 0,
+						CURLOPT_FOLLOWLOCATION => true,
+						CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+						CURLOPT_CUSTOMREQUEST => 'POST',
+						CURLOPT_POSTFIELDS => $data_bruler['data'],
+						CURLOPT_HTTPHEADER => array(
+							'API_KEY: F2PVc01qDR97hna24Lt8Bw611pfGe258',
+							'API_TOKEN: ' . $token,
+							'Content-Type: application/json'
+						),
+					));
+
+					$response = curl_exec($curl);
+					$error = curl_errno($curl);
+
+					if ($error)
+					{
+						$data_bruler['status'] = 2;
+					}
+					else
+					{
+						$http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+						
+						if ($http_code >= 200 && $http_code < 300)
+						{
+							$data_bruler['status'] = 3;
+						}
+						else
+						{
+							$data_bruler['status'] = 4;
+						}
+					}
+
+					curl_close($curl);
+					
+					$data_bruler['debug'] = json_encode($response, true);
+
+					$res3 = $this->db->insert('bruler_pedidos', $data_bruler);
+				}
+			}
 		}
 		return (!empty($res2)) ? $res2 : null;
 	}
@@ -1997,7 +2323,7 @@ class Tienda_model extends CI_Model {
 			$datos['fecha_modificacion'] = now();
 			$datos['username_modificacion'] = $variables['tienda'];
 			$where = "id = ".$variables['pedido'];
-		    $res2 = $this->db->update('tienda_pedidos', $datos, $where);
+			$res2 = $this->db->update('tienda_pedidos', $datos, $where);
 		}
 		return (!empty($res2)) ? $res2 : null;
 	}
@@ -2030,7 +2356,7 @@ class Tienda_model extends CI_Model {
 			$datos['fecha_modificacion'] = now();
 			$datos['username_modificacion'] = $variables['username_modificacion'];
 			$where = "id = ".$variables['pedido'];
-		    $res2 = $this->db->update('tienda_pedidos', $datos, $where);
+			$res2 = $this->db->update('tienda_pedidos', $datos, $where);
 		}
 		return (!empty($res2)) ? $res2 : null;
 	}
@@ -2044,7 +2370,7 @@ class Tienda_model extends CI_Model {
 	}
 
 	public function eliminarItem($variables)
-	{
+	{		
 		$borrar = $this->db->where('id', $variables['id']);
 		$res = $this->db->delete('tienda_pedidos_items'); 
 		
@@ -2091,43 +2417,95 @@ class Tienda_model extends CI_Model {
 	//SUMO LOS TOTALES PARA EL PEDIDO
 	public function sumarTotales($id_pedido, $tienda)
 	{
-		//SELECCIONO TOTAL ITEMS
-		$sql2 = "SELECT SUM(tienda_pedidos_items.subtotal) as subtotal";
-		$sql2 .= " FROM tienda_pedidos_items";
-		$sql2 .= " WHERE tienda_pedidos_items.id_pedido = $id_pedido";
-		$sql2 .= " AND tienda_pedidos_items.estado = 3";
-		$query = $this->db->query($sql2);
-		$subtotal = $query->row_array();
+		//SELECCIONO CUPONES
+		$sql = "SELECT tienda_cupones.id, tienda_cupones.aplica_oferta";
+		$sql .= " FROM tienda_cupones";
+		$sql .= " LEFT JOIN tienda_rel_cupones_pedidos ON tienda_rel_cupones_pedidos.id_cupon = tienda_cupones.id";
+		$sql .= " WHERE tienda_rel_cupones_pedidos.id_pedido = $id_pedido";
+		$query = $this->db->query($sql);
+		$cupones = $query->result_array();
 		
-		//SELECCIONO DESCUENTOS
-		$sqldescuento = "SELECT SUM(tienda_cupones.descuento) as descuento_total";
-		$sqldescuento .= " FROM tienda_cupones";
-		$sqldescuento .= " LEFT JOIN tienda_rel_cupones_pedidos ON tienda_rel_cupones_pedidos.id_cupon = tienda_cupones.id";
-		$sqldescuento .= " WHERE tienda_rel_cupones_pedidos.id_pedido = $id_pedido";
-		$query = $this->db->query($sqldescuento);
-		$descuento_total = $query->row_array();
-
-		if($descuento_total['descuento_total'])
+		if($cupones) 
 		{
-			$datossumas['subtotal'] = $subtotal['subtotal'];
-			$datossumas['descuento'] = ($datossumas['subtotal']*$descuento_total['descuento_total'])/100;
-			$datossumas['descuento_items'] = 0.00; //TRAER POR BASE
-			$datossumas['total'] = $datossumas['subtotal']-$datossumas['descuento_items']-$datossumas['descuento'];
+			//TOTAL ITEMS CON Y SIN OFERTA
+			$sql = "SELECT SUM(
+					CASE 
+						WHEN tienda_productos.precio_oferta > 0 THEN precio_oferta
+						ELSE tienda_productos.precio
+					END) AS total_pedido";
+			$sql .= " FROM tienda_productos";
+			$sql .= " LEFT JOIN tienda_pedidos_items ON tienda_pedidos_items.id_producto = tienda_productos.id";
+			$sql .= " WHERE tienda_productos.estado = 3";
+			$sql .= " AND tienda_pedidos_items.id_pedido = ".$id_pedido;
+			$sql .= " AND tienda_pedidos_items.estado = 3";
+			$query = $this->db->query($sql);
+			$total = $query->row_array();
+			
+			foreach($cupones as $cupon)
+			{
+				if((isset($cupon['aplica_oferta'])) && ($cupon['aplica_oferta'] == 0))
+				{
+					//TOTAL ITEMS SIN OFERTA
+					$sql = "SELECT SUM(tienda_productos.precio) as precio";
+					$sql .= " FROM tienda_productos";
+					$sql .= " LEFT JOIN tienda_pedidos_items ON tienda_pedidos_items.id_producto = tienda_productos.id";
+					$sql .= " WHERE tienda_productos.estado = 3";
+					$sql .= " AND tienda_pedidos_items.id_pedido = ".$id_pedido;
+					$sql .= " AND tienda_pedidos_items.estado = 3";
+					$sql .= " AND tienda_productos.precio_oferta <= 0";
+					$query = $this->db->query($sql);
+					$precio_descuento = $query->row_array();
+				}
+				else
+				{
+					//TOTAL ITEMS CON Y SIN OFERTA
+					$precio_descuento['precio'] = $total['total_pedido'];
+				}
+					
+				if($precio_descuento)
+				{
+					$sql = "SELECT SUM(tienda_cupones.descuento) as descuento_total";
+					$sql .= " FROM tienda_cupones";
+					$sql .= " LEFT JOIN tienda_rel_cupones_pedidos ON tienda_rel_cupones_pedidos.id_cupon = tienda_cupones.id";
+					$sql .= " WHERE tienda_rel_cupones_pedidos.id_pedido = ".$id_pedido;
+					$query = $this->db->query($sql);
+					$descuento_total = $query->row_array();
+	
+					if($descuento_total['descuento_total'])
+					{
+						$datos['descuento'] = ($precio_descuento['precio']*$descuento_total['descuento_total'])/100;
+						$datos['subtotal'] = $total['total_pedido'];
+						$datos['total'] = $total['total_pedido']-$datos['descuento'];
+						$datos['fecha_modificacion'] = now();
+						$datos['username_modificacion'] = $tienda;
+						$where = "id = ".$id_pedido;
+						$res3 = $this->db->update('tienda_pedidos', $datos, $where);
+	
+					}			
+				}
+			}
 		}
-
 		else
 		{
-			$datossumas['subtotal'] = $subtotal['subtotal'];
+			//SELECCIONO TOTAL ITEMS
+			$sql2 = "SELECT SUM(tienda_pedidos_items.subtotal) as subtotal";
+			$sql2 .= " FROM tienda_pedidos_items";
+			$sql2 .= " WHERE tienda_pedidos_items.id_pedido = $id_pedido";
+			$sql2 .= " AND tienda_pedidos_items.estado = 3";
+			$query = $this->db->query($sql2);
+			$total = $query->row_array();
+			
+			$datossumas['subtotal'] = $total['subtotal'];
 			$datossumas['descuento'] = 0;
-			$datossumas['total'] = $subtotal['subtotal'];
+			$datossumas['total'] = $total['subtotal'];
+			$datossumas['fecha_modificacion'] = now();
+			$datossumas['username_modificacion'] = $tienda;
+			$wheresumas = "id = $id_pedido";
+			$res4 = $this->db->update('tienda_pedidos', $datossumas, $wheresumas);
 		}
-
-		$datossumas['fecha_modificacion'] = now();
-		$datossumas['username_modificacion'] = $tienda;
-		$wheresumas = "id = $id_pedido";
-		$res4 = $this->db->update('tienda_pedidos', $datossumas, $wheresumas);
 		
-		return ($subtotal);
+		$tester = 1;
+		return ($total);
 	}
 	/* Fin Usadas por la API */
 
@@ -2194,7 +2572,8 @@ class Tienda_model extends CI_Model {
 		if(isset($valores['recibir_email'])) { $datos['recibir_email'] = $valores['recibir_email']; }
 		if(isset($valores['solicitar_email'])) { $datos['solicitar_email'] = $valores['solicitar_email']; }
 		if(isset($valores['solicitar_telefono'])) { $datos['solicitar_telefono'] = $valores['solicitar_telefono']; }
-		if(isset($valores['privada'])) { $datos['privada'] = $valores['privada']; }
+		if(isset($valores['mmc'])) { $datos['mmc'] = $valores['mmc']; }
+		if(isset($valores['privada'])) { if($valores['privada'] == 1) { $datos['privada'] = 1; } else { $datos['privada'] = null; } } else { $datos['privada'] = null; }
 		if(isset($valores['vista_productos'])) { $datos['vista_productos'] = $valores['vista_productos']; }
 		if(isset($valores['domicilio'])) { $datos['domicilio'] = $valores['domicilio']; }
 		if(isset($valores['numero'])) { $datos['numero'] = $valores['numero']; }
@@ -2204,7 +2583,10 @@ class Tienda_model extends CI_Model {
 		if(isset($valores['url'])) { $datos['url'] = $valores['url']; }
 		if(isset($valores['color1'])) { $datos['color1'] = $valores['color1']; }
 		if(isset($valores['color2'])) { $datos['color2'] = $valores['color2']; }
+		if(isset($valores['leyenda'])) { $datos['leyenda'] = $valores['leyenda']; }
 		if(isset($valores['analytics'])) { $datos['analytics'] = $valores['analytics']; }
+		if(isset($valores['bruler_id'])) { $datos['bruler_id'] = $valores['bruler_id']; }
+		if(isset($valores['bruler_client_id'])) { $datos['bruler_client_id'] = $valores['bruler_client_id']; }
 		if(isset($valores['email_MP'])) { $datos['email_MP'] = $valores['email_MP']; }
 		if(isset($valores['clienteMP'])) { $datos['clienteMP'] = $valores['clienteMP']; }
 		if(isset($valores['claveMP'])) { $datos['claveMP'] = $valores['claveMP']; }
@@ -2292,7 +2674,7 @@ class Tienda_model extends CI_Model {
 		$sql = "SELECT id, orden";
 		$sql .= " FROM tienda_productos_categorias";
 		$sql .= " WHERE id_tienda = ?";
-		$sql .= " AND estado > 0";
+		$sql .= " AND estado > 0";		
 		$sql .= " ORDER BY orden DESC LIMIT 1";
 		$placeholders[] = $valores['id_tienda'];
 
@@ -2340,6 +2722,7 @@ class Tienda_model extends CI_Model {
 		$datos['titulo'] = $valores['titulo'];
 		$datos['uri'] = $valores['uri'];
 		if(isset($valores['contenido1'])) { $datos['contenido1'] = $valores['contenido1']; }
+		if(isset($valores['contenido2'])) { $datos['contenido2'] = $valores['contenido2']; }
 		if(isset($valores['codigo'])) { $datos['codigo'] = $valores['codigo']; }
 		$datos['precio'] = $valores['precio'];
 		if(isset($valores['precio_oferta'])) { $datos['precio_oferta'] = $valores['precio_oferta']; }
@@ -2347,6 +2730,7 @@ class Tienda_model extends CI_Model {
 		if(isset($valores['precio_local_oferta'])) { $datos['precio_local_oferta'] = $valores['precio_local_oferta']; }
 		$datos['galeria'] = $valores['galeria'];
 		$datos['destacado'] = $valores['destacado'];
+		$datos['consultar'] = $valores['consultar'];
 		$datos['estado'] = $valores['estado'];
 
 		//TRAIGO ORDEN ANTERIOR
@@ -2387,6 +2771,7 @@ class Tienda_model extends CI_Model {
 		$datos['titulo'] = $valores['titulo'];
 		$datos['uri'] = $valores['uri'];
 		if(isset($valores['contenido1'])) { $datos['contenido1'] = $valores['contenido1']; }
+		if(isset($valores['contenido2'])) { $datos['contenido2'] = $valores['contenido2']; }
 		if(isset($valores['codigo'])) { $datos['codigo'] = $valores['codigo']; }
 		$datos['precio'] = $valores['precio'];
 		if(isset($valores['precio_oferta'])) { $datos['precio_oferta'] = $valores['precio_oferta']; }
@@ -2394,6 +2779,7 @@ class Tienda_model extends CI_Model {
 		if(isset($valores['precio_local_oferta'])) { $datos['precio_local_oferta'] = $valores['precio_local_oferta']; }
 		$datos['galeria'] = $valores['galeria'];
 		$datos['destacado'] = $valores['destacado'];
+		$datos['consultar'] = $valores['consultar'];
 		$datos['estado'] = $valores['estado'];
 
 		$datos['fecha_modificacion'] = now();
@@ -2405,8 +2791,8 @@ class Tienda_model extends CI_Model {
 	}
 	
 	//ACTUALIZACION MASIVA DE PRODUCTOS CON PORCENTAJE
-    function actualizacionProducto($valores)
-    {
+	function actualizacionProducto($valores)
+	{
 		//CHEQUEO SI TIENE RELACIONES EL CONTENIDO EN EL IDIOMA
 		$sql = "SELECT tienda_productos.id, tienda_productos.precio, tienda_productos.precio_local_oferta, tienda_productos.precio_oferta, tienda_productos.precio_local";
 		$sql .= " FROM tienda_productos";
@@ -2434,12 +2820,12 @@ class Tienda_model extends CI_Model {
 			$res = $this->db->update('tienda_productos', $datos, $where);
 		}
 		return (!empty($res)) ? $res : null;
-    }
+	}
 
 
 	//COMPRA MASIVA DE PRODUCTOS DESDE FRONT
-    function compraMasiva($valores)
-    {
+	function compraMasiva($valores)
+	{
 		$sql = "SELECT tienda_pedidos.id, tienda_pedidos.subtotal, tienda_pedidos.descuento, tienda_pedidos.descuento_items, tienda_pedidos.total, tienda_pedidos.estado";
 		$sql .= " FROM tienda_pedidos";
 		$sql .= " WHERE tienda_pedidos.id_tienda = ".$valores['id_tienda'];
@@ -2548,8 +2934,8 @@ class Tienda_model extends CI_Model {
 	}
 
 	//ACTUALIZACION MASIVA DE PRODUCTOS DESDE FORMULARIO
-    function actualizacionMasivaProducto($valores, $tienda, $categoria = null)
-    {
+	function actualizacionMasivaProducto($valores, $tienda, $categoria = null)
+	{
 		//TRAIGO LOS IDS Y LOS CUENTO
 		$array = $valores['id'];
 		$array = count($array);
@@ -2561,17 +2947,17 @@ class Tienda_model extends CI_Model {
 		//RECORRO EL ARRAY Y ASIGNO VALORES
 		for ($i = 0; $i < $array; $i++) 
 		{
-		    $datos['titulo'] = $array2['titulo'][$i];
-		    $datos['id_categoria'] = $array2['id_categoria'][$i];
-		    $datos['codigo'] = $array2['codigo'][$i];
-		    $datos['precio'] = $array2['precio'][$i];
-		    $datos['precio_oferta'] = $array2['precio_oferta'][$i];
-		    $datos['estado'] = $array2['estado'][$i];
-		    $datos['destacado'] = $array2['destacado'][$i];
+			$datos['titulo'] = $array2['titulo'][$i];
+			$datos['id_categoria'] = $array2['id_categoria'][$i];
+			$datos['codigo'] = $array2['codigo'][$i];
+			$datos['precio'] = $array2['precio'][$i];
+			$datos['precio_oferta'] = $array2['precio_oferta'][$i];
+			$datos['estado'] = $array2['estado'][$i];
+			$datos['destacado'] = $array2['destacado'][$i];
 			$datos['fecha_modificacion'] = now();
 			$datos['username_modificacion'] = $this->usuario->id;
 	
-		    $id = $array2['id'][$i];
+			$id = $array2['id'][$i];
 			$where = "id = $id AND id_tienda = $tienda";
 			$res = $this->db->update('tienda_productos', $datos, $where);
 		}
@@ -2580,8 +2966,8 @@ class Tienda_model extends CI_Model {
 
 
 	//RELACIONO FORMAS DE PAGO
-    function relacionarFormasPago($valores)
-    {
+	function relacionarFormasPago($valores)
+	{
 		//CHEQUEO SI TIENE RELACIONES EL CONTENIDO EN EL IDIOMA
 		$sql = "SELECT tienda_rel_forma_pago_tienda.id";
 		$sql .= " FROM tienda_rel_forma_pago_tienda";
@@ -2607,6 +2993,7 @@ class Tienda_model extends CI_Model {
 			if ($tipo == $datos2['id_forma_pago'])
 			{
 				$datos2['tipo'] = $this->input->post('tipo'.$relacionado);
+				$datos2['id_bruler'] = $this->input->post('id_bruler'.$relacionado); 
 				if ($datos2['tipo'] == 20) 
 				{
 					$datos2['descuento'] = $this->input->post('porcentaje'.$relacionado);
@@ -2615,7 +3002,7 @@ class Tienda_model extends CI_Model {
 				}
 				elseif ($datos2['tipo'] == 21)
 				{
-				    $datos2['recargo'] = $this->input->post('porcentaje'.$relacionado);
+					$datos2['recargo'] = $this->input->post('porcentaje'.$relacionado);
 					$datos2['tipo'] = 21;
 					$datos2['descuento'] = null;
 				}
@@ -2628,12 +3015,12 @@ class Tienda_model extends CI_Model {
 			} 	
 			$res = $this->db->insert('tienda_rel_forma_pago_tienda', $datos2);
 		}
- 		return (!empty($res)) ? $res : null;
+		 return (!empty($res)) ? $res : null;
    }
 
 	//RELACIONO ENVIOS
-    function relacionarEnvios($valores)
-    {
+	function relacionarEnvios($valores)
+	{
 		//CHEQUEO SI TIENE RELACIONES EL CONTENIDO EN EL IDIOMA
 		$sql = "SELECT tienda_rel_envios_tienda.id";
 		$sql .= " FROM tienda_rel_envios_tienda";
@@ -2661,6 +3048,7 @@ class Tienda_model extends CI_Model {
 			{
 				$datos2['tipo'] = $this->input->post('envio'.$relacionado);
 				$datos2['mmc'] = $this->input->post('mmc'.$relacionado); 
+				$datos2['id_bruler'] = $this->input->post('id_bruler'.$relacionado); 
 				if ($datos2['tipo'] == 20) 
 				{
 					$datos2['descuento'] = $this->input->post('valor'.$relacionado);
@@ -2669,7 +3057,7 @@ class Tienda_model extends CI_Model {
 				}
 				elseif ($datos2['tipo'] == 21)
 				{
-				    $datos2['recargo'] = $this->input->post('valor'.$relacionado);
+					$datos2['recargo'] = $this->input->post('valor'.$relacionado);
 					$datos2['tipo'] = 21;
 					$datos2['descuento'] = null;
 				}
@@ -2683,20 +3071,20 @@ class Tienda_model extends CI_Model {
 			$res = $this->db->insert('tienda_rel_envios_tienda', $datos2);
 		}
 		return (!empty($res)) ? $res : null;
-    }
+	}
 
 	public function ingresarCuponCMS()
 	{
 		$datos['id_tienda'] = $this->input->post('id_tienda');
 		$datos['cupon'] = $this->input->post('cupon');
 		$datos['descuento'] = $this->input->post('descuento');
-		$datos['fecha_vencimiento'] = $this->input->post('fecha_vencimiento');
+		$date = date_create($this->input->post('fecha_vencimiento'));
+		$datos['fecha_vencimiento'] = date_format($date, 'Y-m-d');
 		$datos['cantidad'] = $this->input->post('cantidad');
+		$datos['aplica_oferta'] = $this->input->post('aplica_oferta');
 		$datos['estado'] = $this->input->post('estado');
-		
 		$datos['fecha_alta'] = now();
 		$datos['username_alta'] = $this->usuario->id;
-
 		$insert = $this->db->insert('tienda_cupones', $datos);
 		$res['id'] = $this->db->insert_id();
 
@@ -2710,11 +3098,10 @@ class Tienda_model extends CI_Model {
 		$date = date_create($this->input->post('fecha_vencimiento'));
 		$datos['fecha_vencimiento'] = date_format($date, 'Y-m-d');
 		$datos['cantidad'] = $this->input->post('cantidad');
+		$datos['aplica_oferta'] = $this->input->post('aplica_oferta');
 		$datos['estado'] = $this->input->post('estado');
-
 		$datos['fecha_modificacion'] = now();
 		$datos['username_modificacion'] = $this->usuario->id;
-
 		$where = "id = ".$this->input->post('id');
 		$res = $this->db->update('tienda_cupones', $datos, $where);
 		
@@ -2766,8 +3153,8 @@ class Tienda_model extends CI_Model {
 	}
 	
 	//RELACIONO PROYECTO
-    function relacionarProyecto($proyecto, $producto)
-    {
+	function relacionarProyecto($proyecto, $producto)
+	{
 		//CHEQUEO SI TIENE RELACIONES EL CONTENIDO EN EL IDIOMA
 		$sql = "SELECT tienda_rel_productos_proyectos.id";
 		$sql .= " FROM tienda_rel_productos_proyectos";
@@ -2789,19 +3176,19 @@ class Tienda_model extends CI_Model {
 		$res = $this->db->insert('tienda_rel_productos_proyectos', $datos);
 
 		return (!empty($res)) ? $res : null;
-    }
+	}
 
 	//RELACIONO IMAGEN CON PROYECTO
-    function relacionarImagen($proyecto, $imagen)
-    {
+	function relacionarImagen($proyecto, $imagen)
+	{
 		$datos['id_proyecto'] = $proyecto;
 		$datos['id_media'] = $imagen;
 
 		$res = $this->db->insert('media_rel_proyectos', $datos);
 
 		return (!empty($res)) ? $res : null;
-    }
-
+	}
+	
 	//BORRAR GENERAL
 	public function eliminarItems($id, $tabla)
 	{
@@ -2822,10 +3209,10 @@ class Tienda_model extends CI_Model {
 			$data['orden'] = $i;
 			$data['fecha_modificacion'] = now();
 			$data['username_modificacion'] = $this->usuario->id;
-		    
-		    $this->db->update($tabla, $data, array('id'=>$items[$i]));
-		    
-		    $res[] = $i . ' ' . $items[$i];
+			
+			$this->db->update($tabla, $data, array('id'=>$items[$i]));
+			
+			$res[] = $i . ' ' . $items[$i];
 		}
 		
 		return (!empty($res)) ? $res : null;
@@ -2928,14 +3315,14 @@ class Tienda_model extends CI_Model {
 		$res['id'] = $this->db->insert_id();
 
 		//RELACIONO GRUPO CON TIENDA SI SE INSERTA DESDE PRODUCTO
-	    if($id)
-	    {
+		if($id)
+		{
 			$relacion['id_tienda'] = $this->input->post('id_tienda');
 			$relacion['id_producto'] = $id;
 			$relacion['id_opcion_grupo'] = $res['id'];
 	
 			$rel = $this->db->insert('tienda_producto_rel_opciones_grupo', $relacion);
-	    }
+		}
 
 		return (!empty($res)) ? $res : null;
 	}
@@ -2956,8 +3343,8 @@ class Tienda_model extends CI_Model {
 	}
 
 	//RELACIONO FORMAS DE PAGO
-    function relacionarGrupo($id)
-    {
+	function relacionarGrupo($id)
+	{
 		//CHEQUEO SI TIENE RELACIONES EL CONTENIDO EN EL IDIOMA
 		$sql = "SELECT tienda_producto_rel_opciones_grupo.id_producto";
 		$sql .= " FROM tienda_producto_rel_opciones_grupo";
@@ -2983,7 +3370,7 @@ class Tienda_model extends CI_Model {
 			$res = $this->db->insert('tienda_producto_rel_opciones_grupo', $datos2);
 		}
 		return (!empty($res)) ? $res : null;
-    }
+	}
 
 	public function detalleItemGrupo($id)
 	{
@@ -3072,7 +3459,7 @@ class Tienda_model extends CI_Model {
 	public function getProductos($id = null, $parametros = null)
 	{
 		$sql = "	
-				SELECT SQL_CALC_FOUND_ROWS tienda_productos.id, tienda_productos.id_categoria, tienda_productos.titulo, tienda_productos.contenido1, tienda_productos.codigo, tienda_productos.imagen,  tienda_productos.precio, tienda_productos.precio_oferta, tienda_productos.precio_local, tienda_productos.precio_local_oferta, tienda_productos.destacado, tienda_productos.estado AS id_estado, tienda_productos_categorias.categoria
+				SELECT SQL_CALC_FOUND_ROWS tienda_productos.id, tienda_productos.id_categoria, tienda_productos.titulo, tienda_productos.contenido1, tienda_productos.contenido2, tienda_productos.codigo, tienda_productos.imagen,  tienda_productos.precio, tienda_productos.precio_oferta, tienda_productos.precio_local, tienda_productos.precio_local_oferta, tienda_productos.destacado, tienda_productos.consultar, tienda_productos.estado AS id_estado, tienda_productos_categorias.categoria
 				FROM tienda_productos
 				LEFT JOIN tienda_productos_categorias ON tienda_productos_categorias.id = tienda_productos.id_categoria
 				LEFT JOIN tienda_configuracion ON tienda_configuracion.id = tienda_productos.id_tienda
@@ -3090,6 +3477,412 @@ class Tienda_model extends CI_Model {
 		return (!empty($res)) ? $res : null;
 	}
 	
+	public function getProductosExportar($id)
+	{
+		$sql = "SELECT tienda_productos.id_categoria AS 'ID CATEGORIA', tienda_productos_categorias.categoria AS CATEGORIA, tienda_productos.titulo AS PRODUCTO, tienda_productos.contenido1 AS DESCRIPCION, tienda_productos.contenido2 AS LINK, tienda_productos.codigo AS CODIGO, tienda_productos.precio AS PRECIO, tienda_productos.precio_oferta AS 'PRECIO OFERTA', tienda_productos.precio_local AS 'PRECIO MENU', tienda_productos.precio_local_oferta AS 'PRECIO MENU OFERTA', 
+					CASE
+					   WHEN tienda_productos.galeria = 0 THEN 'NO'
+					   WHEN tienda_productos.galeria = 1 THEN 'SI'
+					END AS GALERIA,
+					CASE
+					   WHEN tienda_productos.destacado = 0 THEN 'NO'
+					   WHEN tienda_productos.destacado = 1 THEN 'SI'
+					END AS DESTACADO,
+					CASE
+					   WHEN tienda_productos.consultar = 0 THEN 'NO'
+					   WHEN tienda_productos.consultar = 1 THEN 'SI'
+					END AS CONSULTAR,
+					CASE
+					   WHEN tienda_productos.estado = 1 THEN 'NO'
+					   WHEN tienda_productos.estado = 3 THEN 'SI'
+					END AS PUBLICADO
+				FROM tienda_productos
+				LEFT JOIN tienda_productos_categorias ON tienda_productos_categorias.id = tienda_productos.id_categoria
+				LEFT JOIN tienda_configuracion ON tienda_configuracion.id = tienda_productos.id_tienda
+				WHERE tienda_configuracion.grupo = ".$this->usuario->grupo;
+		$sql .= " AND tienda_productos.id_tienda = ".$id;
+		$sql .= " AND tienda_productos.estado > 0";
+		$res = $this->db->query($sql);
+		return (!empty($res)) ? $res : null;
+	}
+
+	public function importarProducto($data, $tienda)
+	{
+		if( (isset($tienda)) && (!empty($data[0])) )
+		{
+			$tester = mb_detect_encoding($data[0]);
+			
+			if($tester == 'ASCII')
+			{
+				$valores['titulo'] = mb_convert_encoding($data[2], 'UTF-8', 'ASCII');
+				$valores['uri'] = mb_convert_encoding($data[2], 'UTF-8', 'ASCII');
+				if(!empty($data[3])) { $valores['contenido1'] = mb_convert_encoding($data[3], 'UTF-8', 'ASCII'); } else { $valores['contenido1'] = null; }
+				if(!empty($data[4])) { $valores['contenido2'] = mb_convert_encoding($data[4], 'UTF-8', 'ASCII'); } else { $valores['contenido2'] = null; }
+			}
+			else
+			{
+				$valores['titulo'] = mb_convert_encoding($data[2], 'UTF-8');
+				$valores['uri'] = mb_convert_encoding($data[2], 'UTF-8');
+			if(!empty($data[3])) { $valores['contenido1'] = mb_convert_encoding($data[3], 'UTF-8'); } else { $valores['contenido1'] = null; }
+			if(!empty($data[4])) { $valores['contenido2'] = mb_convert_encoding($data[4], 'UTF-8'); } else { $valores['contenido2'] = null; }
+			}
+			
+			$valores['id_tienda'] = $tienda;
+			$valores['id_categoria'] = $data[0];
+			if(!empty($data[5])) { $valores['codigo'] = $data[5]; } else { $valores['codigo'] = null; }
+			if(!empty($data[6])) { $valores['precio'] = $data[6]; } else { $valores['precio'] = null; }
+			if(!empty($data[7])) { $valores['precio_oferta'] = $data[7]; } else { $valores['precio_oferta'] = null; }
+			if(!empty($data[8])) { $valores['precio_local'] = $data[8]; } else { $valores['precio_local'] = null; }
+			if(!empty($data[9])) { $valores['precio_local_oferta'] = $data[9]; } else { $valores['precio_local_oferta'] = null; }
+			if(!empty($data[10])) { $data[10] = strtolower($data[10]); if(convert_accented_characters($data[10]) == 'si') { $valores['galeria'] = 1; } else { $valores['galeria'] = 0;}  } else { $valores['galeria'] = 0; }
+			if(!empty($data[11])) { $data[11] = strtolower($data[11]); if(convert_accented_characters($data[11]) == 'si') { $valores['destacado'] = 1; } else { $valores['destacado'] = 0;}  } else { $valores['destacado'] = 0; }
+			if(!empty($data[12])) { $data[12] = strtolower($data[12]); if(convert_accented_characters($data[12]) == 'si') { $valores['consultar'] = 1; } else { $valores['consultar'] = 0; }  } else { $valores['consultar'] = 0; }
+			if(!empty($data[13])) { $data[13] = strtolower($data[13]); if(convert_accented_characters($data[13]) == 'si') { $valores['estado'] = 3; } else { $valores['estado'] = 1; }  } else { $valores['estado'] = 1; }
+			$valores['fecha_alta'] = now();
+			$valores['username_alta'] = $this->usuario->id;
+	
+			$sql = "SELECT id, codigo, estado FROM tienda_productos";
+			$sql .= " WHERE id_tienda = ".$tienda;
+			$sql .= " AND codigo = '".$data[5]."'";
+			$sql .= " AND estado >= 0";
+			$query = $this->db->query($sql);
+			$producto = $query->row_array();
+	
+			if($producto)
+			{
+				$datos['id_tienda'] = $valores['id_tienda'];
+				$datos['id_categoria'] = $valores['id_categoria'];
+				$datos['titulo'] = $valores['titulo'];
+				$datos['uri'] = $valores['uri'];
+				if(isset($valores['contenido1'])) { $datos['contenido1'] = $valores['contenido1']; }
+				if(isset($valores['contenido2'])) { $datos['contenido2'] = $valores['contenido2']; }
+				if(isset($valores['codigo'])) { $datos['codigo'] = $valores['codigo']; }
+				$datos['precio'] = $valores['precio'];
+				if(isset($valores['precio_oferta'])) { $datos['precio_oferta'] = $valores['precio_oferta']; }
+				if(isset($valores['precio_local'])) { $datos['precio_local'] = $valores['precio_local']; }
+				if(isset($valores['precio_local_oferta'])) { $datos['precio_local_oferta'] = $valores['precio_local_oferta']; }
+				$datos['galeria'] = $valores['galeria'];
+				$datos['destacado'] = $valores['destacado'];
+				$datos['consultar'] = $valores['consultar'];
+				$datos['estado'] = $valores['estado'];
+				$datos['fecha_modificacion'] = now();
+				$datos['username_modificacion'] = $this->usuario->id;
+				$where = "id = ".$producto['id'];
+				$res = $this->db->update('tienda_productos', $datos, $where);
+			}
+			else
+			{
+				//VERIFICO CATEGORIA
+				$cat = "SELECT id, categoria FROM tienda_productos_categorias";
+				$cat .= " WHERE id_tienda = ".$tienda;
+				$cat .= " AND id = '".$data[0]."'";
+				$cat .= " AND estado >= 0";
+				$query = $this->db->query($cat);
+				$categoria = $query->row_array();
+
+				if($categoria)
+				{
+					$insert = $this->db->insert('tienda_productos', $valores);
+					$res = $this->db->insert_id();
+				}
+			}
+			return (!empty($res)) ? $res : null;
+		}
+	}
+
+	public function listadoProductosBruler($tienda)
+	{
+		$sql = "SELECT bruler_data.*";
+		$sql .= " FROM bruler_data";
+		$sql .= " LEFT JOIN tienda_configuracion ON tienda_configuracion.bruler_id = bruler_data.bruler_id";
+		$sql .= " WHERE tienda_configuracion.grupo = ?";
+
+		// permisos
+		if ($this->usuario->perfil == 'reseller')
+		{
+			$placeholders[] = $this->usuario->grupo;
+			if (isset($parametros['id_empresa']))
+			{
+				$sql .= " AND tienda_configuracion.id_empresa = ?";
+				$placeholders[] = $parametros['id_empresa'];
+			}
+		}
+		elseif ($this->usuario->perfil == 'admin')
+		{
+			$placeholders[] = $this->usuario->grupo;
+			$sql .= " AND tienda_configuracion.id_empresa = ?"; 
+			$placeholders[] = $this->usuario->id_empresa;
+		}
+		else
+		{
+			$res['error'] = 'Este perfil no cuenta con los privilegios necesarios';
+		}
+		
+		$sql .= " AND bruler_data.status = 1 LIMIT 1";
+		
+
+		$query = $this->db->query($sql, $placeholders);
+
+		if (!isset($res['error']) && $query)
+		{
+			$res = $query->row_array();
+
+		}
+		return (!empty($res)) ? $res : null;
+	}
+	
+	public function importarProductoBruler($producto, $tienda)
+	{
+		if( (isset($tienda)) && (!empty($producto)) )
+		{
+			$this->load->helper('text');
+			$id_categoria = $producto['Rubro']['RubroId'];
+			
+			//VERIFICO Y TRAIGO CATEGORIA
+			$cat = "SELECT id, categoria FROM tienda_productos_categorias";
+			$cat .= " WHERE id_tienda = ".$tienda;
+			$cat .= " AND id_bruler = $id_categoria";
+			$cat .= " AND estado >= 0";
+			$query = $this->db->query($cat);
+			$categoria = $query->row_array();
+			
+			if(!$categoria)
+			{
+				$categoria['id_tienda'] = $tienda;
+				$categoria['id_bruler'] = $producto['Rubro']['RubroId'];
+				$categoria['categoria'] = $producto['Rubro']['Rubro'];
+				$categoria['delivery'] = 1;
+
+				//TRAIGO ORDEN ANTERIOR
+				$sql = "SELECT id, orden";
+				$sql .= " FROM tienda_productos_categorias";
+				$sql .= " WHERE id_tienda = ?";
+				$sql .= " AND estado > 0";		
+				$sql .= " ORDER BY orden DESC LIMIT 1";
+				$placeholders[] = $tienda;
+				$query = $this->db->query($sql, $placeholders);
+				$orden = $query->row_array();
+		
+				if($orden)
+				{
+					$categoria['orden'] = $orden['orden']+1;
+				}
+				else
+				{
+					$categoria['orden'] = 0;
+				}
+				
+				$categoria['fecha_alta'] = now();
+				$categoria['username_alta'] = $this->usuario->id;
+				
+				$insert_categoria = $this->db->insert('tienda_productos_categorias', $categoria);
+				$res_categoria = $this->db->insert_id();
+			}
+			else
+			{
+				$res_categoria = $categoria['id'];
+			}
+	
+			//VERIFICO PRODUCTO
+			$id_producto = $producto['ArticuloId'];
+			$prod = "SELECT id, titulo FROM tienda_productos";
+			$prod .= " WHERE id_tienda = ".$tienda;
+			$prod .= " AND id_bruler = $id_producto";
+			$prod .= " AND estado >= 0";
+			$query = $this->db->query($prod);
+			$product = $query->row_array();
+
+			if(!$product)
+			{
+				//INGRESO PRODUCTO
+				$datos['id_tienda'] = $tienda;
+				$datos['id_bruler'] = $producto['ArticuloId'];
+				$datos['id_categoria'] = $res_categoria;
+				$datos['titulo'] = $producto['Articulo'];
+				$datos['uri'] = url_title(convert_accented_characters($producto['Articulo']));
+				$datos['precio'] = $producto['Precio'];
+				$datos['cantidad'] = $producto['Cantidad'];
+				$datos['descuento'] = $producto['Descuento'];
+				if(!empty($producto['IsDestacado'])) { $datos['destacado'] = 1; }
+				if(!empty($producto['IsBloqueado'])) { $datos['estado'] = 1; } else { $datos['estado'] = 3; }
+				$datos['fecha_alta'] = now();
+				$datos['username_alta'] = $this->usuario->id;
+				
+				$insert = $this->db->insert('tienda_productos', $datos);
+				$res = $this->db->insert_id();
+			}
+			else
+			{
+				//MODIFICO PRODUCTO
+				$datos['id_categoria'] = $res_categoria;
+				$datos['titulo'] = $producto['Articulo'];
+				$datos['uri'] = url_title(convert_accented_characters($producto['Articulo']));
+				$datos['precio'] = $producto['Precio'];
+				$datos['cantidad'] = $producto['Cantidad'];
+				$datos['descuento'] = $producto['Descuento'];
+				if(!empty($producto['IsDestacado'])) { $datos['destacado'] = 1; }
+				if(!empty($producto['IsBloqueado'])) { $datos['estado'] = 1; } else { $datos['estado'] = 3; }
+				$datos['fecha_modificacion'] = now();
+				$datos['username_modificacion'] = $this->usuario->id;
+				
+				$where = "id = ".$product['id'];
+				$update = $this->db->update('tienda_productos', $datos, $where);
+				$res = $product['id'];
+			}
+			
+			//INGRESO EL GRUPO
+			if($res)
+			{
+				if(!empty($producto['ListAdicionales']))
+				{
+					if(empty($producto['ListAdicionales'][0]['RubrosAdicional']['RubroAdicionalId']))
+					{
+						//VERIFICO QUE NO ESTE OPCIONES
+						$cat = "SELECT id, opcion_grupo FROM tienda_opciones_grupos";
+						$cat .= " WHERE id_tienda = ".$tienda;
+						$cat .= " AND opcion_grupo = 'Opciones'";
+						$cat .= " AND estado >= 0";
+						$query = $this->db->query($cat);
+						$opcion_grupo = $query->row_array();
+						
+						if(!$opcion_grupo)
+						{
+							$datos_grupo['id_tienda'] = $tienda;
+							$datos_grupo['opcion_grupo'] = 'Opciones';
+							$datos_grupo['cantidad'] = $producto['ListAdicionales'][0]['Tope'];
+							$datos_grupo['fecha_alta'] = now();
+							$datos_grupo['username_alta'] = $this->usuario->id;
+			
+							$insert_grupo = $this->db->insert('tienda_opciones_grupos', $datos_grupo);
+							$res_grupo = $this->db->insert_id();
+						}
+						else
+						{
+							$res_grupo = $opcion_grupo['id'];
+						}
+					}
+					else
+					{
+						//VERIFICO QUE NO ESTE OPCIONES CON EL ID_BRULER
+						$cat = "SELECT id, id_bruler FROM tienda_opciones_grupos";
+						$cat .= " WHERE id_tienda = ".$tienda;
+						$cat .= " AND id_bruler = ".$producto['ListAdicionales'][0]['RubrosAdicional']['RubroAdicionalId'];
+						$cat .= " AND estado >= 0";
+						$query = $this->db->query($cat);
+						$opcion_grupo = $query->row_array();
+
+						if(!$opcion_grupo)
+						{
+							$datos_grupo['id_tienda'] = $tienda;
+							$datos_grupo['id_bruler'] = $producto['ListAdicionales'][0]['RubrosAdicional']['RubroAdicionalId'];
+							$datos_grupo['opcion_grupo'] = $producto['ListAdicionales'][0]['RubrosAdicional']['RubroAdicional'];
+							$datos_grupo['cantidad'] = $producto['ListAdicionales'][0]['Tope'];
+							$datos_grupo['fecha_alta'] = now();
+							$datos_grupo['username_alta'] = $this->usuario->id;
+			
+							$insert_grupo = $this->db->insert('tienda_opciones_grupos', $datos_grupo);
+							$res_grupo = $this->db->insert_id();
+						}
+						else
+						{
+							$res_grupo = $opcion_grupo['id'];
+						}
+					}						
+			
+					//VERIFICO QUE NO ESTE LA RELACION GRUPO PRODUCTO
+					$rel = "SELECT id_producto FROM tienda_producto_rel_opciones_grupo";
+					$rel .= " WHERE id_tienda = ".$tienda;
+					$rel .= " AND id_producto = ".$res;
+					$rel .= " AND id_opcion_grupo = ".$res_grupo;
+					$query = $this->db->query($rel);
+					$relacion = $query->row_array();
+
+					//INGRESO RELACION GRUPO PRODUCTO
+					if(!$relacion)
+					{
+						$datos_relacion['id_tienda'] = $tienda;
+						$datos_relacion['id_producto'] = $res;
+						$datos_relacion['id_opcion_grupo'] = $res_grupo;
+						$insert_relacion = $this->db->insert('tienda_producto_rel_opciones_grupo', $datos_relacion);
+					}
+					
+					if($res_grupo)
+					{
+						//BUSCO OPCIONES DE GRUPO ANTERIORES
+						$bor = "SELECT id_tienda, id_bruler, opcion FROM tienda_opciones";
+						$bor .= " WHERE id_tienda = ".$tienda;
+						$bor .= " AND id_opcion_grupo = ".$res_grupo;
+						$query = $this->db->query($bor);
+						$id_opciones_bruler = $query->result_array();
+
+						//OPCIONES DE GRUPO
+						foreach($producto['ListAdicionales'] as $adicionales)
+						{							
+							//INGRESO OPCIONES DE GRUPO
+							$datos_adicional['id_tienda'] = $tienda;
+							$datos_adicional['id_opcion_grupo'] = $res_grupo;
+							$datos_adicional['id_bruler'] = $adicionales['AdicionalId'];
+							$datos_adicional['opcion'] = $adicionales['Adicional'];
+							$datos_adicional['precio'] = $adicionales['Precio'];
+							$datos_adicional['estado'] = 2;
+							$datos_adicional['fecha_alta'] = now();
+							$datos_adicional['username_alta'] = $this->usuario->id;
+	
+							//SI ESTA LA OPCION CARGADA
+							$ids = array_column($id_opciones_bruler, 'id_bruler');
+							if(in_array($adicionales['AdicionalId'], $ids))
+							{
+								$where = "id_bruler = ".$adicionales['AdicionalId'];
+								$update = $this->db->update('tienda_opciones', $datos_adicional, $where);
+							}
+							else
+							{
+								$insert_adicional = $this->db->insert('tienda_opciones', $datos_adicional);
+							}
+						}
+					}
+				}
+				else
+				{
+					//BORRO LAS POSIBLES RELACIONES Y OPCIONES QUE PUDIERA TENER
+					$bor = "SELECT id_tienda, id_opcion_grupo FROM tienda_producto_rel_opciones_grupo";
+					$bor .= " WHERE id_tienda = ".$tienda;
+					$bor .= " AND id_producto = ".$res;
+					$query = $this->db->query($bor);
+					$borrar = $query->row_array();
+
+					if(!empty($borrar['id_opcion_grupo']))
+					{
+						$where_borrar = $this->db->where('id_opcion_grupo', $borrar['id_opcion_grupo']);
+						$borrar_grupos_opciones = $this->db->delete('tienda_producto_rel_opciones_grupo'); 
+					}
+				}
+			}
+			return (!empty($res)) ? $res : null;
+		}
+	}
+
+	public function modificarProductosBruler($id)
+	{
+		$datos['status'] = 0; //1 es para importar - 0 es importado
+		$datos['updated_at'] = unix_to_human(now(), true, 'eu');
+		$where = "id = $id";
+		$res = $this->db->update('bruler_data', $datos, $where);
+
+		return (!empty($res)) ? $res : null;
+	}
+
+	public function getProductosOpcionesBruler($id_pedido_item)
+	{
+		$sql = "SELECT tienda_opciones.id_bruler as AdicionalId, tienda_opciones.opcion as Adicional, tienda_rel_pedidos_item_opcion.precio as Precio, tienda_rel_pedidos_item_opcion.cantidad as Cantidad";
+		$sql .= " FROM tienda_opciones";
+		$sql .= " LEFT JOIN tienda_rel_pedidos_item_opcion ON tienda_rel_pedidos_item_opcion.id_opcion = tienda_opciones.id";
+		$sql .= " WHERE tienda_rel_pedidos_item_opcion.id_pedido_item = $id_pedido_item";
+		$query = $this->db->query($sql);
+		$res = $query->result_array();
+
+		return (!empty($res)) ? $res : null;
+	}
 
 	function comboTiendas($parametros = null)
 	{
@@ -3109,7 +3902,6 @@ class Tienda_model extends CI_Model {
 		{
 			$res['error'] = 'Este perfil no cuenta con los privilegios necesarios';
 		}
-		
 		if (!isset($res['error']))
 		{
 			if (!empty($parametros['estado']))
@@ -3222,7 +4014,7 @@ class Tienda_model extends CI_Model {
 		}
 		return (!empty($id_item)) ? $id_item : null;
 	}
-	
+
 	public function getTiendasPublic($parametros = null)
 	{
 		$sql = "SELECT tienda_configuracion.id, tienda_configuracion.titulo, tienda_configuracion.estado AS id_estado, tienda_rubros.rubro";
@@ -3258,9 +4050,10 @@ class Tienda_model extends CI_Model {
 	public function getTiendas($parametros = null)
 	{
 		$sql = "	
-				SELECT SQL_CALC_FOUND_ROWS tienda_configuracion.id, tienda_configuracion.titulo, tienda_configuracion.estado AS id_estado, tienda_rubros.rubro, tienda_estados.estado															
+				SELECT SQL_CALC_FOUND_ROWS tienda_configuracion.id, tienda_configuracion.titulo, tienda_configuracion.estado AS id_estado, tienda_rubros.rubro, tienda_planes.plan, tienda_estados.estado															
 				FROM tienda_configuracion
 				LEFT JOIN tienda_rubros ON tienda_rubros.id = tienda_configuracion.id_rubro
+				LEFT JOIN tienda_planes ON tienda_planes.id = tienda_configuracion.id_servicio
 				LEFT JOIN tienda_estados ON tienda_estados.id = tienda_configuracion.estado
 				WHERE tienda_configuracion.grupo = ".$this->usuario->grupo;
 				
@@ -3346,9 +4139,9 @@ class Tienda_model extends CI_Model {
 		return (!empty($res)) ? $res : null;
 	}
 	
-    //FUNCIÓN PARA INSERTAR LOS DATOS DE LA IMAGEN SUBIDA
-    function updateImagen($id, $id_media, $tipo, $tabla)
-    {
+	//FUNCIÓN PARA INSERTAR LOS DATOS DE LA IMAGEN SUBIDA
+	function updateImagen($id, $id_media, $tipo, $tabla)
+	{
 		//SELECCIONO IMAGEN
 		$sql = "SELECT media_thumbs.archivo";
 		$sql .= " FROM media_thumbs";

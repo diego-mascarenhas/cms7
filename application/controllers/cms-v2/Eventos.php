@@ -7,10 +7,10 @@ class Eventos extends MY_Controller {
 	{
 		parent::__construct();
 		$this->load->model('cms-v2/Eventos_model');
+		$this->load->model('cms-v2/elearning/Elearning_model');
 		$this->load->model('cms-v2/Configuracion_model');
 	}
 
-	//Listar 
 	public function index($parametros = null)
 	{
 		if ($this->is_logged_in())
@@ -19,7 +19,6 @@ class Eventos extends MY_Controller {
 			if($data['configuracion']['id'])
 			{
 				$this->config->set_item('language', $this->usuario->idioma);
-				
 				$parametros['order_by'] = ' con_contenidos.orden';
 				$parametros['order'] = 'ASC';
 				$data['listado'] = $this->Eventos_model->getContenidos($parametros);
@@ -98,13 +97,14 @@ class Eventos extends MY_Controller {
 								} 
 							}
 				        }
+				        $this->session->set_flashdata('mensaje', 'El evento fue ingresado correctamente.');
 			            redirect(base_url('cms-v2/eventos/modificar/'.$data['id']));
 					}
 					else
 					{
+				        $this->session->set_flashdata('mensaje', 'error');
 						$data['error'] = 'Ha habido un problema, por favor intenta más tarde';
-		
-						$this->load->view('cms-v2/error/');
+						$this->load->view('cms-v2/error/', $data);
 					}
 				}
 			}
@@ -166,13 +166,14 @@ class Eventos extends MY_Controller {
 								$original = $this->upload($id, $_FILES['imagen_'.$extension]['name'], 'imagen_'.$extension, $extension); 
 							}
 				        }
+				        $this->session->set_flashdata('mensaje', 'El evento fue modificado correctamente.');
 			            redirect(base_url('cms-v2/eventos/modificar/'.$id.'/'));
 					}
 					else
 					{
+				        $this->session->set_flashdata('mensaje', 'error');
 						$data['error'] = 'Ha habido un problema, por favor intenta más tarde';
-		
-						$this->load->view('cms-v2/error/');
+						$this->load->view('cms-v2/error/', $data);
 					}
 				}
 			}

@@ -97,10 +97,10 @@
                                     <div class="input-group">
                                     	<select name="medidas" class="form-control m-b">
 		                                <option value="">Sin imagen</option>
-		                                <option value="120x120">120x120 (servicios)</option>
-		                                <option value="220x110">220x110 (proyectos)</option>
-		                                <option value="500x500">500x500 (equipo)</option>
-		                                <option value="220x110">220x110 (clientes)</option>
+		                                <option value="120x120"<?php echo ($item['id_tipo'] == 138) ? ' selected' : '';?>>120x120 (servicios)</option>
+		                                <option value="220x110"<?php echo ($item['id_tipo'] == 141) ? ' selected' : '';?>>220x110 (proyectos)</option>
+		                                <option value="500x500"<?php echo ($item['id_tipo'] == 144) ? ' selected' : '';?>>500x500 (equipo)</option>
+		                                <option value="220x110"<?php echo ($item['id_tipo'] == 150) ? ' selected' : '';?>>220x110 (clientes)</option>
 		                            </select>
 		                            <span class="input-group-btn"><button type="button" class="btn btn-primary m-l-md" data-toggle="tooltip" data-placement="top" data-original-title="Tamaño de la imagen, campo obligatorio excepto en blog." title=""> <i class="fa fa-question"></i></button></span>
                                     </div>

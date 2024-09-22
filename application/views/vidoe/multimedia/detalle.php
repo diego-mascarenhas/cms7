@@ -1,31 +1,32 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
 
 			<div id="content-wrapper">
-	            <div class="container-fluid">
-	                <div class="video-block section-padding">
-	                    <div class="row">
-	                        <div class="col-md-8">
-	                            <div class="single-video-left">
-	                                <div class="single-video">
-	                                    <?php if ($detalle['tipo'] == 'video') { ?>
-											<script type="text/javascript" src="//player.wowza.com/player/latest/wowzaplayer.min.js"></script>
+				<div class="container-fluid">
+					<div class="video-block section-padding">
+						<div class="row">
+							<div class="col-md-8">
+								<div class="single-video-left">
+									<div class="single-video">
+										<?php if ($detalle['tipo'] == 'video') { ?>
+											<!-- <script type="text/javascript" src="//player.wowza.com/player/latest/wowzaplayer.min.js"></script> -->
+											<script type="text/javascript" src="https://s3.amazonaws.com/wcl-wowza-player/prod/latest/wowzaplayer.min.js"></script>
 											<script type="text/javascript">
 											WowzaPlayer.create('playerElement',
-											    {
-											    "license":"PLAY1-jrUYJ-nfkDV-kf7xx-dMH4Q-7x6xD",
-											    "sourceURL":"<?php echo $detalle['video']; ?>",
-											    "autoPlay":false,
-											    "volume":"75",
-											    "mute":false,
-											    "loop":false,
-											    "audioOnly":false,
-											    "uiShowQuickRewind":true,
-											    "uiQuickRewindSeconds":"10",
-												"uiShowFullscreen":true,
-												"uiShowBitrateSelector":true,
-												"posterFrameURL":"<?php echo $detalle['thumb']; ?>",
-												"abrStartingBitrate":"lowest"
-											    }
+												{
+													"license":"PLAY1-jrUYJ-nfkDV-kf7xx-dMH4Q-7x6xD",
+													"sourceURL":"<?php echo $detalle['video']; ?>",
+													"autoPlay":false,
+													"volume":"75",
+													"mute":false,
+													"loop":false,
+													"audioOnly":false,
+													"uiShowQuickRewind":true,
+													"uiQuickRewindSeconds":"10",
+													"uiShowFullscreen":true,
+													"uiShowBitrateSelector":true,
+													"posterFrameURL":"<?php echo $detalle['thumb']; ?>",
+													"abrStartingBitrate":"lowest"
+												}
 											);
 											</script>
 											<div id="playerElement" style="width:100%; height:0; padding:0 0 56.25% 0"></div>
@@ -38,48 +39,48 @@
 											</div>
 										<?php }
 											elseif (isset($detalle['thumb']))
-		                                    { 
-			                                    $thumb = $detalle['thumb'];
-			                                ?>
-			                                	<img src="<?php echo $thumb; ?>" width="100%" height="auto">
-			                                <?php
-			                                }
-			                                else
+											{ 
+												$thumb = $detalle['thumb'];
+											?>
+												<img src="<?php echo $thumb; ?>" width="100%" height="auto">
+											<?php
+											}
+											else
 											{
 												switch ($detalle['tipo'])
-			                                        {
-			                                        	case 'imagen':
-			                                        		$thumb = base_url('assets/vidoe/img/thumb-imagen.png');
-			                                        		break;
-			                                        	case 'video':
-			                                        		$thumb = base_url('assets/vidoe/img/thumb-video.png');
-			                                        		break;
-			                                        	case 'audio':
-			                                        		$thumb = base_url('assets/vidoe/img/thumb-audio.png');
-			                                        		break;
-			                                        	default:
-			                                        		$thumb = base_url('assets/vidoe/img/thumb-default.png');
-			                                        		break;
-			                                        }
-		                                    ?>
+													{
+														case 'imagen':
+															$thumb = base_url('assets/vidoe/img/thumb-imagen.png');
+															break;
+														case 'video':
+															$thumb = base_url('assets/vidoe/img/thumb-video.png');
+															break;
+														case 'audio':
+															$thumb = base_url('assets/vidoe/img/thumb-audio.png');
+															break;
+														default:
+															$thumb = base_url('assets/vidoe/img/thumb-default.png');
+															break;
+													}
+											?>
 												<img src="<?php echo $thumb; ?>" width="100%" height="auto">
 											<?php } ?>
-	                                </div>
-	                                
+									</div>
+									
 									<div class="single-video-title box mb-3">
 										<h2><?php echo $detalle['nombre']; ?></h2>
 <!-- 		                              <p class="mb-0"><i class="fas fa-eye"></i> 2,729,347 views</p> -->
 										<?php if (isset($breadcrumb)) { ?>
-						                    <?php
-							                	foreach ($breadcrumb as $item)
-							                	{
-							                	?>
-							                		&nbsp;/&nbsp;<a class="mb-0" href="<?php echo base_url('multimedia/?proyecto=' . $item['id']); ?>"><?php echo $item['proyecto']; ?></a>
+											<?php
+												foreach ($breadcrumb as $item)
+												{
+												?>
+													&nbsp;/&nbsp;<a class="mb-0" href="<?php echo base_url('multimedia/?proyecto=' . $item['id']); ?>"><?php echo $item['proyecto']; ?></a>
 				
-							                	<?php
-								                }
+												<?php
+												}
 										 } ?>
-		                        	</div>
+									</div>
 	
 									<div class="single-video-info-content box mb-3">
 										<h6>Usuario:</h6>
@@ -161,7 +162,7 @@
 										<?php } ?>
 									</div>
 								</div>
-	                        </div>
+							</div>
 							<div class="col-md-4">
 								<div class="single-video-right">
 									<div class="row">
@@ -179,20 +180,20 @@
 																else
 																{
 																	switch ($media['tipo'])
-								                                        {
-								                                        	case 'imagen':
-								                                        		$thumb = 'assets/vidoe/img/thumb-imagen.png';
-								                                        		break;
-								                                        	case 'video':
-								                                        		$thumb = 'assets/vidoe/img/thumb-video.png';
-								                                        		break;
-								                                        	case 'audio':
-								                                        		$thumb = 'assets/vidoe/img/thumb-audio.png';
-								                                        		break;
-								                                        	default:
-								                                        		$thumb = 'assets/vidoe/img/thumb-default.png';
-								                                        		break;
-								                                        }
+																		{
+																			case 'imagen':
+																				$thumb = 'assets/vidoe/img/thumb-imagen.png';
+																				break;
+																			case 'video':
+																				$thumb = 'assets/vidoe/img/thumb-video.png';
+																				break;
+																			case 'audio':
+																				$thumb = 'assets/vidoe/img/thumb-audio.png';
+																				break;
+																			default:
+																				$thumb = 'assets/vidoe/img/thumb-default.png';
+																				break;
+																		}
 																}
 														?>
 															<img class="img-fluid" src="<?php echo base_url($thumb); ?>">
@@ -211,20 +212,20 @@
 														<div class="video-title">
 															<a href="<?php echo base_url($link); ?>"><?php echo ellipsize($media['nombre'], 18); ?></a>
 														</div>
-		            								</div>
-					                                <div class="video-view">
-					                                	<?php echo byte_format($media['peso']*1024); ?> &nbsp; <?php echo formatear_fecha($media['fecha_alta'], 'd-m-Y H:i', ' hs', $this->usuario->timezone); ?>
-					                                </div>
-		                                		</div>
-	                                        	<?php } ?>
+													</div>
+													<div class="video-view">
+														<?php echo byte_format($media['peso']*1024); ?> &nbsp; <?php echo formatear_fecha($media['fecha_alta'], 'd-m-Y H:i', ' hs', $this->usuario->timezone); ?>
+													</div>
+												</div>
+												<?php } ?>
 											</div>
 										<?php } ?>
-	                            	</div>
-	                        	</div>
-	                        </div>
-	                    </div>
-	                </div>
-	            </div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 			
 			

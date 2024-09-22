@@ -1422,30 +1422,4 @@ class CmsTienda extends REST_Controller {
             $this->response(null, REST_Controller::HTTP_NO_CONTENT);
         }
     }
-
-	//TIENDAS MODELOS
-	public function listadotiendas_get($id_tipo)
-	{		
-		$this->load->model('tienda_model');
-		$parametros['id_tipo'] = $id_tipo;
-		$parametros['estado'] = 3;
-		$data = $this->tienda_model->getTiendasPublic($parametros);
-		
-		if (isset($data['error']))
-        {
-	        $this->response([
-                'status' => false,
-                'message' => $data['error']
-            ], REST_Controller::HTTP_FORBIDDEN);
-            
-        }
-        elseif (isset($data))
-        {
-            $this->response($data, REST_Controller::HTTP_OK);
-        }
-        else
-        {
-            $this->response(null, REST_Controller::HTTP_NO_CONTENT);
-        }
-    }    
 }

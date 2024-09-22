@@ -4,6 +4,8 @@
 		.dl-pedidos dt { text-align:left; width:auto; margin-right:10px; }
 		.dl-pedidos dd { margin-left:0;}
 		.no-disponible { width:90px; height:90px; background:#ebebeb; text-align:center; padding-top:25px;}
+		input::placeholder, ::placeholder { color:#666 !important; }
+		input:read-only { color: green; }
 	</style>
 		<div class="row wrapper border-bottom white-bg page-heading">
         	<div class="col-xs-8 col-sm-8 col-md-6 col-lg-6">
@@ -42,6 +44,8 @@
 		                                <dt>Celular:</dt> <dd>   <?php echo ($detalle['celular']) ? $detalle['celular'] : ' ------ ';?></dd>
 		                                <dt>Email:</dt> <dd><?php echo ($detalle['email']) ? '<a href="mailto:'.$detalle['email'].'" title=""> '.$detalle['email'].'</a>' : ' ------ ';?></dd>
 		                                <dt>Domicilio:</dt> <dd> <?php echo ($detalle['domicilio']) ? $detalle['domicilio'] : ' ------ ';?> </dd>
+		                                <dt>N&deg; de Cliente:</dt> <dd> <?php echo (isset($contacto['numero_cliente'])) ? $contacto['numero_cliente'] : ' ------ ';?> </dd>
+		                                <dt>Sucursal:</dt> <dd> <?php echo (isset($sucursal['titulo'])) ? $sucursal['titulo'].' ('.$sucursal['domicilio'].' '.$sucursal['numero'].')' : ' ------ ';?> </dd>
 			                        </dl>
 		                        </div>
 	                        	<div class="col-sm-6">
@@ -76,30 +80,45 @@
 	                                        	<?php echo ($item['imagen']) ? '<img src="'.base_url('/multimedia/thumbs/'.$item['imagen']).'" alt="'.$item['titulo'].'" width="90">' : '<div class="no-disponible">sin imagen</div>';?>
 	                                        </td>
 	                                        <td class="desc">
-	                                            <h3>
-	                                                <a href="<?php echo base_url('tienda/productos/ingresar/'.$item['id']);?>"><?php echo $item['titulo'];?> <?php echo ($item['codigo']) ? "(".$item['codigo'].")" : null; ?></a>
-	                                            </h3>
-	                                            <p class="small">
-	                                                <?php echo $item['contenido1'];?>
-	                                            </p>
+	                                            <h3><?php echo $item['titulo'];?> <?php echo ($item['codigo']) ? "(".$item['codigo'].")" : null; ?></h3>
+	                                            <p class="small"><?php echo $item['contenido1'];?><br>
+	                                            <b>Opciones:</b> <?php echo ($item['detalle']) ? $item['detalle'] : '----';?></p>
 	                                        </td>
 	
-	                                        <td> <?php echo $item['precio'];?></td>
+	                                        <td> <?php echo $tienda['simbolo'].' '.$item['precio'];?></td>
 	                                        <td width="65"><input type="text" class="form-control" placeholder="<?php echo $item['cantidad'];?>" readonly="true"></td>
 	                                        <td>
-	                                            <h4><?php echo $item['subtotal'];?></h4>
+	                                            <h4><?php echo $tienda['simbolo'].' '.$item['subtotal'];?></h4>
 	                                        </td>
 	                                    </tr>
 
                                 <?php }	?> 
                                 <tr>
                                     <td colspan="5">
-                                       <div class="pull-right">
-										  <h4>Subtotal= <?php echo $detalle['subtotal'];?></h4>
-										  <h4>Descuentos = <?php echo($detalle['descuento'] > 0) ? $detalle['subtotal'] : '0.00'; ?></h4>
-										  <h4>Env&iacute;o = <?php echo($detalle['envio'] > 0) ? $detalle['envio'] : '0.00'; ?></h4>
-										  <h4>Total= <?php echo $detalle['subtotal'];?></h4>
-                                       </div>
+                                    <table style="width:100%;">
+	                                    <tbody>
+		                                    <tr>
+		                                    	<td align="right"><h4 class="pull-right">Subtotal =</h4></td>
+		                                    	<td><h4><?php echo $tienda['simbolo'].' '.$detalle['subtotal'];?></h4></td>
+		                                    </tr>
+		                                    <tr>
+		                                    	<td><h4 class="pull-right">Descuentos =</h4></td>
+		                                    	<td><h4><?php echo $tienda['simbolo']; echo($detalle['descuento']) ? ' '.$detalle['descuento'] : ' 0.00'; ?></h4></td>
+		                                    </tr>
+		                                    <tr>
+		                                    	<td><h4 class="pull-right">Descuento medio de pago =</h4></td>
+		                                    	<td><h4><?php echo $tienda['simbolo']; echo($detalle['descuento_medios_envio']) ? ' '.$detalle['descuento_medios_envio'] : ' 0.00'; ?></td>
+		                                    </tr>
+		                                    <tr>
+		                                    	<td><h4 class="pull-right">Envío =</h4></td>
+		                                    	<td><h4><?php echo $tienda['simbolo']; echo($detalle['envio']) ? ' '.$detalle['envio'] : ' 0.00'; ?></h4></td>
+		                                    </tr>
+		                                    <tr>
+		                                    	<td><h4 class="pull-right">Total =</h4></td>
+		                                    	<td><h4><?php echo $tienda['simbolo'].' '.$detalle['total'];?></h4></td>
+		                                    </tr>
+		                                    </tbody>
+	                                    </table>
                                     </td>
                                 </tr>
                                 <tr>

@@ -3,7 +3,7 @@
 $config['smtp'] = array('protocol' => 'smtp',
 						'smtp_host' => 'mail.revisionalpha.com',
 						'smtp_port' => 587,
-						'smtp_crypto' => 'tls',
+						'smtp_crypto' => null,
 						'smtp_user' => 'administracion@revisionalpha.com',
 						'smtp_pass' => 'vRptd2rqBn1',
 						'mailtype' => 'html',

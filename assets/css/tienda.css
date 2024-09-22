@@ -53,11 +53,12 @@ a {color: #5402b2;}
 .wizard-big.wizard > .content { height:auto; padding-bottom:43px;}
 .wizard > .actions a, .wizard > .actions a:hover, .wizard > .actions a:active {background: #5402b2;color: #fff;display: block;padding: 0.5em 1em;text-decoration: none;-webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px;}
 .wizard > .content > .body label.error { margin-left:0;}
-.wizard-big.wizard > .content {min-height: 430px;}
+.wizard-big.wizard > .content {min-height: 540px;}
 
 @media (max-width:960px) {
 .botones-filtros { position:relative; top:20px; width:100%; left:-10px; }	
 .tabla-pedidos .btn-group { bottom:0 !important;}
+.wizard-big.wizard > .content {min-height: 640px;}
 }
 
 @media screen and (max-width: 767px) {
