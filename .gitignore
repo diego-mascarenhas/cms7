@@ -1,18 +1,22 @@
-*/config/development
-*/logs/log-*.php
-!*/logs/index.html
-*/cache/*
-!system/cache/*
-!*/cache/index.html
-!*/cache/.htaccess
+# Ignorar contenido de landings y multimedia
+/landings/*
+!/landings/.gitkeep
+/multimedia/*
+!/multimedia/.gitkeep
 
-user_guide_src/build/*
-user_guide_src/cilexer/build/*
-user_guide_src/cilexer/dist/*
-user_guide_src/cilexer/pycilexer.egg-info/*
+# Ignorar archivos y directorios de caché
+__pycache__/
+*.py[cod]
+*$py.class
+.cache
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
 
-#codeigniter 3
-application/logs/*
-!application/logs/index.html
-!application/logs/.htaccess
-/vendor/
+# Ignorar archivos de caché específicos
+cache/*.dat
+
+# Ignorar otros archivos temporales comunes
+*.log
+*.tmp
+.DS_Store
