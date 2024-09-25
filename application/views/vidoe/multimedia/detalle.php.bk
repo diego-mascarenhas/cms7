@@ -12,7 +12,7 @@
 											<script type="text/javascript">
 											WowzaPlayer.create('playerElement',
 											    {
-											    "license":"PLAY1-jrUYJ-nfkDV-kf7xx-dMH4Q-7x6xD",
+											    "license":"eyJraWQiOiJZMzQ5cVlIUDFRd1IiLCJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiJ9.eyJjIjoie1wiYWNsXCI6MjIsXCJpZFwiOlwiWTM0OXFZSFAxUXdSXCJ9IiwiaXNzIjoiRmxvd3BsYXllciJ9.URiG5fT4w3-TaPyT76AjZw9Cw8Bt4_Ug9uz2S3X5Tg9I2O0WV5hNUW-hjgY61ZxMFF8THpirCkW8NhWAE0zwXQ",
 											    "sourceURL":"<?php echo $detalle['video']; ?>",
 											    "autoPlay":false,
 											    "volume":"75",

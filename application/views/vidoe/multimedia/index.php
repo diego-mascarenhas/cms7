@@ -103,24 +103,39 @@
 						<div class="col-xl-3 col-sm-6 mb-3">
 						    <div class="video-card">
 					            <div class="video-card-image">
-					            <script type="text/javascript" src="//player.wowza.com/player/latest/wowzaplayer.min.js"></script>
+					            <link rel="stylesheet" href="https://cdn.flowplayer.com/releases/native/3/stable/style/flowplayer.css">
+					            <script src="https://cdn.flowplayer.com/releases/native/3/stable/flowplayer.min.js"></script>
+					            <script src="https://cdn.flowplayer.com/releases/native/3/stable/plugins/hls.min.js"></script>
+
+					            <style>
+					                #playerElement {
+					                    width: 100%;
+					                    height: 0;
+					                    padding: 0 0 56.25% 0;
+					                    position: relative;
+					                }
+					                #playerElement .flowplayer {
+					                    position: absolute;
+					                    top: 0;
+					                    left: 0;
+					                    width: 100%;
+					                    height: 100%;
+					                }
+					            </style>
+
+					            <div id="playerElement"></div>
+
 					            <script type="text/javascript">
-					                WowzaPlayer.create('playerElement',
-					                    {
-					                    "license":"PLAY1-jrUYJ-nfkDV-kf7xx-dMH4Q-7x6xD",
-					                    "sourceURL":"<?php echo $this->session->userdata('livestream'); ?>",
-					                    "autoPlay":true,
-					                    "volume":"75",
-					                    "mute":false,
-					                    "loop":false,
-					                    "audioOnly":false,
-					                    "uiShowQuickRewind":true,
-					                    "uiQuickRewindSeconds":"30"
-					                    }
-					                );
+					                flowplayer('#playerElement', {
+					                    src: "<?php echo $this->session->userdata('livestream'); ?>",
+					                    token: "eyJraWQiOiJZMzQ5cVlIUDFRd1IiLCJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiJ9.eyJjIjoie1wiYWNsXCI6MjIsXCJpZFwiOlwiWTM0OXFZSFAxUXdSXCJ9IiwiaXNzIjoiRmxvd3BsYXllciJ9.URiG5fT4w3-TaPyT76AjZw9Cw8Bt4_Ug9uz2S3X5Tg9I2O0WV5hNUW-hjgY61ZxMFF8THpirCkW8NhWAE0zwXQ",
+					                    autoplay: true,
+					                    volume: 0.75,
+					                    muted: false,
+					                    loop: false
+					                });
 					            </script>
-								<div id="playerElement" style="width:100%; height:0; padding:0 0 56.25% 0"></div>
-					            </div>
+								</div>
 								<div class="video-card-body">
 								   <div class="video-title">
 									  <a href="#">En Vivo</a>
