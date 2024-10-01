@@ -8,28 +8,42 @@
 								<div class="single-video-left">
 									<div class="single-video">
 										<?php if ($detalle['tipo'] == 'video') { ?>
-											<link href="https://vjs.zencdn.net/8.16.1/video-js.css" rel="stylesheet" />
-											<video id="video" class="video-js vjs-default-skin" controls preload="auto" width="948">
-												<source src="<?php echo $detalle['video']; ?>" type="video/mp4">
-												<p class="vjs-no-js">Para ver este video, habilita JavaScript y considera actualizar a un navegador que <a href="https://videojs.com/html5-video-support/" target="_blank">soporte video HTML5</a>.</p>
+											<style>
+												#video {
+													width: 100%;
+													height: auto;
+												}
+											</style>
+
+											<video id="video" controls disableremoteplayback>
+												<source type="video/mp4" src="<?php echo $detalle['url']; ?>">
 											</video>
-											<script src="https://vjs.zencdn.net/8.16.1/video.min.js"></script>
+
+											<script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.5.15/hls.min.js"></script>
 											<script>
-												var player = videojs('video');
-												player.ready(function() {
-													this.src({
-														type: 'video/mp4',
-														src: "<?php echo $detalle['url']; ?>"
+												var video = document.getElementById('video');
+												var videoSrc = "<?php echo $detalle['url']; ?>";
+
+												if (Hls.isSupported()) {
+													var hls = new Hls();
+													hls.loadSource(videoSrc);
+													hls.attachMedia(video);
+													hls.on(Hls.Events.MANIFEST_PARSED, function () {
+														video.play();
 													});
-													this.play();
-												});
+												} else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+													video.src = videoSrc;
+													video.addEventListener('loadedmetadata', function () {
+														video.play();
+													});
+												}
 											</script>
 										<?php } elseif ($detalle['tipo'] == 'audio') { ?>
 											<div class="box">
-													<audio controls>
-														<source src="<?php echo base_url('multimedia/' . $this->usuario->grupo . '/' . $this->usuario->id_empresa . '/' . $detalle['archivo']); ?>">
-													</audio>
-												</div>
+												<audio controls>
+													<source src="<?php echo base_url('multimedia/' . $this->usuario->grupo . '/' . $this->usuario->id_empresa . '/' . $detalle['archivo']); ?>">
+												</audio>
+											</div>
 										<?php }
 											elseif (isset($detalle['thumb']))
 											{ 

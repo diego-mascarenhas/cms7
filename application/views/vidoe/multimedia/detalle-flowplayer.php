@@ -8,28 +8,45 @@
 								<div class="single-video-left">
 									<div class="single-video">
 										<?php if ($detalle['tipo'] == 'video') { ?>
-											<link href="https://vjs.zencdn.net/8.16.1/video-js.css" rel="stylesheet" />
-											<video id="video" class="video-js vjs-default-skin" controls preload="auto" width="948">
-												<source src="<?php echo $detalle['video']; ?>" type="video/mp4">
-												<p class="vjs-no-js">Para ver este video, habilita JavaScript y considera actualizar a un navegador que <a href="https://videojs.com/html5-video-support/" target="_blank">soporte video HTML5</a>.</p>
-											</video>
-											<script src="https://vjs.zencdn.net/8.16.1/video.min.js"></script>
+											<link rel="stylesheet" href="https://cdn.flowplayer.com/releases/native/3/stable/style/flowplayer.css">
+											<script src="https://cdn.flowplayer.com/releases/native/3/stable/flowplayer.min.js"></script>
+											<script src="https://cdn.flowplayer.com/releases/native/3/stable/plugins/hls.min.js"></script>
+
+											<style>
+												#playerElement {
+													width: 100%;
+													height: 0;
+													padding-bottom: 56.25%; /* Mantiene la relación de aspecto 16:9 */
+													position: relative;
+												}
+												#playerElement .flowplayer {
+													position: absolute;
+													top: 0;
+													left: 0;
+													width: 100%;
+													height: 100%;
+												}
+											</style>
+
+											<div id="playerElement"></div>
+
 											<script>
-												var player = videojs('video');
-												player.ready(function() {
-													this.src({
-														type: 'video/mp4',
-														src: "<?php echo $detalle['url']; ?>"
-													});
-													this.play();
+												flowplayer('#playerElement', {
+													src: "<?php echo $detalle['video']; ?>",
+													token: "eyJraWQiOiJZMzQ5cVlIUDFRd1IiLCJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiJ9.eyJjIjoie1wiYWNsXCI6MjIsXCJpZFwiOlwiWTM0OXFZSFAxUXdSXCJ9IiwiaXNzIjoiRmxvd3BsYXllciJ9.URiG5fT4w3-TaPyT76AjZw9Cw8Bt4_Ug9uz2S3X5Tg9I2O0WV5hNUW-hjgY61ZxMFF8THpirCkW8NhWAE0zwXQ",
+													poster: "<?php echo $detalle['thumb']; ?>",
+													autoplay: false,
+													muted: false,
+													loop: false,
+													volume: 0.75
 												});
 											</script>
 										<?php } elseif ($detalle['tipo'] == 'audio') { ?>
 											<div class="box">
-													<audio controls>
-														<source src="<?php echo base_url('multimedia/' . $this->usuario->grupo . '/' . $this->usuario->id_empresa . '/' . $detalle['archivo']); ?>">
-													</audio>
-												</div>
+												<audio controls>
+													<source src="<?php echo base_url('multimedia/' . $this->usuario->grupo . '/' . $this->usuario->id_empresa . '/' . $detalle['archivo']); ?>">
+												</audio>
+											</div>
 										<?php }
 											elseif (isset($detalle['thumb']))
 											{ 
@@ -89,9 +106,6 @@
 										<p><?php echo $detalle['archivo']; ?></p>
 -->
 	
-										<h6>URL:</h6>
-										<p><a href="<?php echo $detalle['url']; ?>" target="_blank"><?php echo $detalle['url']; ?></a></p>
-
 										<h6>Tipo:</h6>
 										<p><?php echo $detalle['mime']; ?></p>
 										<?php } ?>
@@ -223,3 +237,33 @@
 					</div>
 				</div>
 			</div>
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+<!--
+Mata el miedo que guarda el animal. 
+Limpia el cuerpo, pues dentro de él estás. 
+Si buscas libertad, ya no andés por fuera. 
+Hombre de mil nombres naces ya, naces ya. 
+-->
+
+
+
+
+
+
+
+
+
+
+
+

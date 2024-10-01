@@ -520,6 +520,8 @@ class Multimedia extends MY_Controller {
 						$data['detalle']['video'] = 'https://59f778d8c8b09.streamlock.net/vodcms/mp4:multimedia/' . $data['detalle']['grupo'] . '/' . $data['detalle']['id_empresa'] . '/' . $data['detalle']['archivo'] . '/playlist.m3u8';
 					}
 				}
+				
+				$data['detalle']['url'] = 'https://cms.revisionalpha.com/multimedia/' . $data['detalle']['grupo'] . '/' . $data['detalle']['id_empresa'] . '/' . $data['detalle']['archivo']; // Hardcoded
 			}
 			
 			$data['detalle']['thumb'] = (isset($data['detalle']['thumb']) && !(file_exists(FCPATH . 'multimedia/thumb/' . $data['detalle']['thumb']))) ? base_url('multimedia/thumbs/' . $data['detalle']['thumb']) : null;
@@ -888,6 +890,8 @@ class Multimedia extends MY_Controller {
 					
 					$data['detalle']['video'] = 'https://59f778d8c8b09.streamlock.net/vodcms/mp4:multimedia/' . $data['detalle']['grupo'] . '/' . $data['detalle']['id_empresa'] . '/' . $data['detalle']['archivo'] . '/playlist.m3u8';
 				}
+
+				$data['detalle']['url'] = 'https://cms.revisionalpha.com/multimedia/' . $data['detalle']['grupo'] . '/' . $data['detalle']['id_empresa'] . '/' . $data['detalle']['archivo']; // Hardcoded
 				
 				$data['detalle']['thumb'] = (isset($data['detalle']['thumb'])) ? base_url('multimedia/thumbs/' . $data['detalle']['thumb']) : null;
 
