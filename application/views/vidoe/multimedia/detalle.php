@@ -9,7 +9,7 @@
 									<div class="single-video">
 										<?php if ($detalle['tipo'] == 'video') { ?>
 											<link href="https://vjs.zencdn.net/8.16.1/video-js.css" rel="stylesheet" />
-											<video id="video" class="video-js vjs-default-skin" controls preload="auto" width="948">
+											<video id="video" class="video-js vjs-default-skin" controls preload="auto" style="width: 100%; max-width: 100%; object-fit: contain;">
 												<source src="<?php echo $detalle['video']; ?>" type="video/mp4">
 												<p class="vjs-no-js">Para ver este video, habilita JavaScript y considera actualizar a un navegador que <a href="https://videojs.com/html5-video-support/" target="_blank">soporte video HTML5</a>.</p>
 											</video>
