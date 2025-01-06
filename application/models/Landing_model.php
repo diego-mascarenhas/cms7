@@ -301,7 +301,12 @@ class Landing_model extends CI_Model {
 			$res['error'] = 'Este perfil no cuenta con los privilegios necesarios';
 		}
 		
-		
+		if (isset($parametros['id_contacto']))
+		{
+			$sql .= " AND landings_stats.id_contacto = ?";
+			$placeholders[] = $parametros['id_contacto'];
+		}
+
 		if (!isset($res['error']))
 		{
 			// orden
@@ -402,6 +407,7 @@ class Landing_model extends CI_Model {
 	{
 		$data['id_landing'] = $id;
 		if (isset($id_contacto)) $data['id_contacto'] = $id_contacto;
+		if (isset($valores['id_contacto'])) $data['id_contacto'] = $valores['id_contacto'];
 		$data['data'] = json_encode($valores);
 		
 		$data['fecha_alta'] = now();
@@ -416,5 +422,24 @@ class Landing_model extends CI_Model {
 		return (!empty($res)) ? $res : null;
 	}
 	
+	function provincias($id_pais)
+	{
+		$sql = "SELECT sys_provincias.id, sys_provincias.provincia AS descripcion
+				FROM sys_provincias
+				WHERE sys_provincias.id_pais = ?
+				AND estado = 2
+				ORDER BY provincia ASC
+			";
 
+		$query = $this->db->query($sql, $id_pais);
+			
+		if (!isset($res['error']) && $query)
+		{
+			$res = $query->result_array();
+		}
+		
+		return (!empty($res)) ? $res : null;
+	}
+	
 }
+

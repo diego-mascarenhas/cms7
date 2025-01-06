@@ -652,6 +652,8 @@ class Servicios_model extends CI_Model {
 					if(isset($valores['contenido8_'.$extension])) { $data['contenido8'] = $valores['contenido8_'.$extension]; } else { $data['contenido8'] = NULL; }
 					if(isset($valores['contenido9_'.$extension])) { $data['contenido9'] = $valores['contenido9_'.$extension]; }
 					if(isset($valores['contenido10_'.$extension])) { $data['contenido10'] = $valores['contenido10_'.$extension]; }
+					if(isset($valores['contenido11_'.$extension])) { $data['contenido11'] = $valores['contenido11_'.$extension]; }
+					if(isset($valores['contenido12_'.$extension])) { $data['contenido12'] = $valores['contenido12_'.$extension]; }
 					if(isset($valores['orden_'.$extension])) { $data['orden'] = $valores['orden_'.$extension]; } else { $data['orden'] = NULL; }
 					if(isset($valores['id_proyecto_'.$extension])) { $data['id_proyecto'] = $valores['id_proyecto_'.$extension]; }
 					if(isset($valores['video_'.$extension])) { $data['video'] = $valores['video_'.$extension]; }
@@ -732,6 +734,8 @@ class Servicios_model extends CI_Model {
 					if(isset($valores['contenido8_'.$extension])) { $data['contenido8'] = $valores['contenido8_'.$extension]; }
 					if(isset($valores['contenido9_'.$extension])) { $data['contenido9'] = $valores['contenido9_'.$extension]; }
 					if(isset($valores['contenido10_'.$extension])) { $data['contenido10'] = $valores['contenido10_'.$extension]; }
+					if(isset($valores['contenido11_'.$extension])) { $data['contenido11'] = $valores['contenido11_'.$extension]; }
+					if(isset($valores['contenido12_'.$extension])) { $data['contenido12'] = $valores['contenido12_'.$extension]; }
 					if(isset($valores['orden_'.$extension])) { $data['orden'] = $valores['orden_'.$extension]; } else { $data['orden'] = NULL; }
 					if(isset($valores['id_proyecto_'.$extension])) { $data['id_proyecto'] = $valores['id_proyecto_'.$extension]; }
 					if(isset($valores['video_'.$extension])) { $data['video'] = $valores['video_'.$extension]; }
@@ -1267,6 +1271,8 @@ class Servicios_model extends CI_Model {
 					$data['contenido8'] = $item['contenido8'];
 					$data['contenido9'] = $item['contenido9'];
 					$data['contenido10'] = $item['contenido10'];
+					$data['contenido11'] = $item['contenido11'];
+					$data['contenido12'] = $item['contenido12'];
 					$data['orden'] = $item['orden'];
 					$data['video'] = $item['video'];
 					$data['id_moneda'] = $item['id_moneda'];

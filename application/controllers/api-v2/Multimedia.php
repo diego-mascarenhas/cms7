@@ -133,6 +133,7 @@ class Multimedia extends REST_Controller {
 			$parametros['search'] = $this->input->get('search');
 			$parametros['estado'] = $this->input->get('estado');
 			$parametros['tag'] = $this->input->get('tag');
+			$parametros['padre'] = $this->input->get('padre');
 			
 			if ($this->input->get('id_empresa')) $parametros['id_empresa'] = $this->input->get('id_empresa');
 			

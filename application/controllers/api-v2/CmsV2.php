@@ -143,6 +143,33 @@ class CmsV2 extends REST_Controller {
         }
     }
 
+    //Modulo Sitio Web OBA
+    public function configuraciontres_get()
+    {
+        $this->load->model('cms-v2/configuracion_model');
+		$data = 'Hola';		
+		
+		if (isset($data['error']))
+        {
+	        $this->response([
+                'status' => false,
+                'message' => $data['error']
+            ], REST_Controller::HTTP_FORBIDDEN);
+            
+        }
+        elseif (isset($data))
+        {
+            $this->response($data, REST_Controller::HTTP_OK);
+        }
+        else
+        {
+            $this->response([
+                'status' => false,
+                'message' => 'No se encontraron registros'
+            ], REST_Controller::HTTP_NOT_FOUND);
+        }
+    }
+    
     public function secciones_get($padre = null)
     {
 		$this->load->model('cms-v2/paginas_model');
@@ -1867,8 +1894,15 @@ class CmsV2 extends REST_Controller {
 		$this->load->model('cms-v2/servicios/servicios_model');
 		$parametros['id'] = $id_servicio;
 		$parametros['idioma'] = $idioma;
-		$parametros['estado'] = 3;
-		
+		if($id_servicio == 306)
+		{
+			$parametros['estado'] = 1;
+		}
+		else
+		{
+			$parametros['estado'] = 3;
+		}
+
 		$data = $this->servicios_model->getServicioDetalleIdioma($parametros);
 		if (isset($data['error']))
         {

@@ -173,7 +173,7 @@ class Informacion_model extends CI_Model {
 	{
 		if($parametros['tipo'] == 9)
 		{
-			$sql = "SELECT con_contenido_items.id,con_contenidos.id as id_contenido, con_contenidos.color, con_contenidos.id_con_secciones, con_contenidos.fecha_alta as fecha_alta_inicial, con_contenidos.id_tipo, con_secciones.seccion, con_secciones.descripcion, con_contenido_items.subtitulo, con_contenido_items.contenido2, con_contenido_items.fecha_alta, con_contenidos.miniatura, con_contenidos.filtro1, con_contenidos.estado, con_contenido_items.titulo, con_contenido_items.contenido1, con_contenido_items.url, con_contenidos.orden,media.id as id_media, (SELECT media_thumbs.archivo FROM media_thumbs WHERE media_thumbs.referencia = media.id AND (media_thumbs.id_tipo = 19 || media_thumbs.id_tipo = 18) LIMIT 1) AS imagen, con_contenido_items_adicionales.imagen as miembro";
+			$sql = "SELECT con_contenido_items.id,con_contenidos.id as id_contenido, con_contenidos.color, con_contenidos.id_con_secciones, con_contenidos.fecha_alta as fecha_alta_inicial, con_contenidos.id_tipo, con_secciones.seccion, con_secciones.descripcion, con_contenido_items.subtitulo, con_contenido_items.texto_adicional, con_contenido_items.contenido2, con_contenido_items.fecha_alta, con_contenidos.miniatura, con_contenidos.filtro1, con_contenidos.estado, con_contenido_items.titulo, con_contenido_items.contenido1, con_contenido_items.url, con_contenidos.orden,media.id as id_media, (SELECT media_thumbs.archivo FROM media_thumbs WHERE media_thumbs.referencia = media.id AND (media_thumbs.id_tipo = 19 || media_thumbs.id_tipo = 18) LIMIT 1) AS imagen, con_contenido_items_adicionales.imagen as miembro";
 		}
 		else 
 		{

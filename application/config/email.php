@@ -1,4 +1,4 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed.');
+<?php defined('BASEPATH') OR exit('No direct script access allowed.'); // Este no se us
 
 $config['useragent']        = 'PHPMailer';              // Mail engine switcher: 'CodeIgniter' or 'PHPMailer'
 $config['protocol']         = 'mail';                   // 'mail', 'sendmail', or 'smtp'

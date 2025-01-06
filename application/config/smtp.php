@@ -1,9 +1,9 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
 
-$config['smtp'] = array('protocol' => 'smtp',
+$config['smtp'] = array('protocol' => 'sendmail',
 						'smtp_host' => 'mail.revisionalpha.com',
-						'smtp_port' => 587,
-						'smtp_crypto' => null,
+						'smtp_port' => 25,
+						'smtp_crypto' => '',
 						'smtp_user' => 'administracion@revisionalpha.com',
 						'smtp_pass' => 'vRptd2rqBn1',
 						'mailtype' => 'html',

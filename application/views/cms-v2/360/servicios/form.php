@@ -97,7 +97,7 @@
 		                                        <div class="input-group">
 						                            <select name="estado" class="required form-control m-b">
 							                            <option value="3"<?php if (isset($detalle['estado']) && $detalle['estado'] == '3') echo ' selected'; ?>>Activo</option>
-							                            <option value="0"<?php if (isset($detalle['estado']) && $detalle['estado'] == '0') echo ' selected'; ?>>Inactivo</option>
+							                            <option value="1"<?php if (isset($detalle['estado']) && $detalle['estado'] == '1') echo ' selected'; ?>>Inactivo</option>
 						                            </select>
 						                            <span class="input-group-btn"><button type="button" class="btn btn-primary m-l-md" data-toggle="tooltip" data-placement="top" data-original-title="Determina si el contenido se mostrará en el sitio." title=""> <i class="fa fa-question"></i></button></span>
 		                                        </div>
@@ -456,6 +456,39 @@
 										</div>
 					                </div>
 
+					                <div class="col-lg-12 p-xxs">
+										<h2 class="b-r-sm bg-muted p-xs pull-left full-width">Fotos avances de obra</h2>
+										<div class="form-group pull-left full-width">
+						                    <label class="text-right col-sm-1 control-label">Título</label>
+						                    <div class="col-sm-5">
+		                                        <div class="input-group">
+		                                        	<input type="text" name="contenido11_<?php echo $idioma['extension'];?>" class="form-control" value="<?php echo (isset($item['contenido11'])) ? $item['contenido11']: null; ?>"><span class="input-group-btn"><button type="button" class="btn btn-primary m-l-md" data-toggle="tooltip" data-placement="top" data-original-title="Título de Fotos avances de obra" title=""> <i class="fa fa-question"></i></button></span></div>
+		                                    </div>
+                                         	<label class="col-sm-1 control-label text-right">Galería</label>
+                                         	<div class="col-sm-5">
+                                         		<div class="input-group">
+												<select name="<?php echo 'contenido12_'.$idioma['extension'];?>" class="form-control m-b">
+	                                                <option value="0"> -- Seleccione Galería --</option>
+													<?php if (isset($galeria_proyectos)) { 
+														foreach($galeria_proyectos as $proyecto)
+														{ 
+															if($proyecto['id'] == $item['contenido12']) { $selected = 'selected'; } else { $selected = null; }
+															echo '<option value="'.$proyecto['id'].'"'.$selected.'>'.$proyecto['descripcion'].'</option></div>';
+															$galerias = $this->Servicios_model->comboProyectos($proyecto['id']);
+															if($galerias)
+															{
+																foreach($galerias as $galeria)
+																{ 
+																	if($galeria['id'] == $item['contenido12']) { $selected = 'selected'; } else { $selected = null; }
+																	echo '<option value="'.$galeria['id'].'"'.$selected.'>&nbsp; - '.$galeria['descripcion'].'</option></div>';
+																}
+															}
+														  }
+														}  ?></select><span class="input-group-btn"><button type="button" class="btn btn-primary m-l-md" data-toggle="tooltip" data-placement="top" data-original-title="Galería de Fotos avances de obra, se administra desde Multimedia." title=""> <i class="fa fa-question"></i></button></span></div>
+                                         	</div>
+				                 		</div>
+					                </div>
+					                
 					                <div class="col-lg-12 p-xxs">
 										<h2 class="b-r-sm bg-muted p-xs pull-left full-width">Contacto/Ubicación</h2>
 										<div class="form-group pull-left full-width">
