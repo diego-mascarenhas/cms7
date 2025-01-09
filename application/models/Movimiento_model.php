@@ -861,11 +861,18 @@ class Movimiento_model extends CI_Model {
 	public function generarDebito()
 	{	
 		$sql = "
-				SELECT empresas.codigo, empresas.empresa, empresas.id AS id_empresa, UNIX_TIMESTAMP(CONVERT_TZ(facturas.fecha, '-03:00', @@global.time_zone)) AS fecha, COUNT(facturas.id) AS cantidad, SUM(IF(nota.total_neto, facturas.saldo-nota.total_neto, facturas.saldo)) AS saldo
+				SELECT empresas.codigo, 
+					   empresas.empresa, 
+					   empresas.id AS id_empresa, 
+					   cuentas.cbu26 as cbu, 
+					   UNIX_TIMESTAMP(CONVERT_TZ(facturas.fecha, '-03:00', @@global.time_zone)) AS fecha, 
+					   COUNT(facturas.id) AS cantidad, 
+					   SUM(IF(nota.total_neto, facturas.saldo-nota.total_neto, facturas.saldo)) AS saldo
 				
 				FROM facturas
 				LEFT JOIN empresas_fiscales ON facturas.id_empresa_fiscal = empresas_fiscales.id
 				LEFT JOIN empresas ON empresas_fiscales.id_empresa = empresas.id
+				LEFT JOIN cuentas ON cuentas.id_empresa = empresas.id
 				LEFT JOIN facturas AS nota ON nota.padre = facturas.id
 				
 				WHERE 1
@@ -876,6 +883,8 @@ class Movimiento_model extends CI_Model {
 				AND facturas.total_neto <= facturas.saldo
 				AND facturas.estado = 2
 				AND facturas.id NOT IN (SELECT id FROM facturas WHERE nota.padre = facturas.id)
+				AND MONTH(facturas.fecha) = MONTH(CURRENT_DATE())  -- Solo facturas del mes actual
+				AND YEAR(facturas.fecha) = YEAR(CURRENT_DATE())    -- Del año actual
 				
 				GROUP BY empresas.codigo, facturas.id_moneda
 				ORDER BY empresas.codigo ASC
@@ -913,6 +922,8 @@ class Movimiento_model extends CI_Model {
 				AND facturas.total_neto <= facturas.saldo
 				AND facturas.estado = 2
 				AND facturas.id NOT IN (SELECT id FROM facturas WHERE nota.padre = facturas.id)
+				AND MONTH(facturas.fecha) = MONTH(CURRENT_DATE())  -- Solo facturas del mes actual
+				AND YEAR(facturas.fecha) = YEAR(CURRENT_DATE())    -- Del año actual
 			";
 
 		
