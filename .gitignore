@@ -50,7 +50,7 @@ Thumbs.db
 *.wmv
 
 # Enviroment
-application/config/cms.php
-application/config/database.php
-application/config/site.php
-application/config/smtp.php
+#application/config/cms.php
+#application/config/database.php
+#application/config/site.php
+#application/config/smtp.php

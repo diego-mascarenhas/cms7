@@ -15,6 +15,11 @@
 	                    </li>
 	                </ol>
 	            </div>
+				<div class="col-xs-4 col-sm-4 col-md-6 col-lg-6">
+                    <div class="title-action">
+                        <a href="<?php echo base_url('/gestion/debito/exportar'); ?>" class="btn btn-primary btn-sm">Crear archivo</a>
+                    </div>
+                </div>
 	        </div>
 			
 			<div class="wrapper wrapper-content animated fadeInRight">
