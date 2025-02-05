@@ -59,7 +59,7 @@
 					<?php echo $_POST['notificacion']; ?>
 					<br><br>
 					Ante cualquier duda puede contactarse con nosotros por email<br>
-					<a href="mailto:administracion@revisionalpha.com" style="color:inherit">administracion@revisionalpha.com</a> o por WhatsApp al <a href="https://wa.me/5491155687301">+54 9 11 5568-7301</a>
+					<a href="mailto:administracion@revisionalpha.com?subject=Consulta sobre la factura <?php echo $_POST['comprobante']; ?>" style="color:inherit">administracion@revisionalpha.com</a> o por WhatsApp al <a href="https://wa.me/5491155687301?text=Hola,%20tengo%20una%20consulta%20sobre%20la%20factura%20<?php echo $_POST['comprobante']; ?>" style="color:inherit">+54 9 11 5568-7301</a>
 					<br><br>
 					Muchas gracias por su comprensi&oacute;n y confianza.</span>
 				</td>
