@@ -67,8 +67,9 @@
 					<span style="color:#FFFFFF;"><strong>IMPORTANTE</strong><br><br>
 					<?php echo $_POST['notificacion']; ?>
 					<br><br>
-					Ante cualquier duda puede contactarse con nosotros a trav&eacute;s de nuestra web:<br>
-					<a href="https://www.revisionalpha.com/contactenos" style="color:inherit">https://www.revisionalpha.com/contactenos</a><br><br>
+					Ante cualquier duda puede contactarse con nosotros por email<br>
+					<a href="mailto:administracion@revisionalpha.com" style="color:inherit">administracion@revisionalpha.com</a> o por WhatsApp al <a href="https://wa.me/5491155687301">+54 9 11 5568-7301</a>
+					<br><br>
 					Muchas gracias por su comprensi&oacute;n y confianza.</span>
 				</td>
 			</tr>
