@@ -48,7 +48,7 @@ class Factura_model extends CI_Model {
 				LEFT JOIN formas_pago ON facturas.id_forma_pago = formas_pago.id
 				
 				WHERE facturas.grupo = ?
-				AND empresas.estado > 0
+				AND empresas.estado > 1
 			";
 	
 	
