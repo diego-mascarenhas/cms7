@@ -408,8 +408,9 @@ class Movimiento_model extends CI_Model {
 				
 				WHERE facturas.grupo = ?
 				AND empresas_fiscales.id_empresa = ?
-				AND (facturas.estado = 2 OR facturas.estado = 4)
-				
+				# AND (facturas.estado = 2 OR facturas.estado = 4)
+				AND (facturas.estado = 2 OR facturas.estado = 4 OR facturas.estado = 1)
+
 				UNION
 				
 				SELECT movimientos.id, movimientos.id_factura, 'MOV' AS tipo, UNIX_TIMESTAMP(movimientos.fecha) AS fecha, movimientos.transaccion AS operacion,
