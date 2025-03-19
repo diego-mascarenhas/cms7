@@ -208,13 +208,12 @@
 		                <div class="ibox <?php echo (isset($detalle['titular'])) ? 'float-e-margins' : 'collapsed'; ?>">
 		                    <div class="ibox-title">
 		                        <h5>Datos para el débito</h5>
-<!--
+
 		                        <div class="ibox-tools">
-		                            <a href="#" class="btn btn-outline btn-xs">
-		                                <i class="fa fa-plus-circle"> Cambiar datos de la cuenta</i>
+		                            <a href="<?php echo base_url('administracion/cuentas/' . (isset($detalle['id_cuenta']) ? 'modificar/' . $detalle['id_cuenta'] : 'ingresar?id_empresa=' . $detalle['id'])); ?>" class="btn btn-outline btn-xs">
+		                                <i class="fa fa-plus-circle"> <?php echo (isset($detalle['id_cuenta'])) ? 'Actualizar' : 'Ingresar'; ?> datos de la cuenta</i>
 		                            </a>
 		                        </div>
--->
 		                    </div>
 		                    <div class="ibox-content">
 		                        <div class="row">

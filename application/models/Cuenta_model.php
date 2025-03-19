@@ -110,7 +110,7 @@ class Cuenta_model extends CI_Model {
 	public function getCuentaDetalle($id)
 	{
 		$sql = "
-				SELECT cuentas.id, cuentas.nombre_cuenta AS cuenta, cuentas.titular, documentos_tipo.documento_tipo, cuentas.numero_documento AS documento, cuentas.cbu, cuentas_tipo.cuenta_tipo, empresas.empresa, cuentas.id_empresa, bancos.nombre_banco AS banco, cuentas_estado.estado, cuentas.username_alta, UNIX_TIMESTAMP(CONVERT_TZ(cuentas.fecha_alta, '+00:00', @@global.time_zone)) AS fecha_alta, cuentas.username_modificacion, UNIX_TIMESTAMP(CONVERT_TZ(cuentas.fecha_modificacion, '+00:00', @@global.time_zone)) AS fecha_modificacion 
+				SELECT cuentas.id, cuentas.nombre_cuenta AS cuenta, cuentas.titular, cuentas.numero_cuenta, documentos_tipo.documento_tipo, cuentas.numero_documento AS documento, cuentas.cbu, cuentas.cbu26, cuentas_tipo.cuenta_tipo, empresas.empresa, cuentas.id_empresa, bancos.nombre_banco AS banco, cuentas_estado.estado, cuentas.username_alta, UNIX_TIMESTAMP(CONVERT_TZ(cuentas.fecha_alta, '+00:00', @@global.time_zone)) AS fecha_alta, cuentas.username_modificacion, UNIX_TIMESTAMP(CONVERT_TZ(cuentas.fecha_modificacion, '+00:00', @@global.time_zone)) AS fecha_modificacion 
 				
 				FROM cuentas
 				
@@ -172,9 +172,11 @@ class Cuenta_model extends CI_Model {
 		}
 		
 		$data['titular'] = $valores['titular'];
+		$data['numero_cuenta'] = $valores['numero_cuenta'];
 		$data['id_documento_tipo'] = $valores['id_documento_tipo'];
 		$data['numero_documento'] = $valores['numero_documento'];
 		$data['cbu'] = $valores['cbu'];
+		$data['cbu26'] = $valores['cbu26'];
 		
 		$data['fecha_alta'] = unix_to_human(now(), true, 'eu');
 		$data['username_alta'] = $this->usuario->username;
@@ -199,9 +201,11 @@ class Cuenta_model extends CI_Model {
 		}
 		
 		if (isset($valores['titular'])) $data['titular'] = $valores['titular'];
+		if (isset($valores['numero_cuenta'])) $data['numero_cuenta'] = $valores['numero_cuenta'];
 		if (isset($valores['id_documento_tipo'])) $data['id_documento_tipo'] = $valores['id_documento_tipo'];
 		if (isset($valores['numero_documento'])) $data['numero_documento'] = $valores['numero_documento'];
 		if (isset($valores['cbu'])) $data['cbu'] = $valores['cbu'];
+		if (isset($valores['cbu26'])) $data['cbu26'] = $valores['cbu26'];
 		
 		$data['fecha_modificacion'] = unix_to_human(now(), true, 'eu');
 		$data['username_modificacion'] = $this->usuario->username;
