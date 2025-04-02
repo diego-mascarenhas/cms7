@@ -33,7 +33,7 @@
 	                    
 	                    <?php if ($factura['id_estado'] == 1 || $factura['id_estado'] == 7) { ?>
 							<?php 
-								if ($this->usuario->id == 475) { ?>
+								if ($this->usuario->id == 475 || $this->usuario->id == 295359) { ?>
                         		<a href="https://billing.revisionalpha.com/facturas/llamafacturarxid/<?php echo $factura['id']; ?>" target="_blank" class="btn btn-white"><i class="fa fa-smile-o"></i> Facturar </a>
 							<?php } else { ?>
 								<a href="http://staging.cms.revisionalpha.com/sistemafacturacion/facturas/llamafacturarxid/<?php echo $factura['id']; ?>" target="_blank" class="btn btn-white"><i class="fa fa-external-link"></i> Facturar </a>
