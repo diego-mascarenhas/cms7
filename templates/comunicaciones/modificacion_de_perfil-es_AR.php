@@ -1,7 +1,7 @@
 <?php include('header.php'); ?>
 <tr>
 	<td>
-		<h2 style="font-size:30px; color:#FF6666; border-bottom:1px solid lightgrey;">Modificaci&oacute;n de datos de perfil</h2>
+		<h2 style="font-size:30px; color:#FF1A1D; border-bottom:1px solid lightgrey;">Modificaci&oacute;n de datos de perfil</h2>
 		<br><br>
 	</td>
 </tr>
@@ -95,7 +95,7 @@
 		<?php } ?>
 		
 		<br>
-		Si usted no ha realizado niguna modificaci&oacute;n, por favor inf&oacute;rmenos de este cambio a trav&eacute;s de nuestro <a href="https://www.revisionalpha.com/contactenos/" style="color:#FF6666;">formulario de contacto</a>.
+		Si usted no ha realizado niguna modificaci&oacute;n, por favor inf&oacute;rmenos de este cambio a trav&eacute;s de nuestro <a href="https://www.revisionalpha.com/contactenos/" style="color:#FF1A1D;">formulario de contacto</a>.
 	</td>
 </tr>
 <?php include('footer.php'); ?>

@@ -11,8 +11,8 @@
 	a:hover { text-decoration:underline; }
 	</style>
 </head>
-<body bgcolor="#f7f7f7" marginheight="0" marginwidth="0">
-	<table width="100%" bgcolor="#f7f7f7" border="0" cellpadding="0" cellspacing="0">
+<body bgcolor="#F5EFEF" marginheight="0" marginwidth="0">
+	<table width="100%" bgcolor="#F5EFEF" border="0" cellpadding="0" cellspacing="0">
 		<tr>
 			<td height="20"></td>
 		</tr>
@@ -61,7 +61,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td height="2px" bgcolor="#FF6666"></td>
+						<td height="2px" bgcolor="#FF1A1D"></td>
 					</tr>
 					<tr>
 						<td align="center">
@@ -71,7 +71,7 @@
 								</tr>
 								<tr>
 									<td>
-										<h2 style="font-size:30px; color:#FF6666; border-bottom:1px solid lightgrey;">Ticket: <?php echo $_POST['asunto']; ?></h2>
+										<h2 style="font-size:30px; color:#FF1A1D; border-bottom:1px solid lightgrey;">Ticket: <?php echo $_POST['asunto']; ?></h2>
 										<br><br>
 									</td>
 								</tr>
@@ -89,7 +89,7 @@
 											style="	font-family: helvetica, arial, verdana, sans-serif !important;
 													width: auto;
 													width: 75px;
-													background: #FF6666;
+													background: #FF1A1D;
 													margin-right: 10px;
 													padding: 10px 20px;
 													font-family: semibold;
@@ -107,7 +107,7 @@
 											style="	font-family: helvetica, arial, verdana, sans-serif !important;
 													width: auto;
 													width: 75px;
-													background: #FF6666;
+													background: #FF1A1D;
 													margin-right: 10px;
 													padding: 10px 20px;
 													font-family: semibold;
@@ -133,14 +133,14 @@
 						</td>
 					</tr>
 					<tr>
-						<td height="10" bgcolor="#FF6666"></td>
+						<td height="10" bgcolor="#FF1A1D"></td>
 					</tr>
 					<tr>
 						<td align="center">
-							<table width="100%" bgcolor="#666666" border="0" cellpadding="0" cellspacing="0">
+							<table width="100%" bgcolor="#2A333D" border="0" cellpadding="0" cellspacing="0">
 								<tr>
 									<td align="center">
-										<table width="660" bgcolor="#666666" border="0" cellpadding="0" cellspacing="0">
+										<table width="660" bgcolor="#2A333D" border="0" cellpadding="0" cellspacing="0">
 											<tr>
 												<td height="25" colspan="2"></td>
 											</tr>
@@ -150,7 +150,7 @@
 													www.revisionalpha.com</a>
 												</td>
 												<td align="right">
-													<span style="color:#FFFFFF"><strong>Cont&aacute;ctenos:</strong> <span style="color:#FFFFFF !important">+54.11 5274.8490</span><br>
+													<span style="color:#FFFFFF"><strong>Cont&aacute;ctenos:</strong> <span style="color:#FFFFFF !important">+54 11.5219.0345</span><br>
 													<strong>Email:</strong> <a href="mailto:administracion@revisionalpha.com?subject=Consulta" style="color:inherit;">administracion@revisionalpha.com</a></span>
 												</td>
 											</tr>

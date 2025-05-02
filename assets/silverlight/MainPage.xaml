@@ -108,13 +108,13 @@
                 </vsm:VisualStateManager.VisualStateGroups>
                 <Grid Margin="11,3,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" 
                   Opacity="1" x:Name="playSymbol" Width="21" Height="22">
-                    <Path Width="14" Height="15" Stretch="Fill" Fill="#FF7F7F7F" 
+                    <Path Width="14" Height="15" Stretch="Fill" Fill="#FF5EFEFF" 
                       Data="F1 M 15.1997,22.542L 29.7776,14.89L 15.2707,6.99886L 15.1997,22.542 Z "/>
                 </Grid>
                 <Grid Margin="11,2,0,0" Opacity="0" x:Name="pauseSymbol" Width="31" Height="15">
-                    <Rectangle Stretch="Fill" Fill="#FF7F7F7F" HorizontalAlignment="Left"
+                    <Rectangle Stretch="Fill" Fill="#FF5EFEFF" HorizontalAlignment="Left"
                            Margin="0,0,0,0" Width="6"/>
-                    <Rectangle Stretch="Fill" Fill="#FF7F7F7F" HorizontalAlignment="Stretch" 
+                    <Rectangle Stretch="Fill" Fill="#FF5EFEFF" HorizontalAlignment="Stretch" 
                            Margin="6,0,13,0" Width="6"/>
                 </Grid>
             </Grid>
@@ -168,7 +168,7 @@
                 <Grid HorizontalAlignment="Left" VerticalAlignment="Top" 
                   Width="17">
                     <Path HorizontalAlignment="Left" Stretch="Fill"
-                      Fill="#FF7F7F7F" Data="F1 M 23.1457,26.5056L 23.1457,33.8944L 25.7913,33.8944L 28.8235,37.4722L 30.5346,37.4722L 30.5665,23.0833L 28.8995,23.0833L 25.8679,26.5056L 23.1457,26.5056 Z "
+                      Fill="#FF5EFEFF" Data="F1 M 23.1457,26.5056L 23.1457,33.8944L 25.7913,33.8944L 28.8235,37.4722L 30.5346,37.4722L 30.5665,23.0833L 28.8995,23.0833L 25.8679,26.5056L 23.1457,26.5056 Z "
                       Width="7.421" Height="14.389" UseLayoutRounding="False" 
                       Margin="0,6.5,0,6.5"/>
 
@@ -176,11 +176,11 @@
                         <Path HorizontalAlignment="Right" VerticalAlignment="Stretch"
                           Width="2.398" 
                           Data="M0.5,0.5 C0.5,0.5 2.5939558,2.7128265 2.5946648,7.0504856 C2.5953746,11.391507 0.50033337,13.889001 0.50033337,13.889001" 
-                          Stretch="Fill" Stroke="#FF7F7F7F" Margin="0,0,-0.398,0" UseLayoutRounding="False"/>
+                          Stretch="Fill" Stroke="#FF5EFEFF" Margin="0,0,-0.398,0" UseLayoutRounding="False"/>
                         <Path HorizontalAlignment="Stretch" Margin="2.4,2.384,2.317,1.584" VerticalAlignment="Stretch" 
-                          Data="M0.5,0.50000006 C0.5,0.50000006 1.4786903,2.1275051 1.4781417,4.9569001 C1.4776551,7.4670725 0.35717732,9.892808 0.35717732,9.892808" Stretch="Fill" Stroke="#FF7F7F7F" UseLayoutRounding="False"/>
+                          Data="M0.5,0.50000006 C0.5,0.50000006 1.4786903,2.1275051 1.4781417,4.9569001 C1.4776551,7.4670725 0.35717732,9.892808 0.35717732,9.892808" Stretch="Fill" Stroke="#FF5EFEFF" UseLayoutRounding="False"/>
                         <Path HorizontalAlignment="Left" Margin="0,4.36,0,3.46" VerticalAlignment="Stretch" Width="1.542" 
-                          Data="M0.5,0.5 C0.5,0.5 1.0412779,1.4903735 1.042276,3.1459465 C1.0429831,4.3189368 0.66544437,6.0685911 0.66544437,6.0685911" Stretch="Fill" Stroke="#FF7F7F7F" d:LayoutOverrides="Width"/>
+                          Data="M0.5,0.5 C0.5,0.5 1.0412779,1.4903735 1.042276,3.1459465 C1.0429831,4.3189368 0.66544437,6.0685911 0.66544437,6.0685911" Stretch="Fill" Stroke="#FF5EFEFF" d:LayoutOverrides="Width"/>
                     </Grid>
                 </Grid>
             </Grid>
@@ -269,7 +269,7 @@
                 <Path Height="14.375" HorizontalAlignment="Stretch" 
                   VerticalAlignment="Bottom" RenderTransformOrigin="0.212389379739761,0.208695650100708" 
                   Data="M10.181361,8.375 L12.844413,11.008244 L14.125,9.7418737 L14.125,14.375 L9.675765,14.374833 L10.906104,13.158273 L8.125,10.408315 L10.181361,8.375 z M3.9666855,8.375 L6,10.431361 L3.3667567,13.094413 L4.6331258,14.375 L0,14.375 L0.00016707927,9.925765 L1.2167276,11.156104 L3.9666855,8.375 z M9.4918737,0 L14.125,0 L14.124833,4.449235 L12.908273,3.2188957 L10.158315,6 L8.125,3.943639 L10.758244,1.2805867 L9.4918737,0 z M0,0 L4.449235,0.00016686507 L3.2188957,1.2167276 L6,3.9666855 L3.943639,6 L1.280587,3.3667567 L0,4.6331258 L0,0 z"
-                  Fill="#FF7F7F7F" Stretch="Fill" Stroke="#FF000000" StrokeThickness="0" />
+                  Fill="#FF5EFEFF" Stretch="Fill" Stroke="#FF000000" StrokeThickness="0" />
             </Button>
         </Grid>
     </Grid>

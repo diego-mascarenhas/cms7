@@ -1,7 +1,7 @@
 <?php include('header.php'); ?>
 <tr>
 	<td>
-		<h2 style="font-size:30px; color:#FF6666; border-bottom:1px solid lightgrey;">Notificaci&oacute;n de Suspensi&oacute;n de Servicios</h2>
+		<h2 style="font-size:30px; color:#FF1A1D; border-bottom:1px solid lightgrey;">Notificaci&oacute;n de Suspensi&oacute;n de Servicios</h2>
 		<br><br>
 	</td>
 </tr>
@@ -34,10 +34,11 @@
 		<strong>Cuenta Corriente:</strong> 12416-2 019-8<br>
 		<strong>CBU:</strong> 00700191 20000012416286<br>
 		<br>
-		Una vez efectuado inf&oacute;rmenos del mismo a trav&eacute;s de nuestro <a href="http://www.revisionalpha.com/contactenos/?message=Aviso de pago realizado" style="color:#FF6666">formulario de contacto</a>.
+		Una vez efectuado inf&oacute;rmenos del mismo a trav&eacute;s de nuestro <a href="http://www.revisionalpha.com/contactenos/?message=Aviso de pago realizado" style="color:#FF1A1D">formulario de contacto</a>.
 		<br>
 		<br>
-		Para ver el estado de sus servicios y el balance de su cuenta puede hacerlo desde el <a href="<?php echo 'https://cms.revisionalpha.com/user/login/?username=' . $_POST['username'] . '&password=' . $_POST['hash'] . '&redirect=https://cms.revisionalpha.com/micuenta/'; ?>" style="color:#FF6666;">&aacute;rea de clientes</a> de nuestro sitio.
+		<!-- Para ver el estado de sus servicios y el balance de su cuenta puede hacerlo desde el <a href="<?php echo 'https://cms.revisionalpha.com/user/login/?username=' . $_POST['username'] . '&password=' . $_POST['hash'] . '&redirect=https://cms.revisionalpha.com/micuenta/'; ?>" style="color:#FF1A1D;">&aacute;rea de clientes</a> de nuestro sitio.-->
+		Para consultar por el estado de sus servicios y balance de su cuenta puede hacerlo a través de nuestro canal exclusivo de <a href="https://api.whatsapp.com/send/?phone=12202137800&text=<?php echo urlencode('Mi usuario es ' . $_POST['username'] . ' y tengo una consulta sobre mi factura ' . $_POST['comprobante']); ?>" style="color:#FF1A1D;">WhatsApp.</a>
 	</td>
 </tr>
 <?php include('footer.php'); ?>

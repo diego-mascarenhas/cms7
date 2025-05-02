@@ -1,7 +1,7 @@
 <?php include('header.php'); ?>
 <tr>
 	<td>
-		<h2 style="font-size:30px; color:#FF6666; border-bottom:1px solid lightgrey;">Factura pr&oacute;xima a vencer</h2>
+		<h2 style="font-size:30px; color:#FF1A1D; border-bottom:1px solid lightgrey;">Factura pr&oacute;xima a vencer</h2>
 		<br><br>
 	</td>
 </tr>
@@ -22,7 +22,7 @@
 			<br>
 		
 		<?php elseif (($_POST['id_forma_pago'] == 13) && ($_POST['id_factura_tipo'] == 15 || $_POST['id_factura_tipo'] == 16)) : ?>
-			Para realizar el pago correspondiente a trav&eacute;s de mercado pago <a href="<?php echo 'https://cms.revisionalpha.com/user/login/?username=' . $_POST['username'] . '&password=' . $_POST['hash'] . '&redirect=https://cms.revisionalpha.com/micuenta/facturas/detalle/' . $_POST['id']; ?>" style="color:#FF6666;">presionando aqu&iacute;.</a>
+			Para realizar el pago correspondiente a trav&eacute;s de mercado pago <a href="<?php echo 'https://cms.revisionalpha.com/user/login/?username=' . $_POST['username'] . '&password=' . $_POST['hash'] . '&redirect=https://cms.revisionalpha.com/micuenta/facturas/detalle/' . $_POST['id']; ?>" style="color:#FF1A1D;">presionando aqu&iacute;.</a>
 			<br>
 			<br>
 			Recuerde que si elige como forma de pago cualquier opci&oacute;n que no sea tarjeta de cr&eacute;dito deber&aacute; contemplar los plazos de acreditaci&oacute;n correspondientes al m&eacute;todo elegido en relaci&oacute;n al vencimiento de la factura para evitar cualquier inconveniente.<br>
@@ -30,9 +30,8 @@
 			
 		<?php endif; ?>
 			
-			Para ver el estado de sus servicios y el balance de su cuenta puede hacerlo desde el <a href="<?php echo 'https://cms.revisionalpha.com/user/login/?username=' . $_POST['username'] . '&password=' . $_POST['hash'] . '&redirect=https://cms.revisionalpha.com/micuenta/'; ?>" style="color:#FF6666;">&aacute;rea de clientes</a> de nuestro sitio.
-			<br>
-			
+		<!-- Para ver el estado de sus servicios y el balance de su cuenta puede hacerlo desde el <a href="<?php echo 'https://cms.revisionalpha.com/user/login/?username=' . $_POST['username'] . '&password=' . $_POST['hash'] . '&redirect=https://cms.revisionalpha.com/micuenta/'; ?>" style="color:#FF1A1D;">&aacute;rea de clientes</a> de nuestro sitio.-->
+		Para consultar por el estado de sus servicios y balance de su cuenta puede hacerlo a través de nuestro canal exclusivo de <a href="https://api.whatsapp.com/send/?phone=12202137800&text=<?php echo urlencode('Mi usuario es ' . $_POST['username'] . ' y tengo una consulta sobre mi factura ' . $_POST['comprobante']); ?>" style="color:#FF1A1D;">WhatsApp.</a>		
 	</td>
 </tr>
 <?php include('footer.php'); ?>

@@ -11,8 +11,8 @@
 	a:hover { text-decoration:underline; }
 	</style>
 </head>
-<body bgcolor="#f7f7f7" marginheight="0" marginwidth="0">
-	<table width="100%" bgcolor="#f7f7f7" border="0" cellpadding="0" cellspacing="0">
+<body bgcolor="#F5EFEF" marginheight="0" marginwidth="0">
+	<table width="100%" bgcolor="#F5EFEF" border="0" cellpadding="0" cellspacing="0">
 		<tr>
 			<td height="20"></td>
 		</tr>
@@ -61,7 +61,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td height="2px" bgcolor="#FF6666"></td>
+						<td height="2px" bgcolor="#FF1A1D"></td>
 					</tr>
 					<tr>
 						<td align="center">

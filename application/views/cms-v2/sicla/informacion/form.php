@@ -188,15 +188,15 @@
 										<h2 class="b-r-sm bg-muted p-xs pull-left full-width">SEO</h2>
 										<div class="form-group m-b-md pull-left full-width m-t-md">
 						                    <div class="col-md-4">
-						                    	<div class="ibox-title" style="background:#f7f7f7;"><h5>Título</h5> <button type="button" class="btn btn-primary btn-circle m-l-md" data-toggle="tooltip" data-placement="top" data-original-title="Título de la página, deberá contener no más de 70 caracteres." title=""> <i class="fa fa-question"></i></button></div>
+						                    	<div class="ibox-title" style="background:#F5EFEF;"><h5>Título</h5> <button type="button" class="btn btn-primary btn-circle m-l-md" data-toggle="tooltip" data-placement="top" data-original-title="Título de la página, deberá contener no más de 70 caracteres." title=""> <i class="fa fa-question"></i></button></div>
 							                    <div class="ibox-content no-padding"><textarea class="form-control" name="seo_titulo_<?php echo $idioma['extension'];?>" rows="5"><?php echo(isset($item['seo_titulo'])) ? $item['seo_titulo']: null?></textarea></div>
 						                    </div>
 						                    <div class="col-md-4">
-						                    	<div class="ibox-title" style="background:#f7f7f7;"><h5>Descripci&oacute;n</h5> <button type="button" class="btn btn-primary btn-circle m-l-md" data-toggle="tooltip" data-placement="top" data-original-title="Descripción de la página, entre 70 y 250 caracteres (incluyendo espacios y signos de puntuación)." title=""> <i class="fa fa-question"></i></button></div>
+						                    	<div class="ibox-title" style="background:#F5EFEF;"><h5>Descripci&oacute;n</h5> <button type="button" class="btn btn-primary btn-circle m-l-md" data-toggle="tooltip" data-placement="top" data-original-title="Descripción de la página, entre 70 y 250 caracteres (incluyendo espacios y signos de puntuación)." title=""> <i class="fa fa-question"></i></button></div>
 							                    <div class="ibox-content no-padding"><textarea class="form-control" name="seo_descripcion_<?php echo $idioma['extension'];?>" rows="5"><?php echo(isset($item['seo_descripcion'])) ? $item['seo_descripcion']: null?></textarea></div>
 						                    </div>
 						                    <div class="col-md-4">
-						                    	<div class="ibox-title" style="background:#f7f7f7;"><h5>Keywords</h5> <button type="button" class="btn btn-primary btn-circle m-l-md" data-toggle="tooltip" data-placement="top" data-original-title="Si bien están prácticamente en desuso, son palabras o frases que se asocian al contenido de la página. Máximo 10, separadas por coma y no más de 600 caracteres (incluyendo espacios y signos de puntuación)." title=""> <i class="fa fa-question"></i></button></div>
+						                    	<div class="ibox-title" style="background:#F5EFEF;"><h5>Keywords</h5> <button type="button" class="btn btn-primary btn-circle m-l-md" data-toggle="tooltip" data-placement="top" data-original-title="Si bien están prácticamente en desuso, son palabras o frases que se asocian al contenido de la página. Máximo 10, separadas por coma y no más de 600 caracteres (incluyendo espacios y signos de puntuación)." title=""> <i class="fa fa-question"></i></button></div>
 							                    <div class="ibox-content no-padding"><textarea class="form-control" name="seo_keywords_<?php echo $idioma['extension'];?>" rows="5"><?php echo(isset($item['seo_keywords'])) ? $item['seo_keywords']: null?></textarea></div>
 						                    </div>
 					                 	</div>

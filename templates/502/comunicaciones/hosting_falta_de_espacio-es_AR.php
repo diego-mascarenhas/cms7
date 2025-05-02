@@ -1,7 +1,7 @@
 <?php include('header.php'); ?>
 <tr>
 	<td>
-		<h2 style="font-size:30px; color:#FF6666; border-bottom:1px solid lightgrey;">Notificación de uso de disco</h2>
+		<h2 style="font-size:30px; color:#FF1A1D; border-bottom:1px solid lightgrey;">Notificación de uso de disco</h2>
 		<br><br>
 	</td>
 </tr>
@@ -30,7 +30,7 @@ Dar de baja archivos innecesarios
 En el caso que no se quiera mantener con el nuevo plan, se debe informar por medio de un ticket que no están conforme con este cambio antes que finalice el mes en curso.
 		<br>
 		<br>
-		<a href="<?php echo 'https://cms.revisionalpha.com/user/login/?username=' . $_POST['username'] . '&password=' . $_POST['hash'] . '&redirect=https://cms.revisionalpha.com/tickets/ingresar/' . $_POST['id']; ?>" style="color:#FF6666;">Confirmar solicitud de alta de plan</a>
+		<a href="<?php echo 'https://cms.revisionalpha.com/user/login/?username=' . $_POST['username'] . '&password=' . $_POST['hash'] . '&redirect=https://cms.revisionalpha.com/tickets/ingresar/' . $_POST['id']; ?>" style="color:#FF1A1D;">Confirmar solicitud de alta de plan</a>
 	</td>
 </tr>
 <?php include('footer.php'); ?>

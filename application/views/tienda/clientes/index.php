@@ -1,7 +1,7 @@
 <style>
 .table-responsive { padding-bottom:200px;}
 @media screen and (max-width: 767px) { 
-.table-responsive { border: 1px solid #f7f7f7; }
+.table-responsive { border: 1px solid #F5EFEF; }
 }
 </style>
 <link href="<?php echo base_url('assets/css/tienda.css'); ?>" rel="stylesheet" type="text/css">

@@ -6,7 +6,7 @@
 										<strong>ADMINISTRACI&Oacute;N</strong> | REVISION ALPHA<br>
 										Donado 840, CABA | +54.11 6632.2134<br>
 										Miami Beach, Fl 33119 | +001.305 534.5678<br>
-                                        González Besada 39 Oviedo, Asturias | +34 722 37 28 58</span>
+                                        González Besada 39 Oviedo, Asturias | +34 722.372.858</span>
 									</td>
 								</tr>
 								<tr>
@@ -16,14 +16,14 @@
 						</td>
 					</tr>
 					<tr>
-						<td height="10" bgcolor="#FF6666"></td>
+						<td height="10" bgcolor="#FF1A1D"></td>
 					</tr>
 					<tr>
 						<td align="center">
-							<table width="100%" bgcolor="#666666" border="0" cellpadding="0" cellspacing="0">
+							<table width="100%" bgcolor="#2A333D" border="0" cellpadding="0" cellspacing="0">
 								<tr>
 									<td align="center">
-										<table width="660" bgcolor="#666666" border="0" cellpadding="0" cellspacing="0">
+										<table width="660" bgcolor="#2A333D" border="0" cellpadding="0" cellspacing="0">
 											<tr>
 												<td height="25" colspan="2"></td>
 											</tr>

@@ -1,7 +1,7 @@
 <?php include('header.php'); ?>
 <tr>
 	<td>
-		<h2 style="font-size:30px; color:#FF6666; border-bottom:1px solid lightgrey;"><?php echo $_POST['titulo']; ?></h2>
+		<h2 style="font-size:30px; color:#FF1A1D; border-bottom:1px solid lightgrey;"><?php echo $_POST['titulo']; ?></h2>
 		<br><br>
 	</td>
 </tr>

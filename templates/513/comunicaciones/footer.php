@@ -4,9 +4,9 @@
 										Atte.<br>
 										<span>--<br>
 										<strong>ADMINISTRACI&Oacute;N</strong> | PEDIMOS FÁCIL<br>
-										Vuelta de Obligado 2443, oficina 403. CABA, ARGENTINA | +54.11 5274.8490<br>
+										Vuelta de Obligado 2443, oficina 403. CABA, ARGENTINA | +54 11.5219.0345<br>
 										Miami Beach, Fl 33119, US | +001.305 534.5678<br>
-                                        González Besada 39 Oviedo, Asturias | +34 722 37 28 58</span>
+                                        González Besada 39 Oviedo, Asturias | +34 722.372.858</span>
 									</td>
 								</tr>
 								<!-- dos br -->
@@ -39,7 +39,7 @@
 													www.pedimosfacil.com</a>
 												</td>
 												<td align="right">
-													<span style="color:#FFFFFF"><strong>Cont&aacute;ctenos:</strong> <span style="color:#FFFFFF !important">+54.11 5274.8490</span><br>
+													<span style="color:#FFFFFF"><strong>Cont&aacute;ctenos:</strong> <span style="color:#FFFFFF !important">+54 11.5219.0345</span><br>
 													<!-- cambio de texto -->
 													<strong>Email:</strong> <a href="mailto:administracion@pedimosfacil.com?subject=Consulta" style="color:inherit;">administracion@pedimosfacil.com</a></span>
 												</td>
