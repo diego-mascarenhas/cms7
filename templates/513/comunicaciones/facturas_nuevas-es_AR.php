@@ -56,22 +56,36 @@
 			
 		<?php endif; ?>
 		
-		<!-- Para ver el estado de sus servicios y el balance de su cuenta puede hacerlo desde el <a href="<?php echo 'https://cms.revisionalpha.com/user/login/?username=' . $_POST['username'] . '&password=' . $_POST['hash'] . '&redirect=https://cms.revisionalpha.com/micuenta/'; ?>" style="color:#FF1A1D;">&aacute;rea de clientes</a> de nuestro sitio.-->
-		Para consultar por el estado de sus servicios y balance de su cuenta puede hacerlo a través de nuestro canal exclusivo de <a href="https://api.whatsapp.com/send/?phone=12202137800&text=<?php echo urlencode('Mi usuario es ' . $_POST['username'] . ' y tengo una consulta sobre mi factura ' . $_POST['comprobante']); ?>" style="color:#FF1A1D;">WhatsApp.</a>
+		Para ver el estado de sus servicios y el balance de su cuenta puede hacerlo desde el <a href="<?php echo 'https://cms.revisionalpha.com/user/login/?username=' . $_POST['username'] . '&password=' . $_POST['hash'] . '&redirect=https://cms.revisionalpha.com/micuenta/'; ?>" style="color:#FF1A1D;">&aacute;rea de clientes</a> de nuestro sitio.
+		<!-- Para consultar por el estado de sus servicios y balance de su cuenta puede hacerlo a través de nuestro canal exclusivo de <a href="https://api.whatsapp.com/send/?phone=12202137800&text=<?php echo urlencode('Mi usuario es ' . $_POST['username'] . ' y tengo una consulta sobre mi factura ' . $_POST['comprobante']); ?>" style="color:#FF1A1D;">WhatsApp.</a> -->
 		<br>
+		<br>
+		<div style="color:#39A0ED;"><strong>¡Nos estamos renovando para ti!</strong>
+		<br>
+		Para darte un soporte más ágil y personalizado, necesitamos que te registres en nuestro nuevo sistema de administración.
+		<br>
+		<br>
+		📍 Puedes hacerlo desde nuestro sitio web tocando el botón de WhatsApp, o directamente en este enlace:
+		<br>
+		👉 <a href="https://api.whatsapp.com/send/?phone=12202137800&text=Quiero+registrarme" style="color:inherit;">WhatsApp +1 220 213 7800</a>
+		<br>
+		<br>
+		🎯 Muy pronto lanzaremos nuevos servicios que te ayudarán a gestionar tus activos de forma más eficiente.
+		<br>
+		<br>
+		No te quedes afuera. ¡Regístrate y sé el primero en aprovechar estas mejoras!
+		</div>	
+		
 		
 		<?php if (!empty($_POST['notificacion'])) : ?>
 		<br><br>
-		<table width="100%" bgcolor="blueviolet" border="0" cellpadding="0" cellspacing="10">
+		<table width="100%" bgcolor="#39A0ED" border="0" cellpadding="0" cellspacing="10">
 			<tr>
 				<td>
-					<span style="color:#FFFFFF;"><strong>IMPORTANTE</strong>
-					<?php echo $_POST['notificacion']; ?>
-					<br><br>
-					Ante cualquier duda puede contactarse con nosotros por email<br>
-					<a href="mailto:administracion@revisionalpha.com?subject=Consulta sobre la factura <?php echo $_POST['comprobante']; ?>" style="color:inherit">administracion@revisionalpha.com</a> o por WhatsApp al <a href="https://wa.me/5491155687301?text=Hola,%20tengo%20una%20consulta%20sobre%20la%20factura%20<?php echo $_POST['comprobante']; ?>" style="color:inherit">+54 9 11 5568-7301</a>
-					<br><br>
-					Muchas gracias por su comprensi&oacute;n y confianza.</span>
+					<span style="color:#FFFFFF;">
+						<strong>IMPORTANTE</strong>
+						<?php echo $_POST['notificacion']; ?>
+					</span>
 				</td>
 			</tr>
 		</table>
