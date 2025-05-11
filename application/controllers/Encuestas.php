@@ -327,6 +327,10 @@ class Encuestas extends MY_Controller {
 			$data['detalle'] = $this->evento_model->detalleEvento($id);
 
 			$parametros['id_evento'] = $id;
+			if(isset($data['detalle']['id_elearning']))
+			{
+				$parametros['id_tipo'] = 2;
+			}
 			$data['listado'] = $this->evento_model->getContactos($parametros);
 		
 			$this->load->view('header', array('buscador'=>true));

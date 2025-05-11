@@ -54,3 +54,5 @@ Thumbs.db
 #application/config/database.php
 #application/config/site.php
 #application/config/smtp.php
+application/cache/
+application/logs/

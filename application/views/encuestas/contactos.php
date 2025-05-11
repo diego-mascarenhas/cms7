@@ -33,8 +33,12 @@
 					                        <th>Nombre</th>
 					                        <th>Apellido</th>
 					                        <th>Email</th>
+					                        <?php if(isset($detalle['id_elearning'])) { ?>
+					                        <th>Certific&oacute;</th>
+					                        <?php } else { ?>
 					                        <th>Estado</th>
 						                    <th>Acciones</th>
+					                        <?php } ?>
 					                    </tr>
 					                    </thead>
 					                    <tbody>
@@ -45,13 +49,17 @@
 													<td><?php echo $lista['nombre']; ?></td>
 													<td><?php echo $lista['apellido']; ?></td>
 													<td><?php echo $lista['email']; ?></td>
+													<?php if(isset($detalle['id_elearning'])) { ?>
+													<td><?php echo ($lista['certificado'] == 1) ? 'S&iacute;' : 'No'; ?></td>
+													<?php } else { ?>
 													<td><?php echo ($lista['estado'] == 1) ? 'Inactivo' : 'Activo'; ?></td>
 													<td>
 														<?php if($lista['certificado'] < 1) { ?><a title="Eliminar" id="item" href="#" data-toggle="modal" data-seccion="<?php echo $lista['nombre'].' '.$lista['apellido'];?>?" data-estado="<?php echo $lista['estado'];?>" data-id="<?php echo $lista['id'];?>" data-evento="<?php echo $detalle['id'];?>" data-target="#myModalEliminarItem" class="sepV_a btn btn-primary btn-sm"><i class="fa fa-minus-circle"></i> Eliminar</a></td>
 														<?php } else { ?>
-														El usuario realiz√≥ la certificaci√≥n.
+														El usuario realiz®Æ la certificaci®Æn.
 														<?php } ?>
 													</td>
+													<?php } ?>
 						                    	</tr>
 											<?php } ?>	
 										<?php } ?>

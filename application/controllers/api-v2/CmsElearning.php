@@ -646,6 +646,34 @@ class CmsElearning extends REST_Controller {
         }
     }
 
+    public function verificar_certificado_get($id_contacto, $id_producto)
+    {
+		$this->load->model('cms-v2/elearning/pedidos_model');
+		$parametros['id_contacto'] = $id_contacto;
+		$parametros['id_producto'] = $id_producto;
+
+		$data = $this->pedidos_model->verificarCertificado($parametros);
+		if (isset($data['error']))
+        {
+	        $this->response([
+                'status' => false,
+                'message' => $data['error']
+            ], REST_Controller::HTTP_FORBIDDEN);
+            
+        }
+        elseif (isset($data))
+        {
+            $this->response($data, REST_Controller::HTTP_OK);
+        }
+        else
+        {
+            $this->response([
+                'status' => false,
+                'message' => 'No se encontraron registros'
+            ], REST_Controller::HTTP_NOT_FOUND);
+        }
+    }
+    
     public function archivo_get($id, $idioma)
     {
 		$this->load->model('cms-v2/elearning/elearning_model');

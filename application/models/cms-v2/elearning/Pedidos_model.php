@@ -562,17 +562,24 @@ class Pedidos_model extends CI_Model {
 		$where = "id = ".$variables['id'];
 		$res = $this->db->update('con_carro_pedidos', $datos, $where);
 		
-		if($variables['estado'] == 8)
-		{
-			$sql = "SELECT id, estado";
-			$sql .= " FROM con_carro_pedidos_items";
-			$sql .= " WHERE id_con_car_pedido = ".$variables['id'];
-			$query = $this->db->query($sql);
-			$items = $query->row_array();
+		$sql = "SELECT id, estado";
+		$sql .= " FROM con_carro_pedidos_items";
+		$sql .= " WHERE id_con_car_pedido = ".$variables['id'];
+		$query = $this->db->query($sql);
+		$items = $query->row_array();
 
+		if($items)
+		{
 			foreach($items as $item)
 			{
-				$dato['estado'] = 1;
+				if(($variables['estado'] == 8) || ($variables['estado'] == 5))
+				{
+					$dato['estado'] = 1;
+				}
+				elseif(($variables['estado'] == 2) || ($variables['estado'] == 7))
+				{
+					$dato['estado'] = 2;
+				}
 				$dato['fecha_modificacion'] = unix_to_human(time(), TRUE, 'eu');
 				$dato['user_modificacion'] = $this->usuario->id;
 				$where1 = "id_con_car_pedido = ".$variables['id'];
@@ -607,7 +614,7 @@ class Pedidos_model extends CI_Model {
 			$sql = "SELECT con_carro_pedidos_items.id_producto";
 			$sql .= " FROM con_carro_pedidos_items";
 			$sql .= " WHERE con_carro_pedidos_items.id_con_car_pedido = ".$valores['id_pedido'];
-			$sql .= " AND con_carro_pedidos_items.estado = 2";
+			$sql .= " AND (con_carro_pedidos_items.estado = 2 || con_carro_pedidos_items.estado = 7)";
 			$query = $this->db->query($sql);
 			$items = $query->result_array();
 
@@ -763,6 +770,30 @@ class Pedidos_model extends CI_Model {
 		}
 		return (!empty($res)) ? $res : null;
 	}
+
+	/* VERIFICAR CERTIFICADO */
+	public function verificarCertificado($parametros)
+	{
+		$sql = "SELECT con_rel_pedido_contactos.*";
+ 		$sql .= " FROM con_rel_pedido_contactos";
+		$sql .= " LEFT JOIN con_elearning ON con_elearning.id = con_rel_pedido_contactos.id_producto";
+		$sql .= " WHERE con_elearning.grupo = ?";
+		$sql .= " AND con_elearning.id_empresa = ?";
+		$placeholders[] = $this->usuario->grupo;
+		$placeholders[] = $this->usuario->id_empresa;
+ 		$sql .= " AND con_rel_pedido_contactos.id_contacto = ?";
+		$placeholders[] = $parametros['id_contacto'];
+		$sql .= " AND con_rel_pedido_contactos.id_producto = ?";
+		$placeholders[] = $parametros['id_producto'];
+		$sql .= " ORDER BY id ASC LIMIT 1";
+
+		$query = $this->db->query($sql, $placeholders);
+		if (!isset($res['error']) && $query)
+		{
+			$res = $query->row_array();
+		}
+		return (!empty($res)) ? $res : null;
+	}
 	
 	public function ingresarCertificado($variables)
 	{
@@ -857,11 +888,13 @@ class Pedidos_model extends CI_Model {
 			$sql .= " AND id = ?";
 			$placeholders[] = $parametros['id_pedido'];
 		}
+/*
 		if (isset($parametros['id_contacto']))
 		{
 			$sql .= " AND id_contacto = ?";
 			$placeholders[] = $parametros['id_contacto'];
 		}
+*/
 
 		if (isset($parametros['estado']))
 		{

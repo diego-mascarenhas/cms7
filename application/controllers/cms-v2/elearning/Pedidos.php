@@ -319,7 +319,7 @@ class Pedidos extends MY_Controller {
 			$this->load->library('form_validation');
 			$this->config->set_item('language', $this->usuario->idioma);
 			$this->form_validation->set_rules('subir', 'subir', 'required', array('required' => 'Debe ingresar un archivo csv.'));
-			
+
 			if (empty($_FILES['archivo']['name']))
 			{
 			    $this->form_validation->set_rules('archivo', 'Archivo', 'required', array('required' => 'Debe ingresar un archivo csv.'));
@@ -330,7 +330,7 @@ class Pedidos extends MY_Controller {
 				{
 				    $this->form_validation->set_rules('archivo', 'Archivo', 'required', array('required' => 'Debe ingresar un archivo csv.'));
 				}
-				elseif($_FILES['archivo']['size'] > 1024)
+				elseif($_FILES['archivo']['size'] > 1000000)
 				{
 				    $this->form_validation->set_rules('archivo', 'Archivo', 'required', array('required' => 'El archivo es muy pesado, debe pesar menos de 1MB.'));
 				}

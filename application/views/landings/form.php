@@ -78,13 +78,13 @@
 	                    </div>
 	                    <div class="ibox-content" style="float: left; width:100%;">
 							<div class="col-lg-6">
-			                    <div class="ibox-title" style="background:#F5EFEF;"><h5>Contenido</h5></div>
+			                    <div class="ibox-title" style="background:#f7f7f7;"><h5>Contenido</h5></div>
 		                    	<div class="ibox-content no-padding">
 			                    	<textarea cols="80" id="codigo" name="codigo" rows="10" class="ckeditor"><?php echo (isset($detalle['codigo'])) ? htmlspecialchars($detalle['codigo']): null; ?></textarea>
 			                    </div>
 							</div>
 							<div class="col-lg-6">
-			                    <div class="ibox-title" style="background:#F5EFEF;"><h5>Contenido Thank You Page</h5></div>
+			                    <div class="ibox-title" style="background:#f7f7f7;"><h5>Contenido Thank You Page</h5></div>
 		                    	<div class="ibox-content no-padding">
 			                    	<textarea cols="80" id="codigo_gracias" name="codigo_gracias" rows="10" class="ckeditor"><?php echo (isset($detalle['codigo_gracias'])) ? htmlspecialchars($detalle['codigo_gracias']): null; ?></textarea>
 			                    </div>
