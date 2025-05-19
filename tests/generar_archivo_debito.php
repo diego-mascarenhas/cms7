@@ -1,8 +1,9 @@
 <?php
 
 /**
- * Standalone script to generate the debit file
+ * Standalone script to generate the debit file with CBU validation
  * This replicates the functionality of the exportar method in the Debito controller
+ * with added CBU validation and correction
  */
 
 // Load database configuration
@@ -10,6 +11,51 @@ require_once 'db_config.php';
 
 // Optional date parameter (format: YYYYMMDD)
 $fechaVto = isset($argv[1]) ? $argv[1] : null;
+
+/**
+ * Normaliza un CBU en formato variable a formato SNP (26 caracteres)
+ * 
+ * @param string $cbu El CBU en formato variable
+ * @return string El CBU normalizado
+ */
+function normalizarCBU($cbu) {
+    // Eliminar cualquier carácter no numérico
+    $cbu = preg_replace('/[^0-9]/', '', $cbu);
+    
+    // Si el CBU tiene 22 caracteres (formato Banelco), convertirlo a formato SNP (26 caracteres)
+    if (strlen($cbu) == 22) {
+        // Según documento: Formato SNP (26 caracteres): 0007SSSX000TM00FFFFFFFFABY
+        // Se agrega un '0' al inicio y tres '0' al final
+        $cbu = '0' . $cbu . '000';
+    } 
+    // Si tiene una longitud diferente, intentar corregirlo
+    else if (strlen($cbu) != 26) {
+        if (strlen($cbu) < 26) {
+            // Rellenar con ceros a la derecha
+            $cbu = str_pad($cbu, 26, '0', STR_PAD_RIGHT);
+        } else if (strlen($cbu) > 26) {
+            // Truncar a 26 caracteres
+            $cbu = substr($cbu, 0, 26);
+        }
+    }
+    
+    return $cbu;
+}
+
+/**
+ * Verifica si un CBU cumple con el formato SNP (validación básica)
+ * 
+ * @param string $cbu El CBU a validar
+ * @return bool Si el CBU es válido o no
+ */
+function verificarFormatoCBU($cbu) {
+    // Comprobar longitud y que solo contenga dígitos
+    if (strlen($cbu) != 26 || !ctype_digit($cbu)) {
+        return false;
+    }
+    
+    return true;
+}
 
 // Connect to database
 try {
@@ -33,7 +79,8 @@ try {
         SELECT empresas.codigo, 
                 empresas.empresa, 
                 empresas.id AS id_empresa, 
-                cuentas.cbu26 as cbu, 
+                cuentas.cbu,
+                cuentas.cbu26, 
                 UNIX_TIMESTAMP(CONVERT_TZ(facturas.fecha, '-03:00', @@global.time_zone)) AS fecha, 
                 COUNT(facturas.id) AS cantidad, 
                 SUM(IF(nota.total_neto, facturas.saldo-nota.total_neto, facturas.saldo)) AS saldo
@@ -63,9 +110,33 @@ try {
         throw new Exception("Debits query failed: " . $mysqli->error);
     }
 
-    // Convert result to array
+    // Convert result to array and normalize CBUs
     $debitos = [];
+    $cbuProblemas = [];
+    $cbuCorregidos = 0;
+    
     while ($row = $result_debitos->fetch_assoc()) {
+        // Determinar qué CBU usar y normalizarlo
+        $cbuOriginal = !empty($row['cbu26']) ? $row['cbu26'] : $row['cbu'];
+        $cbuNormalizado = normalizarCBU($cbuOriginal);
+        
+        // Verificar si el CBU es válido después de normalizar
+        if (!verificarFormatoCBU($cbuNormalizado)) {
+            $cbuProblemas[] = [
+                'empresa' => $row['empresa'],
+                'codigo' => $row['codigo'],
+                'cbu_original' => $cbuOriginal,
+                'cbu_normalizado' => $cbuNormalizado
+            ];
+        }
+        
+        // Si el CBU normalizado es diferente al original, contar como corregido
+        if ($cbuNormalizado !== $cbuOriginal) {
+            $cbuCorregidos++;
+        }
+        
+        // Agregar el CBU normalizado al registro
+        $row['cbu'] = $cbuNormalizado;
         $debitos[] = $row;
     }
 
@@ -162,9 +233,20 @@ try {
     if (php_sapi_name() === 'cli') {
         $filename = 'DEBITOS_' . date('Ymd') . '.txt';
         file_put_contents($filename, $contenido);
-        echo "File generated: $filename\n";
-        echo "Total records: $cantidadRegistros\n";
-        echo "Total amount: $total\n";
+        echo "Archivo generado: $filename\n";
+        echo "Total de registros: $cantidadRegistros\n";
+        echo "Total monto: $total\n";
+        echo "CBUs corregidos: $cbuCorregidos\n";
+        
+        // Mostrar CBUs con problemas
+        if (count($cbuProblemas) > 0) {
+            echo "\n=== CBUs con posibles problemas ===\n";
+            foreach ($cbuProblemas as $problema) {
+                echo "Empresa: {$problema['empresa']} (Código: {$problema['codigo']})\n";
+                echo "CBU Original: {$problema['cbu_original']}\n";
+                echo "CBU Normalizado: {$problema['cbu_normalizado']}\n\n";
+            }
+        }
     } 
     // If running from web, set headers for download
     else {
