@@ -6,6 +6,9 @@ class MY_Controller extends CI_Controller {
 	{
 		parent::__construct();
 
+		// Load simple session first
+		$this->load->library('simple_session');
+
 		// Verify session directory exists
 		$sess_path = $this->config->item('sess_save_path');
 		if (!is_dir($sess_path)) {
@@ -15,7 +18,29 @@ class MY_Controller extends CI_Controller {
 		// Log session state for debugging
 		$this->log_session_state();
 
-		if ($this->session->has_userdata('usuario'))
+		// Check for user in simple session first
+		$simple_usuario = $this->simple_session->get('usuario');
+		if ($simple_usuario && is_object($simple_usuario) && 
+		   (!$this->session->has_userdata('usuario') || empty($this->session->userdata('usuario')))) {
+			// Transfer from simple session to CI session
+			$this->session->set_userdata('usuario', $simple_usuario);
+			$this->session->set_userdata('logged_in', true);
+			$this->session->set_userdata('reseller', $simple_usuario->id);
+			$this->usuario = $simple_usuario;
+			
+			// Load language
+			if (isset($simple_usuario->idioma)) {
+				$this->session->set_userdata('lang', $simple_usuario->idioma);
+				$this->lang->load('site', $simple_usuario->idioma);
+			}
+			
+			// Log transfer
+			$this->load->helper('file');
+			$log_message = date('Y-m-d H:i:s') . " - MY_CONTROLLER TRANSFERRED FROM SIMPLE SESSION: User ID: " . $simple_usuario->id . "\n";
+			write_file(FCPATH . 'application/logs/session_transfer.log', $log_message, 'a');
+		}
+		// Check standard CI session
+		elseif ($this->session->has_userdata('usuario'))
 		{
 			$this->usuario = $this->session->userdata('usuario');
 			
@@ -102,7 +127,31 @@ class MY_Controller extends CI_Controller {
 	 */
 	private function recover_session()
 	{
-		// If we have reseller ID, use that to recover
+		// First try to recover from simple session if available
+		if (class_exists('Simple_session')) {
+			$this->load->library('simple_session');
+			if ($this->simple_session->has('usuario')) {
+				$user = $this->simple_session->get('usuario');
+				if ($user && isset($user->id)) {
+					// Log the recovery attempt
+					$this->load->helper('file');
+					$log_message = date('Y-m-d H:i:s') . " - SIMPLE SESSION RECOVERY: User ID: " . $user->id . "\n";
+					write_file(FCPATH . 'application/logs/session_recovery.log', $log_message, 'a');
+					
+					// Store in CI session
+					$this->session->set_userdata('usuario', $user);
+					$this->session->set_userdata('logged_in', true);
+					$this->session->set_userdata('reseller', $user->id);
+					
+					// Use object in this request
+					$this->usuario = $user;
+					
+					return true;
+				}
+			}
+		}
+		
+		// If simple session recovery failed, try from reseller ID
 		if ($this->session->has_userdata('reseller')) {
 			$reseller_id = $this->session->userdata('reseller');
 			
@@ -198,6 +247,27 @@ class MY_Controller extends CI_Controller {
      */
     protected function check_session_integrity()
     {
+        // Check if we need to recover from simple session
+        if (class_exists('Simple_session')) {
+            $this->load->library('simple_session');
+            $simple_usuario = $this->simple_session->get('usuario');
+            
+            if ($simple_usuario && (!$this->session->has_userdata('usuario') || empty($this->session->userdata('usuario')))) {
+                // We have usuario in simple session but not in CI session - restore it
+                $this->session->set_userdata('usuario', $simple_usuario);
+                $this->session->set_userdata('logged_in', true);
+                $this->session->set_userdata('reseller', $simple_usuario->id);
+                $this->usuario = $simple_usuario;
+                
+                // Log recovery
+                $this->load->helper('file');
+                $log_message = date('Y-m-d H:i:s') . " - INTEGRITY RECOVERY FROM SIMPLE SESSION: User ID: " . $simple_usuario->id . "\n";
+                write_file(FCPATH . 'application/logs/session_integrity.log', $log_message, 'a');
+                
+                return true;
+            }
+        }
+        
         // If we have a session ID but no user data, try to restore it
         if ($this->session->session_id && !$this->session->has_userdata('usuario') && $this->session->has_userdata('reseller')) {
             $reseller_id = $this->session->userdata('reseller');

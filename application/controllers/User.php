@@ -7,6 +7,7 @@ class User extends MY_Controller {
 	{
 		parent::__construct();
 		$this->load->model('user_model');
+		$this->load->library('simple_session');
 	}
 
 
@@ -63,8 +64,37 @@ class User extends MY_Controller {
 					$log_message = date('Y-m-d H:i:s') . " - Login: User ID: " . $user->id . "\n";
 					file_put_contents(FCPATH . 'application/logs/session_debug.log', $log_message, FILE_APPEND);
 					
-					// Use the new safe storage method
+					// SIMPLIFIED SESSION IMPLEMENTATION
+					// 1. Store in simple_session
+					$this->simple_session->set('usuario', $user);
+					$this->simple_session->set('logged_in', true);
+					$this->simple_session->set('reseller', $user->id);
+					
+					// 2. Store in PHP native session as backup
+					$_SESSION['usuario'] = $user;
+					$_SESSION['logged_in'] = true;
+					$_SESSION['reseller'] = $user->id;
+					
+					// 3. Store in CodeIgniter session
+					$this->session->set_userdata('usuario', $user);
+					$this->session->set_userdata('logged_in', true);
+					$this->session->set_userdata('reseller', $user->id);
+					
+					// 4. Store additional data in CI session
+					$_SESSION['servicios'] = $this->user_model->getUserServicios($id);
+					$_SESSION['menu'] = $this->sys_model->menu($user->grupo, $user->id_perfil, $user->id);
+					$_SESSION['config'] = $this->user_model->getUserConfig($user->id_empresa);
+					
+					// Use our special method too as backup
 					$this->store_user_in_session($user);
+					
+					// Verify the session data was stored
+					$verification = "Session before redirect:\n";
+					$verification .= "Session ID: " . session_id() . "\n";
+					$verification .= "Has usuario: " . (isset($_SESSION['usuario']) ? 'YES' : 'NO') . "\n";
+					$verification .= "Has logged_in: " . (isset($_SESSION['logged_in']) ? 'YES' : 'NO') . "\n";
+					$verification .= "Simple session has usuario: " . ($this->simple_session->has('usuario') ? 'YES' : 'NO') . "\n";
+					file_put_contents(FCPATH . 'application/logs/session_verification.log', $verification, FILE_APPEND);
 					
 					// Debug output before redirect
 					if (isset($_GET['debug']) && $_GET['debug'] == 1) {
@@ -76,6 +106,8 @@ class User extends MY_Controller {
 						echo session_id();
 						echo "<h3>User Object:</h3>";
 						var_dump($user);
+						echo "<h3>SIMPLE SESSION:</h3>";
+						var_dump($this->simple_session->get());
 						echo "</pre>";
 						echo "<a href='" . base_url('home') . "'>Continue to Dashboard</a>";
 						exit;
@@ -84,8 +116,11 @@ class User extends MY_Controller {
 					// Make sure we have a clean output buffer before redirect
 					if (ob_get_level()) ob_end_clean();
 					
-					// Redirect to home
-					redirect(base_url('home/debug')); // Redirect to debug page first to check session
+					// Force session write
+					session_write_close();
+					
+					// Redirect to home debug
+					redirect(base_url('home/debug'));
 				}
 				else
 				{
@@ -120,6 +155,7 @@ class User extends MY_Controller {
 			
 			// remove session datas
 			$this->session->sess_destroy();
+			$this->simple_session->destroy();
 			
 			// user logout ok
 			redirect(base_url('user/login?username=' . $data->username . '&password=' . $data->password));
@@ -132,6 +168,7 @@ class User extends MY_Controller {
 			
 			// remove session datas
 			$this->session->sess_destroy();
+			$this->simple_session->destroy();
 
 			// user logout ok
 			redirect($redirect);

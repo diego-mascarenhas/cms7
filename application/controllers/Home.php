@@ -7,6 +7,9 @@ class Home extends MY_Controller {
 	{
 		parent::__construct();
 		
+		// Load simple session library first
+		$this->load->library('simple_session');
+		
 		// Check if session needs repair
 		$this->check_session_integrity();
 		
@@ -19,6 +22,9 @@ class Home extends MY_Controller {
 	 */
 	public function debug()
 	{
+		// To avoid header already sent error, buffer all output
+		ob_start();
+		
 		echo "<pre style='background: #f5f5f5; padding: 15px; border: 1px solid #ddd; margin: 20px; max-height: 500px; overflow: auto;'>";
 		echo "<h2>Session Debug in Home Controller</h2>";
 		echo "<h3>REQUEST INFO:</h3>";
@@ -41,6 +47,12 @@ class Home extends MY_Controller {
 		echo "<h3>USUARIO OBJECT:</h3>";
 		var_dump(isset($this->usuario) ? $this->usuario : "No usuario object found");
 		
+		echo "<h3>SIMPLE SESSION DATA:</h3>";
+		var_dump($this->simple_session->get());
+		
+		echo "<h3>SIMPLE SESSION USUARIO:</h3>";
+		var_dump($this->simple_session->get('usuario'));
+		
 		echo "<h3>SESSION FILE CONTENT:</h3>";
 		$session_file = session_save_path() . '/ci_session' . session_id();
 		if (file_exists($session_file)) {
@@ -52,11 +64,44 @@ class Home extends MY_Controller {
 			echo "File exists: NO<br>";
 		}
 		
+		echo "<h3>SIMPLE SESSION FILE CONTENT:</h3>";
+		$simple_session_file = $this->simple_session->get_session_file();
+		if (file_exists($simple_session_file)) {
+			echo "File exists: YES<br>";
+			echo "File size: " . filesize($simple_session_file) . " bytes<br>";
+			echo "File content: <br>";
+			echo htmlspecialchars($this->simple_session->get_session_file_content());
+		} else {
+			echo "File exists: NO<br>";
+		}
+		
 		echo "</pre>";
+		
+		echo "<div style='text-align: center; margin: 20px;'>";
+		echo "<a href='" . base_url() . "' style='display: inline-block; padding: 10px 20px; background: #4CAF50; color: white; text-decoration: none; border-radius: 4px;'>Continue to Dashboard</a>";
+		echo "</div>";
+		
+		$output = ob_get_clean();
+		echo $output;
 	}
 
 	public function index()
 	{
+		// Check if simple session contains user data
+		$simple_usuario = $this->simple_session->get('usuario');
+		if ($simple_usuario && !$this->is_logged_in()) {
+			// Transfer data from simple session to CI session
+			$this->session->set_userdata('usuario', $simple_usuario);
+			$this->session->set_userdata('logged_in', true);
+			$this->session->set_userdata('reseller', $simple_usuario->id);
+			$this->usuario = $simple_usuario;
+			
+			// Log session transfer
+			$this->load->helper('file');
+			$log_message = date('Y-m-d H:i:s') . " - TRANSFERRED FROM SIMPLE SESSION: User ID: " . $simple_usuario->id . "\n";
+			write_file(FCPATH . 'application/logs/session_transfer.log', $log_message, 'a');
+		}
+		
 		// If user is not logged in, redirect to login
 		if (!$this->is_logged_in()) {
 			redirect(base_url('user/login'));
