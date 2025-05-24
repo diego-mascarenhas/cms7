@@ -3,6 +3,53 @@
 
 class Home extends MY_Controller {
 
+	public function __construct()
+	{
+		parent::__construct();
+		
+		// Detailed session dump
+		echo "<pre style='background: #f5f5f5; padding: 15px; border: 1px solid #ddd; margin: 20px; max-height: 500px; overflow: auto;'>";
+		echo "<h2>Session Debug in Home Controller</h2>";
+		echo "<h3>REQUEST INFO:</h3>";
+		echo "Controller: " . $this->router->class . "<br>";
+		echo "Method: " . $this->router->method . "<br>";
+		echo "URI: " . $this->uri->uri_string() . "<br>";
+		echo "Time: " . date('Y-m-d H:i:s') . "<br>";
+		
+		echo "<h3>SESSION DETAILS:</h3>";
+		echo "Session ID: " . session_id() . "<br>";
+		echo "Session Name: " . session_name() . "<br>";
+		echo "Session Save Path: " . session_save_path() . "<br>";
+		
+		echo "<h3>SESSION DATA:</h3>";
+		var_dump($this->session->userdata());
+		
+		echo "<h3>RAW SESSION DATA:</h3>";
+		var_dump($_SESSION);
+		
+		echo "<h3>USUARIO OBJECT:</h3>";
+		var_dump($this->usuario);
+		
+		echo "<h3>SESSION FILE CONTENT:</h3>";
+		$session_file = session_save_path() . '/ci_session' . session_id();
+		if (file_exists($session_file)) {
+			echo "File exists: YES<br>";
+			echo "File size: " . filesize($session_file) . " bytes<br>";
+			echo "File content: <br>";
+			echo htmlspecialchars(file_get_contents($session_file));
+		} else {
+			echo "File exists: NO<br>";
+		}
+		
+		echo "</pre>";
+		
+		// Check if session needs repair
+		$this->check_session_integrity();
+		
+		// Ensure critical session data is available
+		ensure_session_data(array('usuario', 'logged_in'));
+	}
+
 	public function index()
 	{
 		if (isset($this->usuario->dashboard) && $this->usuario->dashboard != '/')

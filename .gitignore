@@ -54,5 +54,11 @@ Thumbs.db
 #application/config/database.php
 #application/config/site.php
 #application/config/smtp.php
-application/cache/
-application/logs/
+
+# Ignorar contenido de carpetas pero mantener las carpetas
+application/cache/*
+!application/cache/.gitkeep
+application/logs/*
+!application/logs/.gitkeep
+application/sessions/*
+!application/sessions/.gitkeep

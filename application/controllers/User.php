@@ -57,30 +57,31 @@ class User extends MY_Controller {
 				$id = $this->user_model->getUserIdFromUsername($username);
 				$user = $this->user_model->getUserInfo($id);
 				
-				if ($user->estado > 1)
+				if ($user->estado > 0)
 				{
-					// set session user datas
-					$this->session->set_userdata('logged_in', true);
-					$this->session->set_userdata('usuario', $user);
-					$this->session->set_userdata('servicios', $this->user_model->getUserServicios($id));
-					$this->session->set_userdata('menu', $this->sys_model->menu($user->grupo, $user->id_perfil, $user->id));
-					$this->session->set_userdata('config', $this->user_model->getUserConfig($user->id_empresa));
+					// Write to a debug log file to track session data
+					$log_message = date('Y-m-d H:i:s') . " - Login: User ID: " . $user->id . "\n";
+					file_put_contents(FCPATH . 'application/logs/session_debug.log', $log_message, FILE_APPEND);
 					
-					if (!$this->session->has_userdata('reseller') && $user->id_perfil == 2) $this->session->set_userdata('reseller', $user->id);
+					// Use the new safe storage method
+					$this->store_user_in_session($user);
 					
-					if ($this->session->has_userdata('reseller'))
-					{
-						if ($this->session->userdata('reseller') == $user->id) $this->user_model->updateUltimaVisita($user->id);
+					// Debug output before redirect
+					if (isset($_GET['debug']) && $_GET['debug'] == 1) {
+						echo "<pre style='background: #f5f5f5; padding: 15px; border: 1px solid #ddd; margin: 20px;'>";
+						echo "<h2>Login Debug - Before Redirect</h2>";
+						echo "<h3>SESSION DATA:</h3>";
+						var_dump($_SESSION);
+						echo "<h3>SESSION ID:</h3>";
+						echo session_id();
+						echo "<h3>User Object:</h3>";
+						var_dump($user);
+						echo "</pre>";
+						echo "<a href='" . base_url('home') . "'>Continue to Dashboard</a>";
+						exit;
 					}
-					else
-					{
-						$this->user_model->updateUltimaVisita($user->id);
-						
-						$this->load->library('user_agent');
-						if ($this->agent->is_referral()) $this->session->set_userdata('logout', $this->agent->referrer());
-					}
-					
-					redirect((isset($data->detalle['redirect']) && !empty($data->detalle['redirect'])) ? $data->detalle['redirect'] : $user->dashboard);
+
+					redirect(base_url('home'));
 				}
 				else
 				{

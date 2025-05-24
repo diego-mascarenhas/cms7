@@ -3,6 +3,11 @@
 
 class Debug extends MY_Controller {
 
+	public function __construct()
+	{
+		parent::__construct();
+	}
+
 	public function index()
 	{
 		if ($this->is_logged_in())
@@ -451,5 +456,96 @@ class Debug extends MY_Controller {
 		}
 	}
 	
+	
+	public function session_info()
+	{
+		echo "<h1>Session Debug Info</h1>";
+		echo "<pre>";
+		
+		echo "SESSION DATA:\n";
+		print_r($this->session->userdata());
+		
+		echo "\n\nSESSION DETAILS:\n";
+		echo "Session ID: " . session_id() . "\n";
+		echo "Session Name: " . session_name() . "\n";
+		echo "Session Save Path: " . session_save_path() . "\n";
+		
+		echo "\n\nSESSION CONFIG:\n";
+		echo "sess_driver: " . $this->config->item('sess_driver') . "\n";
+		echo "sess_cookie_name: " . $this->config->item('sess_cookie_name') . "\n";
+		echo "sess_expiration: " . $this->config->item('sess_expiration') . "\n";
+		echo "sess_save_path: " . $this->config->item('sess_save_path') . "\n";
+		echo "sess_match_ip: " . ($this->config->item('sess_match_ip') ? 'TRUE' : 'FALSE') . "\n";
+		echo "sess_time_to_update: " . $this->config->item('sess_time_to_update') . "\n";
+		echo "sess_regenerate_destroy: " . ($this->config->item('sess_regenerate_destroy') ? 'TRUE' : 'FALSE') . "\n";
+		
+		echo "\n\nCOOKIE INFO:\n";
+		echo "Cookie Domain: " . $this->config->item('cookie_domain') . "\n";
+		echo "Cookie Path: " . $this->config->item('cookie_path') . "\n";
+		echo "Cookie Secure: " . ($this->config->item('cookie_secure') ? 'TRUE' : 'FALSE') . "\n";
+		echo "Cookie HttpOnly: " . ($this->config->item('cookie_httponly') ? 'TRUE' : 'FALSE') . "\n";
+		
+		echo "\n\nPHP SESSION INFO:\n";
+		echo "session.save_handler: " . ini_get('session.save_handler') . "\n";
+		echo "session.gc_maxlifetime: " . ini_get('session.gc_maxlifetime') . "\n";
+		echo "session.cookie_lifetime: " . ini_get('session.cookie_lifetime') . "\n";
+		
+		// Check session files
+		if ($this->config->item('sess_driver') == 'files') {
+			echo "\n\nSESSION FILES:\n";
+			$save_path = $this->config->item('sess_save_path');
+			if (is_dir($save_path)) {
+				$files = scandir($save_path);
+				$session_files = array_filter($files, function($file) {
+					return strpos($file, 'ci_session') === 0;
+				});
+				echo "Number of session files: " . count($session_files) . "\n";
+				echo "Current session file exists: " . (file_exists($save_path . '/ci_session' . session_id()) ? 'YES' : 'NO') . "\n";
+			} else {
+				echo "Save path directory does not exist or is not accessible.\n";
+			}
+		}
+		
+		echo "</pre>";
+	}
+	
+	public function session_watch()
+	{
+		echo "<h1>Session Watch Tool</h1>";
+		
+		$this->load->helper('file');
+		
+		// Create a session log entry
+		$log_message = date('Y-m-d H:i:s') . " - Navigation: " . $this->uri->uri_string() . "\n";
+		$log_message .= "Session ID: " . session_id() . "\n";
+		$log_message .= "Has usuario: " . ($this->session->has_userdata('usuario') ? 'YES' : 'NO') . "\n";
+		$log_message .= "Has logged_in: " . ($this->session->has_userdata('logged_in') ? 'YES' : 'NO') . "\n";
+		$log_message .= "---------------------------------------------\n";
+		
+		write_file(FCPATH . 'application/logs/session_debug.log', $log_message, 'a');
+		
+		echo "<p>Session log updated. <a href='".base_url('debug/session_log')."'>View Log</a></p>";
+		
+		// Add a JavaScript redirect to continue to the original page
+		echo "<script>
+			setTimeout(function() {
+				window.location.href = '" . base_url() . "';
+			}, 1000);
+		</script>";
+	}
+	
+	public function session_log()
+	{
+		$this->load->helper('file');
+		
+		$log_file = FCPATH . 'application/logs/session_debug.log';
+		
+		if (file_exists($log_file)) {
+			echo "<h1>Session Debug Log</h1>";
+			echo "<pre>" . read_file($log_file) . "</pre>";
+		} else {
+			echo "No session log file found.";
+		}
+	}
 	
 }
