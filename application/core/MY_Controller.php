@@ -257,9 +257,21 @@ class MY_Controller extends CI_Controller {
 		$_SESSION['menu'] = $this->sys_model->menu($user->grupo, $user->id_perfil, $user->id);
 		$_SESSION['config'] = $this->user_model->getUserConfig($user->id_empresa);
 		
-		// Force write to disk
-		session_write_close();
-		session_start();
+		// Also set in CI session data
+		$this->session->set_userdata('usuario', $user_unserialized);
+		$this->session->set_userdata('logged_in', true);
+		$this->session->set_userdata('reseller', $user->id);
+		
+		// Make sure the usuario property is set for this request
+		$this->usuario = $user_unserialized;
+		
+		// Force write to disk only if headers haven't been sent
+		if (!headers_sent()) {
+			@session_write_close();
+			@session_start();
+		} else {
+			log_message('error', 'store_user_in_session: Cannot manipulate session - headers already sent');
+		}
 		
 		// Log the action
 		$this->load->helper('file');

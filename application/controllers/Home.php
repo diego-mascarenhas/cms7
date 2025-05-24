@@ -7,7 +7,18 @@ class Home extends MY_Controller {
 	{
 		parent::__construct();
 		
-		// Detailed session dump
+		// Check if session needs repair
+		$this->check_session_integrity();
+		
+		// Ensure critical session data is available
+		ensure_session_data(array('usuario', 'logged_in'));
+	}
+	
+	/**
+	 * Debug method to show session info without interfering with redirects
+	 */
+	public function debug()
+	{
 		echo "<pre style='background: #f5f5f5; padding: 15px; border: 1px solid #ddd; margin: 20px; max-height: 500px; overflow: auto;'>";
 		echo "<h2>Session Debug in Home Controller</h2>";
 		echo "<h3>REQUEST INFO:</h3>";
@@ -28,7 +39,7 @@ class Home extends MY_Controller {
 		var_dump($_SESSION);
 		
 		echo "<h3>USUARIO OBJECT:</h3>";
-		var_dump($this->usuario);
+		var_dump(isset($this->usuario) ? $this->usuario : "No usuario object found");
 		
 		echo "<h3>SESSION FILE CONTENT:</h3>";
 		$session_file = session_save_path() . '/ci_session' . session_id();
@@ -42,21 +53,24 @@ class Home extends MY_Controller {
 		}
 		
 		echo "</pre>";
-		
-		// Check if session needs repair
-		$this->check_session_integrity();
-		
-		// Ensure critical session data is available
-		ensure_session_data(array('usuario', 'logged_in'));
 	}
 
 	public function index()
 	{
-		if (isset($this->usuario->dashboard) && $this->usuario->dashboard != '/')
-		{
-			redirect($this->usuario->dashboard);	
+		// If user is not logged in, redirect to login
+		if (!$this->is_logged_in()) {
+			redirect(base_url('user/login'));
+			return;
 		}
 		
+		// Check if user has a custom dashboard
+		if (isset($this->usuario) && isset($this->usuario->dashboard) && $this->usuario->dashboard != '/')
+		{
+			redirect($this->usuario->dashboard);	
+			return;
+		}
+		
+		// Handle different user roles
 		elseif ($this->is_logged_in('root'))
 		{
 			$data['debug'] = $this->session->userdata();

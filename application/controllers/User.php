@@ -81,7 +81,11 @@ class User extends MY_Controller {
 						exit;
 					}
 
-					redirect(base_url('home'));
+					// Make sure we have a clean output buffer before redirect
+					if (ob_get_level()) ob_end_clean();
+					
+					// Redirect to home
+					redirect(base_url('home/debug')); // Redirect to debug page first to check session
 				}
 				else
 				{

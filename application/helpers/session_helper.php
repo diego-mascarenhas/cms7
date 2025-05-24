@@ -33,8 +33,13 @@ if (!function_exists('ensure_session_data')) {
         // If any data is missing, force session write and restart
         if ($missing) {
             $CI->session->mark_as_temp('dummy', 1);
-            session_write_close();
-            session_start();
+            // Only do session operations if headers haven't been sent
+            if (!headers_sent()) {
+                @session_write_close();
+                @session_start();
+            } else {
+                log_message('error', 'Cannot manipulate session - headers already sent');
+            }
         }
     }
 }
@@ -62,8 +67,12 @@ if (!function_exists('safe_set_userdata')) {
             $_SESSION[$data] = $value;
         }
         
-        // Force session write
-        session_write_close();
-        session_start();
+        // Force session write only if headers haven't been sent
+        if (!headers_sent()) {
+            @session_write_close();
+            @session_start();
+        } else {
+            log_message('error', 'Cannot manipulate session - headers already sent');
+        }
     }
 } 
