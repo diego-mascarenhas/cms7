@@ -34,6 +34,20 @@ Antes de iniciar la aplicación, es necesario modificar los siguientes archivos 
 3. **application/config/smtp.php**
    - Configurar los datos del servidor SMTP para el envío de correos
 
+## Personalización de marca
+
+Para personalizar el logo y los colores de la empresa:
+
+1. **Logo de la empresa:**
+   - Ubicación: `multimedia/[ID_GRUPO]/logo.png`
+   - El sistema verifica automáticamente la existencia de este archivo y lo utiliza como logo principal
+
+2. **Estilos personalizados:**
+   - Archivo CSS: `multimedia/[ID_GRUPO]/style.css`
+   - El sistema carga automáticamente este archivo si existe en la ruta especificada
+
+Donde `[ID_GRUPO]` es el identificador del grupo asignado a la empresa.
+
 ## Acceso a la aplicación
 
 La aplicación estará disponible en: http://localhost:8080

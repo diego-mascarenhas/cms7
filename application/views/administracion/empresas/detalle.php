@@ -76,17 +76,17 @@
 	                        <tbody>
 	                        <tr>
 	                            <td>
-	                                <strong><?php echo count($servicios); ?></strong> Servicios
+	                                <strong><?php echo (isset($servicios) && is_array($servicios)) ? count($servicios) : 0; ?></strong> Servicios
 	                            </td>
 	                        </tr>
 	                        <tr>
 	                            <td>
-	                                <strong><?php echo count($facturas); ?></strong> Facturas
+	                                <strong><?php echo (isset($facturas) && is_array($facturas)) ? count($facturas) : 0; ?></strong> Facturas
 	                            </td>
 	                        </tr>
 	                        <tr>
 	                            <td>
-	                                <strong><?php echo count($contactos); ?></strong> Contactos
+	                                <strong><?php echo (isset($contactos) && is_array($contactos)) ? count($contactos) : 0; ?></strong> Contactos
 	                            </td>
 	                        </tr>
 	                        </tbody>
