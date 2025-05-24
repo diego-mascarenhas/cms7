@@ -214,13 +214,36 @@ else
 		'save_queries' => TRUE
 	);
 
-	$db['default'] = array(
+	$db['local'] = array(
 		'dsn'	=> '',
 		'hostname' => '127.0.0.1',
 		'port' => '3306',
 		'username' => 'revcms_espacio',
 		'password' => 'T7MzP.87#@Xb',
 		'database' => 'revcms_galera',
+		'dbdriver' => 'mysqli',
+		'dbprefix' => '',
+		'pconnect' => FALSE,
+		'db_debug' => (ENVIRONMENT !== 'production'),
+		'cache_on' => FALSE,
+		'cachedir' => '',
+		'char_set' => 'utf8',
+		'dbcollat' => 'utf8_general_ci',
+		'swap_pre' => '',
+		'encrypt' => FALSE,
+		'compress' => FALSE,
+		'stricton' => FALSE,
+		'failover' => array(),
+		'save_queries' => TRUE
+	);
+
+	$db['default'] = array(
+		'dsn'	=> '',
+		'hostname' => 'md1227595-002.eu.clouddb.ovh.net',
+		'port' => '35994',
+		'username' => 'revision',
+		'password' => 'vonborborhyG9pedpy',
+		'database' => 'revcms',
 		'dbdriver' => 'mysqli',
 		'dbprefix' => '',
 		'pconnect' => FALSE,
