@@ -94,6 +94,18 @@ class Home extends MY_Controller {
 			$this->session->set_userdata('usuario', $simple_usuario);
 			$this->session->set_userdata('logged_in', true);
 			$this->session->set_userdata('reseller', $simple_usuario->id);
+			
+			// Transfer additional data if available
+			if ($this->simple_session->has('menu')) {
+				$this->session->set_userdata('menu', $this->simple_session->get('menu'));
+			}
+			if ($this->simple_session->has('servicios')) {
+				$this->session->set_userdata('servicios', $this->simple_session->get('servicios'));
+			}
+			if ($this->simple_session->has('config')) {
+				$this->session->set_userdata('config', $this->simple_session->get('config'));
+			}
+			
 			$this->usuario = $simple_usuario;
 			
 			// Log session transfer

@@ -80,10 +80,26 @@ class User extends MY_Controller {
 					$this->session->set_userdata('logged_in', true);
 					$this->session->set_userdata('reseller', $user->id);
 					
-					// 4. Store additional data in CI session
-					$_SESSION['servicios'] = $this->user_model->getUserServicios($id);
-					$_SESSION['menu'] = $this->sys_model->menu($user->grupo, $user->id_perfil, $user->id);
-					$_SESSION['config'] = $this->user_model->getUserConfig($user->id_empresa);
+					// 4. Load menu and other critical data
+					$servicios = $this->user_model->getUserServicios($id);
+					$menu = $this->sys_model->menu($user->grupo, $user->id_perfil, $user->id);
+					$config = $this->user_model->getUserConfig($user->id_empresa);
+					
+					// 5. Store additional data in all session types
+					// In Simple Session
+					$this->simple_session->set('servicios', $servicios);
+					$this->simple_session->set('menu', $menu);
+					$this->simple_session->set('config', $config);
+					
+					// In PHP native session
+					$_SESSION['servicios'] = $servicios;
+					$_SESSION['menu'] = $menu;
+					$_SESSION['config'] = $config;
+					
+					// In CI session
+					$this->session->set_userdata('servicios', $servicios);
+					$this->session->set_userdata('menu', $menu);
+					$this->session->set_userdata('config', $config);
 					
 					// Use our special method too as backup
 					$this->store_user_in_session($user);
