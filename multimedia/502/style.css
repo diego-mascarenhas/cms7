@@ -31,7 +31,6 @@
 
 /* Títulos */
 .wrapper-content h1, 
-.wrapper-content h2, 
 .wrapper-content h3 {
   color: var(--titulo-primario);
 }
