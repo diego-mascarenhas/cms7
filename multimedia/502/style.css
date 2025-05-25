@@ -89,7 +89,6 @@
 
 /* Paneles (en el área de contenido) */
 .wrapper-content .ibox-title {
-  background-color: var(--titulo-secundario);
   color: white;
 }
 
@@ -103,14 +102,14 @@
 }
 
 /* Links (en el área de contenido) */
-.wrapper-content a {
+/* .wrapper-content a {
   color: var(--secundario-1);
-}
+} */
 
-.wrapper-content a:hover, 
+/* .wrapper-content a:hover, 
 .wrapper-content a:focus {
   color: #2b82c7;
-}
+} */
 
 /* No modificar los enlaces en el breadcrumb */
 .breadcrumb a,
