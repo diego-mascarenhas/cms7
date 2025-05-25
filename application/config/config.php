@@ -23,8 +23,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | a PHP script and you can easily do that on your own.
 |
 */
-// $config['base_url'] = ($_SERVER['HTTPS'] == 'on') ? 'https://'  . $_SERVER['SERVER_NAME'] . '/' : 'http://' . $_SERVER['SERVER_NAME'] . '/';
-$config['base_url'] = 'http://localhost:8080/';
+// Dynamic base URL: Use localhost:8080 for local environment, otherwise use the production URL
+$server_name = isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : '';
+$is_local = ($server_name == 'localhost' || $server_name == '127.0.0.1' || strpos($server_name, '.local') !== false);
+
+if ($is_local) {
+    $config['base_url'] = 'http://localhost:8080/';
+} else {
+    $config['base_url'] = 'https://cms.revisionalpha.com/';
+}
 
 /*
 |--------------------------------------------------------------------------

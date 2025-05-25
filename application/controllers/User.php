@@ -112,7 +112,7 @@ class User extends MY_Controller {
 					$verification .= "Simple session has usuario: " . ($this->simple_session->has('usuario') ? 'YES' : 'NO') . "\n";
 					file_put_contents(FCPATH . 'application/logs/session_verification.log', $verification, FILE_APPEND);
 					
-					// Debug output before redirect
+					// Debug output only when explicitly requested
 					if (isset($_GET['debug']) && $_GET['debug'] == 1) {
 						echo "<pre style='background: #f5f5f5; padding: 15px; border: 1px solid #ddd; margin: 20px;'>";
 						echo "<h2>Login Debug - Before Redirect</h2>";
@@ -135,8 +135,8 @@ class User extends MY_Controller {
 					// Force session write
 					session_write_close();
 					
-					// Redirect to home debug
-					redirect(base_url('home/debug'));
+					// Redirect directly to home instead of debug page
+					redirect(base_url('home'));
 				}
 				else
 				{
