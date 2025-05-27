@@ -361,7 +361,7 @@ $config['rest_key_name'] = 'CMS-API-KEY';
 |   ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 |
 */
-$config['rest_enable_logging'] = TRUE;
+$config['rest_enable_logging'] = FALSE;
 /*
 |--------------------------------------------------------------------------
 | REST API Logs Table Name
@@ -439,7 +439,7 @@ $config['rest_logs_json_params'] = TRUE;
 |
 | See application/controllers/api/example.php for examples
 */
-$config['rest_enable_limits'] = TRUE;
+$config['rest_enable_limits'] = FALSE;
 /*
 |--------------------------------------------------------------------------
 | REST API Limits Table Name
