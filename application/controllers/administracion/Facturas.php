@@ -19,10 +19,16 @@ class Facturas extends MY_Controller {
 			$parametros['page'] = $this->input->get('page');
 			$parametros['search'] = $this->input->get('search');
 			
+			// Set default parameters if not provided
 			$parametros['estado'] = $this->input->get('estado');
 			$parametros['id_empresa_fiscal'] = $this->input->get('id_empresa_fiscal');
-			$parametros['pendiente'] = $this->input->get('pendiente');
+			$parametros['pendiente'] = $this->input->get('pendiente') ? $this->input->get('pendiente') : 'true';
 			$parametros['operacion'] = $this->input->get('operacion');
+			
+			// Exclude credit notes by default
+			if (!$this->input->get('estado')) {
+				$parametros['excluir_notas'] = true;
+			}
 			
 			$data['facturas'] = $this->factura_model->getFacturas($parametros);
 			

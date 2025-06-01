@@ -124,7 +124,7 @@
 	                            </div>
 	                            <div class="hr-line-dashed"></div>
 	                            
-	                            <?php if ($this->usuario->perfil == 'reseller' && !isset($detalle['api'])) { ?>
+	                            <?php //if ($this->usuario->perfil == 'reseller' && !isset($detalle['api'])) { ?>
 	                            <div class="form-group">
 		                            <label class="col-sm-2 control-label">Estados</label>
 	                                <div class="col-sm-10">
@@ -147,7 +147,7 @@
 		                            </div>
 	                            </div>
 	                            <div class="hr-line-dashed"></div>
-	                            <?php } ?>
+	                            <?php //} ?>
 	                            
 	                            <div class="form-group">
 	                                <div class="col-sm-4 col-sm-offset-2">

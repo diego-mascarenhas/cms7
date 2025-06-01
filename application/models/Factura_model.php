@@ -108,6 +108,12 @@ class Factura_model extends CI_Model {
 					";
 			}
 			
+			// Exclude credit notes (estado = 4)
+			if (!empty($parametros['excluir_notas']))
+			{
+				$sql .= " AND facturas.estado != 4";
+			}
+			
 			if (!empty($parametros['operacion']))
 			{
 				$sql .= " AND facturas.operacion = ?";
@@ -1083,7 +1089,7 @@ class Factura_model extends CI_Model {
 					break;
 				default:
 					$factura['id_afip'] = 0;
-					$break;
+					break;
 			}
 			
 			$factura['id_factura_tipo'] = $this->getNotaDeCreditoFacturaTipoId($factura['id_afip'], $factura['afip_cuit']);

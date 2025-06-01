@@ -226,19 +226,19 @@ class Servicios extends MY_Controller {
 					$data['detalle']['categoria'] = $this->categorias_generales_model->getCategoriaGeneralDetalle($data['detalle']['id_categoria']);
 					$data['detalle']['categoria']['caracteristicas'] = json_decode($data['detalle']['categoria']['caracteristicas'], true);
 					
-					if ($data['detalle']['categoria']['id_tipo'] == 1 || $data['detalle']['categoria']['id_tipo'] == 2)
-					{
-						// models
-						$this->load->model('hosting_model');
+					// if ($data['detalle']['categoria']['id_tipo'] == 1 || $data['detalle']['categoria']['id_tipo'] == 2)
+					// {
+					// 	// models
+					// 	$this->load->model('hosting_model');
 						
-						$data['detalle']['hosting'] = $this->hosting_model->getPlanDetalle($data['detalle']['id_servicio_hosting']);
+					// 	$data['detalle']['hosting'] = $this->hosting_model->getPlanDetalle($data['detalle']['id_servicio_hosting']);
 						
-						// helpers and libraries
-						$config = $this->hosting_model->getCredenciales($this->hosting_model->getServerIdFromUser($data['detalle']['hosting']['user']));
-						$this->load->library('Cpanel', $config);
+					// 	// helpers and libraries
+					// 	$config = $this->hosting_model->getCredenciales($this->hosting_model->getServerIdFromUser($data['detalle']['hosting']['user']));
+					// 	$this->load->library('Cpanel', $config);
 						
-						$this->cpanel->changepackage($data['detalle']['hosting']['user'], array('plan'=>$data['detalle']['categoria']['caracteristicas']['plan']));
-					}
+					// 	$this->cpanel->changepackage($data['detalle']['hosting']['user'], array('plan'=>$data['detalle']['categoria']['caracteristicas']['plan']));
+					// }
 					
 					redirect(base_url('administracion/servicios/detalle/' . $id));
 				}
