@@ -104,7 +104,7 @@
 		                                    <tr>
 			                                    <td>
 				                                    <a href="<?php echo base_url('administracion/facturas/detalle/'); ?><?php echo $factura['id']; ?>"><?php echo $factura['comprobante']; ?></a>
-			                                    	<?php echo formatear_fecha($factura['fecha'], 'd-m-Y', '<br><small>%s</small>', $this->usuario->timezone); ?>
+			                                    	<br><small><?php echo date('d-m-Y', strtotime($factura['fecha_real'])); ?></small>
 			                                    	</td>
 		                                        <td>
 			                                        <a href="<?php echo base_url('administracion/empresas/detalle/'); ?><?php echo $factura['id_empresa']; ?>"><?php echo $factura['empresa']; ?></a>
@@ -117,15 +117,17 @@
 			                                        <small><?php echo $factura['simbolo']; ?><?php echo $factura['saldo']; ?></small>
 		                                        </td>
 		                                        <td class="text-center">
-			                                        <?php echo formatear_fecha($factura['vencimiento'], 'd-m-Y', null, $this->usuario->timezone); ?>
+			                                        <?php echo date('d-m-Y', strtotime($factura['vencimiento_real'])); ?>
 			                                        <?php
 			                                        	if (isset($factura['recibido']))
 			                                        	{
-				                                        	echo formatear_fecha($factura['recibido'], 'd-m-Y', '<br><small><em>(Recibida: %s)</em></small>', $this->usuario->timezone, null);
+				                                        	echo date('d-m-Y', $factura['recibido']);
+				                                        	echo '<br><small><em>(Recibida)</em></small>';
 				                                        }
 				                                        elseif (isset($factura['enviado']))
 				                                        {
-					                                        echo formatear_fecha($factura['enviado'], 'd-m-Y', '<br><small><em>(Enviada: %s)</em></small>', $this->usuario->timezone, null);
+					                                        echo date('d-m-Y', $factura['enviado']);
+					                                        echo '<br><small><em>(Enviada)</em></small>';
 				                                        }
 					                                ?>
 			                                    </td>
