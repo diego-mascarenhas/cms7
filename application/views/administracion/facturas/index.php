@@ -117,7 +117,11 @@
 			                                        <small><?php echo $factura['simbolo']; ?><?php echo $factura['saldo']; ?></small>
 		                                        </td>
 		                                        <td class="text-center">
-			                                        <?php echo date('d-m-Y', strtotime($factura['vencimiento_real'])); ?>
+			                                        <?php 
+			                                        if (!empty($factura['vencimiento_real'])) {
+			                                            echo date('d-m-Y', strtotime($factura['vencimiento_real']));
+			                                        }
+			                                        ?>
 			                                        <?php
 			                                        	if (isset($factura['recibido']))
 			                                        	{
