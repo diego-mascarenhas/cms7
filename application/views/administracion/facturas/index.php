@@ -12,16 +12,77 @@
 	                    </li>
 	                </ol>
 	            </div>
+	            <div class="col-xs-4 col-sm-4 col-md-6 col-lg-6">
+                    <div class="title-action">
+                        <a href="<?php echo base_url('administracion/facturas/?estado=2&pendiente=true&operacion=c'); ?>" class="btn btn-danger btn-sm">Pendientes de Compra</a>
+                        <a href="<?php echo base_url('administracion/facturas/?estado=2&pendiente=true&operacion=v'); ?>" class="btn btn-success btn-sm">Pendientes de Venta</a>
+                        <a href="<?php echo base_url('administracion/facturas/?estado=1'); ?>" class="btn btn-warning btn-sm">Sin imprimir</a>
+                        <a href="<?php echo base_url('administracion/facturas/?estado=8'); ?>" class="btn btn-info btn-sm">Nuevas facturas</a>
+                    </div>
+                </div>
 	        </div>
 			
 			<div class="wrapper wrapper-content animated fadeInRight">
-				<div class="alert alert-info">
-					<a href="<?php echo base_url('administracion/facturas/?estado=2&pendiente=true&operacion=c'); ?>">Pendientes de Compra</a> | 
-					<a href="<?php echo base_url('administracion/facturas/?estado=2&pendiente=true&operacion=v'); ?>">Pendientes de Venta</a> |
-					<a href="<?php echo base_url('administracion/facturas/?estado=1'); ?>">Sin imprimir</a> | 
-					<a href="<?php echo base_url('administracion/facturas/?estado=7'); ?>">Con error</a> | 
-					<a href="<?php echo base_url('administracion/facturas/?estado=4'); ?>">Notas de crédito</a>
+				<!-- Totales de facturación -->
+				<div class="row">
+					<div class="col-lg-3">
+						<div class="widget style1 navy-bg">
+							<div class="row">
+								<div class="col-xs-4">
+									<i class="fa fa-money fa-4x"></i>
+								</div>
+								<div class="col-xs-8 text-right">
+									<span>Total facturado (Ventas)</span>
+									<h2 class="font-bold">$<?php echo number_format(isset($totales['total_ventas']) ? $totales['total_ventas'] : 0, 2); ?></h2>
+									<small>Mes anterior: $<?php echo number_format(isset($totales['total_ventas_anterior']) ? $totales['total_ventas_anterior'] : 0, 2); ?></small>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-3">
+						<div class="widget style1 red-bg">
+							<div class="row">
+								<div class="col-xs-4">
+									<i class="fa fa-shopping-cart fa-4x"></i>
+								</div>
+								<div class="col-xs-8 text-right">
+									<span>Total facturado (Compras)</span>
+									<h2 class="font-bold">$<?php echo number_format(isset($totales['total_compras']) ? $totales['total_compras'] : 0, 2); ?></h2>
+									<small>Mes anterior: $<?php echo number_format(isset($totales['total_compras_anterior']) ? $totales['total_compras_anterior'] : 0, 2); ?></small>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-3">
+						<div class="widget style1 lazur-bg">
+							<div class="row">
+								<div class="col-xs-4">
+									<i class="fa fa-arrow-circle-o-down fa-4x"></i>
+								</div>
+								<div class="col-xs-8 text-right">
+									<span>Pendiente de cobro</span>
+									<h2 class="font-bold">$<?php echo number_format(isset($totales['pendiente_cobro']) ? $totales['pendiente_cobro'] : 0, 2); ?></h2>
+									<small>Mes anterior: $<?php echo number_format(isset($totales['pendiente_cobro_anterior']) ? $totales['pendiente_cobro_anterior'] : 0, 2); ?></small>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-3">
+						<div class="widget style1 yellow-bg">
+							<div class="row">
+								<div class="col-xs-4">
+									<i class="fa fa-arrow-circle-o-up fa-4x"></i>
+								</div>
+								<div class="col-xs-8 text-right">
+									<span>Pendiente de pago</span>
+									<h2 class="font-bold">$<?php echo number_format(isset($totales['pendiente_pago']) ? $totales['pendiente_pago'] : 0, 2); ?></h2>
+									<small>Mes anterior: $<?php echo number_format(isset($totales['pendiente_pago_anterior']) ? $totales['pendiente_pago_anterior'] : 0, 2); ?></small>
+								</div>
+							</div>
+						</div>
+					</div>
 				</div>
+				
 	            <div class="row">
 	                <div class="col-lg-12">
 	                    <div class="ibox float-e-margins">

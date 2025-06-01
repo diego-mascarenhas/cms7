@@ -30,6 +30,9 @@ class Facturas extends MY_Controller {
 				$parametros['excluir_notas'] = true;
 			}
 			
+			// Get invoice totals
+			$data['totales'] = $this->factura_model->getTotalFacturado();
+			
 			$data['facturas'] = $this->factura_model->getFacturas($parametros);
 			
 			$config['total_rows'] = $this->factura_model->total();

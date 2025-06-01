@@ -82,6 +82,11 @@ class Factura_model extends CI_Model {
 			{
 				$sql .= " AND facturas.estado = ?";
 				$placeholders[] = $parametros['estado'];
+				
+				// Para nuevas facturas (estado=8) no filtramos por saldo
+				if ($parametros['estado'] == 8) {
+					$parametros['pendiente'] = false;
+				}
 			}
 			elseif (empty($parametros['search']))
 			{
@@ -1538,5 +1543,143 @@ class Factura_model extends CI_Model {
 		return $this->db->query('SELECT FOUND_ROWS() count;')->row()->count;
 	}
 	
+	public function getTotalCompras($parametros = null)
+	{
+		$sql = "
+				SELECT IFNULL(SUM(facturas.saldo), 0) AS total
+				FROM facturas
+				LEFT JOIN empresas_fiscales ON facturas.id_empresa_fiscal = empresas_fiscales.id
+				LEFT JOIN empresas ON empresas_fiscales.id_empresa = empresas.id
+				WHERE facturas.grupo = ?
+				AND facturas.operacion = 'C'
+				AND facturas.estado = 2
+				AND facturas.saldo > 0
+				AND empresas.estado > 1
+			";
+		
+		$placeholders[] = $this->usuario->grupo;
+		
+		if ($this->usuario->perfil == 'admin') {
+			$sql .= " AND empresas.id = ?";
+			$placeholders[] = $this->usuario->id_empresa;
+		}
+		
+		$query = $this->db->query($sql, $placeholders);
+		
+		if ($query) {
+			$res = $query->row_array()['total'];
+		}
+		
+		return (!empty($res)) ? $res : 0;
+	}
+	
+	public function getTotalVentas($parametros = null)
+	{
+		$sql = "
+				SELECT IFNULL(SUM(facturas.saldo), 0) AS total
+				FROM facturas
+				LEFT JOIN empresas_fiscales ON facturas.id_empresa_fiscal = empresas_fiscales.id
+				LEFT JOIN empresas ON empresas_fiscales.id_empresa = empresas.id
+				WHERE facturas.grupo = ?
+				AND facturas.operacion = 'V'
+				AND facturas.estado = 2
+				AND facturas.saldo > 0
+				AND empresas.estado > 1
+			";
+		
+		$placeholders[] = $this->usuario->grupo;
+		
+		if ($this->usuario->perfil == 'admin') {
+			$sql .= " AND empresas.id = ?";
+			$placeholders[] = $this->usuario->id_empresa;
+		}
+		
+		$query = $this->db->query($sql, $placeholders);
+		
+		if ($query) {
+			$res = $query->row_array()['total'];
+		}
+		
+		return (!empty($res)) ? $res : 0;
+	}
+	
+	public function getTotalFacturado($parametros = null)
+	{
+		// Current month data
+		$sql = "
+				SELECT 
+					SUM(CASE WHEN facturas.operacion = 'C' THEN facturas.total_neto ELSE 0 END) AS total_compras,
+					SUM(CASE WHEN facturas.operacion = 'V' THEN facturas.total_neto ELSE 0 END) AS total_ventas,
+					SUM(CASE WHEN facturas.operacion = 'C' THEN facturas.saldo ELSE 0 END) AS pendiente_pago,
+					SUM(CASE WHEN facturas.operacion = 'V' THEN facturas.saldo ELSE 0 END) AS pendiente_cobro
+				FROM facturas
+				LEFT JOIN empresas_fiscales ON facturas.id_empresa_fiscal = empresas_fiscales.id
+				LEFT JOIN empresas ON empresas_fiscales.id_empresa = empresas.id
+				WHERE facturas.grupo = ?
+				AND facturas.estado = 2
+				AND facturas.saldo > 0
+				AND empresas.estado > 1
+				AND MONTH(facturas.fecha) = MONTH(CURRENT_DATE())
+				AND YEAR(facturas.fecha) = YEAR(CURRENT_DATE())
+			";
+		
+		$placeholders[] = $this->usuario->grupo;
+		
+		if ($this->usuario->perfil == 'admin') {
+			$sql .= " AND empresas.id = ?";
+			$placeholders[] = $this->usuario->id_empresa;
+		}
+		
+		$query = $this->db->query($sql, $placeholders);
+		
+		if ($query) {
+			$res = $query->row_array();
+		}
+		
+		// Previous month data
+		$sql_anterior = "
+				SELECT 
+					SUM(CASE WHEN facturas.operacion = 'C' THEN facturas.total_neto ELSE 0 END) AS total_compras_anterior,
+					SUM(CASE WHEN facturas.operacion = 'V' THEN facturas.total_neto ELSE 0 END) AS total_ventas_anterior,
+					SUM(CASE WHEN facturas.operacion = 'C' THEN facturas.saldo ELSE 0 END) AS pendiente_pago_anterior,
+					SUM(CASE WHEN facturas.operacion = 'V' THEN facturas.saldo ELSE 0 END) AS pendiente_cobro_anterior
+				FROM facturas
+				LEFT JOIN empresas_fiscales ON facturas.id_empresa_fiscal = empresas_fiscales.id
+				LEFT JOIN empresas ON empresas_fiscales.id_empresa = empresas.id
+				WHERE facturas.grupo = ?
+				AND facturas.estado = 2
+				AND facturas.saldo > 0
+				AND empresas.estado > 1
+				AND (
+					(MONTH(facturas.fecha) = MONTH(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH)) 
+					AND YEAR(facturas.fecha) = YEAR(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH)))
+					OR
+					(MONTH(facturas.fecha) = 12 AND MONTH(CURRENT_DATE()) = 1
+					AND YEAR(facturas.fecha) = YEAR(CURRENT_DATE()) - 1)
+				)
+			";
+		
+		$placeholders_anterior[] = $this->usuario->grupo;
+		
+		if ($this->usuario->perfil == 'admin') {
+			$sql_anterior .= " AND empresas.id = ?";
+			$placeholders_anterior[] = $this->usuario->id_empresa;
+		}
+		
+		$query_anterior = $this->db->query($sql_anterior, $placeholders_anterior);
+		
+		if ($query_anterior) {
+			$res_anterior = $query_anterior->row_array();
+			
+			// Merge results
+			if (!empty($res) && !empty($res_anterior)) {
+				$res = array_merge($res, $res_anterior);
+			} elseif (!empty($res_anterior)) {
+				$res = $res_anterior;
+			}
+		}
+		
+		return (!empty($res)) ? $res : null;
+	}
 
 }
