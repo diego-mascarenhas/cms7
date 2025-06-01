@@ -6,19 +6,26 @@ function DigitoVerificador($codbarras)
     $totalimpares = 0;
     $digito = 0;
 
-    for ($i = 1; $i <= strlen($codbarras); $i = $i + 2)
-    {
-        $totalimpares = $totalimpares + substr($codbarras, $i, 1);
+    // Asegurarnos de que codbarras sea un string y solo contenga números
+    $codbarras = preg_replace('/[^0-9]/', '', (string)$codbarras);
+    
+    if (empty($codbarras)) {
+        return 0; // Devolver un valor predeterminado si no hay dígitos
     }
 
-    for ($i = 0; $i <= strlen($codbarras); $i = $i + 2)
+    for ($i = 1; $i < strlen($codbarras); $i = $i + 2)
     {
-        $totalpares = $totalpares + substr($codbarras, $i, 1);
+        $totalimpares = $totalimpares + (int)substr($codbarras, $i, 1);
+    }
+
+    for ($i = 0; $i < strlen($codbarras); $i = $i + 2)
+    {
+        $totalpares = $totalpares + (int)substr($codbarras, $i, 1);
     }
 
     $suma = $totalimpares + $totalpares;
 
-    while ((intval($suma / 10) * 10) <> $suma)
+    while ((intval($suma / 10) * 10) != $suma)
     {
         $suma = $suma + 1;
         $digito = $digito + 1;
@@ -30,14 +37,29 @@ function DigitoVerificador($codbarras)
 
 function htmlParaPdf($factura, $cae)
 {
-	$numeroCodigoBarras = $factura['cuit'];
+    // Verificar que la factura tenga todos los campos necesarios
+    if (empty($factura['cuit']) || empty($factura['id_afip']) || 
+        empty($factura['numero_talonario']) || empty($cae['CAE']) || 
+        empty($cae['CAEFchVto'])) {
+        error_log("Datos de factura incompletos para generar el PDF");
+        return null;
+    }
+
+    // Asegurarnos de que todos los campos necesarios estén presentes
+    if (!isset($factura['subtotal210'])) $factura['subtotal210'] = 0;
+    if (!isset($factura['imp210'])) $factura['imp210'] = 0;
+    if (!isset($factura['template'])) {
+        error_log("Plantilla no definida para la factura");
+        return null;
+    }
+
+    $numeroCodigoBarras = $factura['cuit'];
     $numeroCodigoBarras .= str_pad($factura['id_afip'], 2, 0, STR_PAD_LEFT);
     $numeroCodigoBarras .= str_pad($factura['numero_talonario'], 4, 0, STR_PAD_LEFT);
     $numeroCodigoBarras .= $cae['CAE'];
     $numeroCodigoBarras .= $cae['CAEFchVto'];
     $codigoVerificador = DigitoVerificador($numeroCodigoBarras);
     $numeroCodigoBarras .= $codigoVerificador;
-    
     
     $envio['numero_talonario'] = str_pad($factura['numero_talonario'], 4, 0, STR_PAD_LEFT);
     $envio['numero_factura'] = str_pad($cae['CbteDesde'], 8, 0, STR_PAD_LEFT);
@@ -52,12 +74,12 @@ function htmlParaPdf($factura, $cae)
     
     if (!empty($factura['domicilio']))
     {
-	    $envio['domicilio'] = $factura['domicilio'];
-	    if ($factura['codigo_postal']) $envio['domicilio'] .= ', ' . $factura['codigo_postal'];
-	    if ($factura['provincia']) $envio['domicilio'] .= ', ' . $factura['provincia'];
-	    if ($factura['pais']) $envio['domicilio'] .= ', ' . $factura['pais'];
-	}
-		    
+        $envio['domicilio'] = $factura['domicilio'];
+        if ($factura['codigo_postal']) $envio['domicilio'] .= ', ' . $factura['codigo_postal'];
+        if ($factura['provincia']) $envio['domicilio'] .= ', ' . $factura['provincia'];
+        if ($factura['pais']) $envio['domicilio'] .= ', ' . $factura['pais'];
+    }
+            
     $envio['items'] = json_encode($factura['items']);
     
     $envio['bruto'] = $factura['bruto'];
@@ -92,20 +114,20 @@ function htmlParaPdf($factura, $cae)
     $envio['codigoqrjson_base64'] = $codigoqrjson_base64;
 
     
-	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_URL, $factura['template']);
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-	curl_setopt($ch, CURLOPT_POSTFIELDS, $envio);
-	$mensaje_envio = curl_exec($ch);
-	$code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-	curl_close($ch);
-	
-	if ($code === 200)
-	{
-		$res = $mensaje_envio;
-	}
-	
-	return (!empty($res)) ? $res : null;
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $factura['template']);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $envio);
+    $mensaje_envio = curl_exec($ch);
+    $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    
+    if ($code === 200)
+    {
+        $res = $mensaje_envio;
+    }
+    
+    return (!empty($res)) ? $res : null;
 }
 
 ?>
