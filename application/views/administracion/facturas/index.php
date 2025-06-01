@@ -33,8 +33,8 @@
 								</div>
 								<div class="col-xs-8 text-right">
 									<span>Total facturado (Ventas)</span>
-									<h2 class="font-bold">$<?php echo number_format(isset($totales['total_ventas']) ? $totales['total_ventas'] : 0, 2); ?></h2>
-									<small>Mes anterior: $<?php echo number_format(isset($totales['total_ventas_anterior']) ? $totales['total_ventas_anterior'] : 0, 2); ?></small>
+									<h2 class="font-bold">ARS $<?php echo number_format(isset($totales['total_ventas']) ? $totales['total_ventas'] : 0, 2); ?></h2>
+									<small>Mes anterior: ARS $<?php echo number_format(isset($totales['total_ventas_anterior']) ? $totales['total_ventas_anterior'] : 0, 2); ?></small>
 								</div>
 							</div>
 						</div>
@@ -47,8 +47,8 @@
 								</div>
 								<div class="col-xs-8 text-right">
 									<span>Total facturado (Compras)</span>
-									<h2 class="font-bold">$<?php echo number_format(isset($totales['total_compras']) ? $totales['total_compras'] : 0, 2); ?></h2>
-									<small>Mes anterior: $<?php echo number_format(isset($totales['total_compras_anterior']) ? $totales['total_compras_anterior'] : 0, 2); ?></small>
+									<h2 class="font-bold">ARS $<?php echo number_format(isset($totales['total_compras']) ? $totales['total_compras'] : 0, 2); ?></h2>
+									<small>Mes anterior: ARS $<?php echo number_format(isset($totales['total_compras_anterior']) ? $totales['total_compras_anterior'] : 0, 2); ?></small>
 								</div>
 							</div>
 						</div>
@@ -61,8 +61,8 @@
 								</div>
 								<div class="col-xs-8 text-right">
 									<span>Pendiente de cobro</span>
-									<h2 class="font-bold">$<?php echo number_format(isset($totales['pendiente_cobro']) ? $totales['pendiente_cobro'] : 0, 2); ?></h2>
-									<small>Mes anterior: $<?php echo number_format(isset($totales['pendiente_cobro_anterior']) ? $totales['pendiente_cobro_anterior'] : 0, 2); ?></small>
+									<h2 class="font-bold">ARS $<?php echo number_format(isset($totales['pendiente_cobro']) ? $totales['pendiente_cobro'] : 0, 2); ?></h2>
+									<small>Mes anterior: ARS $<?php echo number_format(isset($totales['pendiente_cobro_anterior']) ? $totales['pendiente_cobro_anterior'] : 0, 2); ?></small>
 								</div>
 							</div>
 						</div>
@@ -75,8 +75,8 @@
 								</div>
 								<div class="col-xs-8 text-right">
 									<span>Pendiente de pago</span>
-									<h2 class="font-bold">$<?php echo number_format(isset($totales['pendiente_pago']) ? $totales['pendiente_pago'] : 0, 2); ?></h2>
-									<small>Mes anterior: $<?php echo number_format(isset($totales['pendiente_pago_anterior']) ? $totales['pendiente_pago_anterior'] : 0, 2); ?></small>
+									<h2 class="font-bold">ARS $<?php echo number_format(isset($totales['pendiente_pago']) ? $totales['pendiente_pago'] : 0, 2); ?></h2>
+									<small>Mes anterior: ARS $<?php echo number_format(isset($totales['pendiente_pago_anterior']) ? $totales['pendiente_pago_anterior'] : 0, 2); ?></small>
 								</div>
 							</div>
 						</div>
