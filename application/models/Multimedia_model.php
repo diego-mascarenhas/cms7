@@ -24,7 +24,7 @@ class Multimedia_model extends CI_Model {
 					CASE
 						WHEN media.estado = 1 THEN 'Inactivo'
 						WHEN media.estado = 2 THEN 'Activo'
-						WHEN media.estado = 3 THEN 'Público'
+						WHEN media.estado = 3 THEN 'PÃºblico'
 					END AS estado
 				
 				FROM media
@@ -203,7 +203,7 @@ class Multimedia_model extends CI_Model {
 						CASE
 							WHEN media.estado = 1 THEN 'Inactivo'
 							WHEN media.estado = 2 THEN 'Activo'
-							WHEN media.estado = 3 THEN 'Público'
+							WHEN media.estado = 3 THEN 'PÃºblico'
 						END AS estado
 					
 					FROM media
@@ -527,7 +527,7 @@ class Multimedia_model extends CI_Model {
 		
 		if (!empty($row))
 		{
-			$res[] = '--- Selecciona una opción ---';
+			$res[] = '--- Selecciona una opciÃ³n ---';
 			
 			foreach ($row as $obj => $value)
 			{
@@ -656,29 +656,34 @@ class Multimedia_model extends CI_Model {
 	
 	
 	public function ingresarThumb($id_tipo, $id, $valores)
-	{
-		$data['id_tipo'] = $id_tipo;
-		$data['referencia'] = $id;
-		$data['archivo'] = $valores['archivo'];
-		$data['ancho'] = $valores['ancho'];
-		$data['alto'] = $valores['alto'];
-		if (isset($valores['peso'])) $data['peso'] = $valores['peso'];
-		
-		$thumb = $this->getThumbDetalle($id_tipo, $id);
-				
-		if ($this->db->delete('media_thumbs', array('id_tipo'=>$id_tipo, 'referencia'=>$id)))
-		{
-			$this->db->insert('media_thumbs', $data);
-			
-			$res['id'] = $this->db->insert_id();
-		}
-		else
-		{
-			$res['id'] = $thumb['id'];
-		}
-
-		return (!empty($res)) ? $res : null;
+{
+	if (empty($valores['archivo'])) {
+		log_message('error', 'El valor de archivo no fue proporcionado a ingresarThumb');
+		return null; // o lanzá un error controlado si lo preferís
 	}
+
+	$data['id_tipo'] = $id_tipo;
+	$data['referencia'] = $id;
+	$data['archivo'] = $valores['archivo'];
+	$data['ancho'] = $valores['ancho'] ?? null;
+	$data['alto'] = $valores['alto'] ?? null;
+	if (isset($valores['peso'])) $data['peso'] = $valores['peso'];
+
+	$thumb = $this->getThumbDetalle($id_tipo, $id);
+
+	if ($this->db->delete('media_thumbs', array('id_tipo'=>$id_tipo, 'referencia'=>$id)))
+	{
+		$this->db->insert('media_thumbs', $data);
+		$res['id'] = $this->db->insert_id();
+	}
+	else
+	{
+		$res['id'] = $thumb['id'];
+	}
+
+	return (!empty($res)) ? $res : null;
+}
+
 	
 	
 	function menuProyectos($padre = null, $seleccionada = null, $niveles = 10, $nivel = null, $parametros = null)
