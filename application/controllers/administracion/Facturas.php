@@ -84,7 +84,7 @@ class Facturas extends MY_Controller {
 	
 					$raw['factura'] = $this->factura_model->getFacturaDetalleRaw($id);
 					
-					$url = 'http://wsaa.revisionalpha.com/comprobante/' . $raw['factura']['grupo']  . '/' . $raw['factura']['afip_cuit']  . '/' . $raw['factura']['id_afip']  . '/' . $raw['factura']['numero_talonario'] . '/' . $data['factura']['numero_factura'] . '/';
+					$url = 'https://cms.revisionalpha.com/comprobante/' . $raw['factura']['grupo']  . '/' . $raw['factura']['afip_cuit']  . '/' . $raw['factura']['id_afip']  . '/' . $raw['factura']['numero_talonario'] . '/' . $data['factura']['numero_factura'] . '/';
 					
 					$this->load->library('curl');
 					$res = json_decode($this->curl->simple_get($url), true);
@@ -142,7 +142,7 @@ class Facturas extends MY_Controller {
 				
 				if ($raw['factura']['error'])
 				{
-					$url = 'http://wsaa.revisionalpha.com/comprobante/' . $raw['factura']['grupo']  . '/' . $raw['factura']['afip_cuit']  . '/' . $raw['factura']['id_afip']  . '/' . $raw['factura']['numero_talonario'] . '/' . $raw['factura']['numero_factura'] . '/';
+					$url = 'https://cms.revisionalpha.com/comprobante/' . $raw['factura']['grupo']  . '/' . $raw['factura']['afip_cuit']  . '/' . $raw['factura']['id_afip']  . '/' . $raw['factura']['numero_talonario'] . '/' . $raw['factura']['numero_factura'] . '/';
 					
 					$this->load->library('curl');
 					$res = json_decode($this->curl->simple_get($url), true);

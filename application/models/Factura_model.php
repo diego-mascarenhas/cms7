@@ -6,7 +6,7 @@ class Factura_model extends CI_Model {
 	public function getFacturas($parametros = null)
 	{
 		$sql = "	
-				SELECT SQL_CALC_FOUND_ROWS facturas.id, CONCAT(facturas_tipo.factura_tipo, ' ', lpad(facturas.numero_talonario, 4, '0'), '-', lpad(IF(facturas.numero_factura, facturas.numero_factura, '********'), 8, '0')) AS comprobante, IF(facturas.cae_numero, CONCAT('http://wsaa.revisionalpha.com/', md5(CONCAT(facturas.grupo,facturas.id)), '.pdf'), NULL) as link, empresas_fiscales.id as id_empresa_fiscal, empresas_fiscales.razon_social, facturas.fecha AS fecha_real, UNIX_TIMESTAMP(facturas.fecha) AS fecha, facturas.vencimiento AS vencimiento_real, UNIX_TIMESTAMP(facturas.vencimiento) AS vencimiento, facturas.total_neto, facturas.saldo, UNIX_TIMESTAMP(CONVERT_TZ(facturas.enviado, '+00:00', @@global.time_zone)) AS enviado, UNIX_TIMESTAMP(CONVERT_TZ(facturas.recibido, '+00:00', @@global.time_zone)) AS recibido, empresas.empresa, empresas.id as id_empresa, formas_pago.forma_pago, facturas.id_forma_pago, sys_monedas.simbolo, facturas.padre,
+				SELECT SQL_CALC_FOUND_ROWS facturas.id, CONCAT(facturas_tipo.factura_tipo, ' ', lpad(facturas.numero_talonario, 4, '0'), '-', lpad(IF(facturas.numero_factura, facturas.numero_factura, '********'), 8, '0')) AS comprobante, IF(facturas.cae_numero, CONCAT('https://cms.revisionalpha.com/pdfs/', md5(CONCAT(facturas.grupo,facturas.id)), '.pdf'), NULL) as link, empresas_fiscales.id as id_empresa_fiscal, empresas_fiscales.razon_social, facturas.fecha AS fecha_real, UNIX_TIMESTAMP(facturas.fecha) AS fecha, facturas.vencimiento AS vencimiento_real, UNIX_TIMESTAMP(facturas.vencimiento) AS vencimiento, facturas.total_neto, facturas.saldo, UNIX_TIMESTAMP(CONVERT_TZ(facturas.enviado, '+00:00', @@global.time_zone)) AS enviado, UNIX_TIMESTAMP(CONVERT_TZ(facturas.recibido, '+00:00', @@global.time_zone)) AS recibido, empresas.empresa, empresas.id as id_empresa, formas_pago.forma_pago, facturas.id_forma_pago, sys_monedas.simbolo, facturas.padre,
 	
 					CASE
 						WHEN facturas.estado = 1 THEN 'label-warning'
@@ -185,7 +185,7 @@ class Factura_model extends CI_Model {
 		else
 		{
 			$sql = " 	
-					SELECT SQL_CALC_FOUND_ROWS facturas.id, facturas.grupo, facturas.id_factura_tipo, facturas_tipo.id_afip, facturas_tipo.cuit AS afip_cuit, facturas.operacion, facturas.cae_numero, facturas.numero_talonario, facturas.numero_factura, CONCAT(facturas_tipo.factura_tipo, ' ', lpad(facturas.numero_talonario, 4, '0'), '-', lpad(IF(facturas.numero_factura, facturas.numero_factura, '********'), 8, '0')) AS comprobante, IF(facturas.cae_numero, CONCAT('http://wsaa.revisionalpha.com/', md5(CONCAT(facturas.grupo,facturas.id)), '.pdf'), NULL) as link, IF(facturas.cae_numero, CONCAT('http://wsaa.revisionalpha.com/descargar/', md5(CONCAT(facturas.grupo,facturas.id))), NULL) as descargar, empresas_fiscales.id as id_empresa_fiscal, empresas_fiscales.razon_social, facturas.fecha AS fecha_real, UNIX_TIMESTAMP(facturas.fecha) AS fecha, facturas.vencimiento AS vencimiento_real, UNIX_TIMESTAMP(facturas.vencimiento) AS vencimiento, facturas.bruto, facturas.descuento,
+					SELECT SQL_CALC_FOUND_ROWS facturas.id, facturas.grupo, facturas.id_factura_tipo, facturas_tipo.id_afip, facturas_tipo.cuit AS afip_cuit, facturas.operacion, facturas.cae_numero, facturas.numero_talonario, facturas.numero_factura, CONCAT(facturas_tipo.factura_tipo, ' ', lpad(facturas.numero_talonario, 4, '0'), '-', lpad(IF(facturas.numero_factura, facturas.numero_factura, '********'), 8, '0')) AS comprobante, IF(facturas.cae_numero, CONCAT('https://cms.revisionalpha.com/pdfs/', md5(CONCAT(facturas.grupo,facturas.id)), '.pdf'), NULL) as link, IF(facturas.cae_numero, CONCAT('https://cms.revisionalpha.com/pdfs/descargar/', md5(CONCAT(facturas.grupo,facturas.id))), NULL) as descargar, empresas_fiscales.id as id_empresa_fiscal, empresas_fiscales.razon_social, facturas.fecha AS fecha_real, UNIX_TIMESTAMP(facturas.fecha) AS fecha, facturas.vencimiento AS vencimiento_real, UNIX_TIMESTAMP(facturas.vencimiento) AS vencimiento, facturas.bruto, facturas.descuento,
 					facturas.SUBTOTAL105 AS subtotal105, facturas.IMP105 AS imp105, facturas.NO_GRAVADOS105 AS no_gravados105,
 					facturas.SUBTOTAL210 AS subtotal210, facturas.IMP210 AS imp210, facturas.NO_GRAVADOS210 AS no_gravados210,
 					facturas.SUBTOTAL270 AS subtotal270, facturas.IMP270 AS imp270, facturas.NO_GRAVADOS270 AS no_gravados275,
@@ -524,7 +524,7 @@ class Factura_model extends CI_Model {
 				UNIX_TIMESTAMP(facturas.fecha) AS fecha,
 				UNIX_TIMESTAMP(facturas.vencimiento) AS vencimiento,
 				CONCAT(facturas_tipo.factura_tipo, ' ', lpad(facturas.numero_talonario, 4, '0'), '-', lpad(facturas.numero_factura, 8, '0')) as comprobante,
-				IF(facturas.cae_numero, CONCAT('http://wsaa.revisionalpha.com/', md5(CONCAT(facturas.grupo,facturas.id)), '.pdf'), NULL) as link
+				IF(facturas.cae_numero, CONCAT('https://cms.revisionalpha.com/pdfs/', md5(CONCAT(facturas.grupo,facturas.id)), '.pdf'), NULL) as link
 				
 				FROM facturas
 				LEFT JOIN facturas_tipo ON facturas.id_factura_tipo = facturas_tipo.id

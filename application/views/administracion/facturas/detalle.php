@@ -87,7 +87,7 @@
 			<div class="wrapper wrapper-content animated fadeInRight">
 				<?php if ($this->usuario->perfil == 'reseller' && $factura['operacion'] == 'V' && $factura['id_afip'] == 19 && !empty($factura['numero_factura']) && !empty($factura['cae_numero'])) { ?>
 				<div class="alert alert-info">
-						Subir el comprobante de AFIP con el siguiente nombre a <a href="ftp://wsaa.revisionalpha.com/">http://wsaa.revisionalpha.com/pdfs/30716710072_<?php echo $factura['id_afip']; ?>_<?php echo sprintf("%04s", $factura['numero_talonario']); ?>_<?php echo sprintf("%08s", $factura['numero_factura']); ?>.pdf</a>
+						Subir el comprobante de AFIP con el siguiente nombre a <a href="ftp://cms.revisionalpha.com/">http://cms.revisionalpha.com/pdfs/30716710072_<?php echo $factura['id_afip']; ?>_<?php echo sprintf("%04s", $factura['numero_talonario']); ?>_<?php echo sprintf("%08s", $factura['numero_factura']); ?>.pdf</a>
 						<br>
 						<em>(Usuario: comprobantes@wsaa.revisionalpha.com | Contraseña: laquequieras)</em>
 				</div>
