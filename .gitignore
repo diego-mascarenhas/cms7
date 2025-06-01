@@ -55,10 +55,15 @@ Thumbs.db
 #application/config/site.php
 #application/config/smtp.php
 
-# Ignorar contenido de carpetas pero mantener las carpetas
+# Ignore folder contents but keep the folders
 application/cache/*
 !application/cache/.gitkeep
 application/logs/*
 !application/logs/.gitkeep
 application/sessions/*
 !application/sessions/.gitkeep
+
+# Ignore the multimedia folder and its content
+# but keep the structure to avoid losing files on the server
+multimedia/**/*
+!multimedia/.gitkeep
