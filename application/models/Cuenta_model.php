@@ -6,7 +6,7 @@ class Cuenta_model extends CI_Model {
 	public function getCuentas($parametros = null)
 	{
 		$sql = "
-				SELECT cuentas.id, cuentas.titular, cuentas.cbu, cuentas.id_empresa, empresas.empresa, documentos_tipo.documento_tipo, UNIX_TIMESTAMP(CONVERT_TZ(cuentas.fecha_alta, '+00:00', @@global.time_zone)) AS fecha_alta,
+				SELECT SQL_CALC_FOUND_ROWS cuentas.id, cuentas.titular, cuentas.cbu, cuentas.id_empresa, empresas.empresa, documentos_tipo.documento_tipo, UNIX_TIMESTAMP(cuentas.fecha_alta) AS fecha_alta,
 				
 					CASE
 					   WHEN cuentas.estado = 1 THEN 'label-primary'
@@ -110,7 +110,7 @@ class Cuenta_model extends CI_Model {
 	public function getCuentaDetalle($id)
 	{
 		$sql = "
-				SELECT cuentas.id, cuentas.nombre_cuenta AS cuenta, cuentas.titular, cuentas.numero_cuenta, documentos_tipo.documento_tipo, cuentas.numero_documento AS documento, cuentas.cbu, cuentas.cbu26, cuentas_tipo.cuenta_tipo, empresas.empresa, cuentas.id_empresa, bancos.nombre_banco AS banco, cuentas_estado.estado, cuentas.username_alta, UNIX_TIMESTAMP(CONVERT_TZ(cuentas.fecha_alta, '+00:00', @@global.time_zone)) AS fecha_alta, cuentas.username_modificacion, UNIX_TIMESTAMP(CONVERT_TZ(cuentas.fecha_modificacion, '+00:00', @@global.time_zone)) AS fecha_modificacion 
+				SELECT cuentas.id, cuentas.nombre_cuenta AS cuenta, cuentas.titular, cuentas.numero_cuenta, documentos_tipo.documento_tipo, cuentas.numero_documento AS documento, cuentas.cbu, cuentas.cbu26, cuentas_tipo.cuenta_tipo, empresas.empresa, cuentas.id_empresa, bancos.nombre_banco AS banco, cuentas_estado.estado, cuentas.username_alta, UNIX_TIMESTAMP(cuentas.fecha_alta) AS fecha_alta, cuentas.username_modificacion, UNIX_TIMESTAMP(cuentas.fecha_modificacion) AS fecha_modificacion 
 				
 				FROM cuentas
 				

@@ -866,7 +866,7 @@ class Movimiento_model extends CI_Model {
 					   empresas.empresa, 
 					   empresas.id AS id_empresa, 
 					   cuentas.cbu26 as cbu, 
-					   UNIX_TIMESTAMP(CONVERT_TZ(facturas.fecha, '-03:00', @@global.time_zone)) AS fecha, 
+					   UNIX_TIMESTAMP(facturas.fecha) AS fecha, 
 					   COUNT(facturas.id) AS cantidad, 
 					   SUM(IF(nota.total_neto, facturas.saldo-nota.total_neto, facturas.saldo)) AS saldo
 				
@@ -909,7 +909,7 @@ class Movimiento_model extends CI_Model {
 					   empresas.empresa, 
 					   empresas.id AS id_empresa, 
 					   cuentas.cbu26 as cbu, 
-					   UNIX_TIMESTAMP(CONVERT_TZ(facturas.fecha, '-03:00', @@global.time_zone)) AS fecha, 
+					   UNIX_TIMESTAMP(facturas.fecha) AS fecha, 
 					   COUNT(facturas.id) AS cantidad, 
 					   SUM(IF(nota.total_neto, facturas.saldo-nota.total_neto, facturas.saldo)) AS saldo
 				

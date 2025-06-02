@@ -342,11 +342,11 @@ class Newsletter_model extends CI_Model {
 		$sql = "
 				SELECT sys_grupos.grupo, emailer_newsletters.grupo AS id_grupo, emailer_newsletters.id, emailer_newsletters.newsletter, emailer_newsletters.remitente, emailer_newsletters.email, emailer_newsletters.asunto,
 				
-				UNIX_TIMESTAMP(CONVERT_TZ(emailer_newsletters.enviar, '+00:00', @@global.time_zone)) AS enviar,
+				UNIX_TIMESTAMP(emailer_newsletters.enviar) AS enviar,
 				
-				UNIX_TIMESTAMP(CONVERT_TZ(IF(emailer_newsletters.estado=1, '', IF(emailer_newsletters.estado>1, emailer_newsletters.enviar, emailer_newsletters.inicio)), '+00:00', @@global.time_zone)) AS inicio,
+				UNIX_TIMESTAMP(IF(emailer_newsletters.estado=1, '', IF(emailer_newsletters.estado>1, emailer_newsletters.enviar, emailer_newsletters.inicio))) AS inicio,
 				
-				UNIX_TIMESTAMP(CONVERT_TZ(IF(emailer_newsletters.estado=5, emailer_newsletters.final, null), '+00:00', @@global.time_zone)) AS final,
+				UNIX_TIMESTAMP(IF(emailer_newsletters.estado=5, emailer_newsletters.final, null)) AS final,
 				
 				emailer_newsletters_envios_stats.suscriptores, emailer_newsletters_envios_stats.restantes, emailer_newsletters_envios_stats.fallidos, emailer_newsletters_envios_stats.enviados, emailer_newsletters_envios_stats.rechazados, emailer_newsletters_envios_stats.recibidos, emailer_newsletters_envios_stats.abiertos, emailer_newsletters_envios_stats.desuscriptos, emailer_newsletters_envios_stats.clicks, emailer_newsletters_envios_stats.aberturas, emailer_newsletters_envios_stats.ratio,
 				

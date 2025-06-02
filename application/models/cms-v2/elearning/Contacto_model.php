@@ -5,7 +5,7 @@ class Contacto_model extends CI_Model {
 	public function getContactos($parametros = null)
 	{
 		$sql = "	
-				SELECT SQL_CALC_FOUND_ROWS contactos.id, IFNULL(trim(CONCAT(contactos.nombre, ' ', IFNULL(contactos.apellido, ''))), contactos.username) AS contacto, contactos.email, contactos.estado as id_estado, contactos.username, COALESCE(contactos.celular, contactos.telefono, empresas.telefono) AS telefono, empresas.id AS id_empresa, empresas.empresa, UNIX_TIMESTAMP(CONVERT_TZ(contactos.ultima_visita, '+00:00', @@global.time_zone)) AS ultima_visita, contactos_extras.tipo_contacto, contactos_extras.razon_social,				
+				SELECT SQL_CALC_FOUND_ROWS contactos.id, IFNULL(trim(CONCAT(contactos.nombre, ' ', IFNULL(contactos.apellido, ''))), contactos.username) AS contacto, contactos.email, contactos.estado as id_estado, contactos.username, COALESCE(contactos.celular, contactos.telefono, empresas.telefono) AS telefono, empresas.id AS id_empresa, empresas.empresa, UNIX_TIMESTAMP(contactos.ultima_visita) AS ultima_visita, contactos_extras.tipo_contacto, contactos_extras.razon_social,				
 					CASE
 						WHEN contactos.area_privada = 2 THEN 'Reseller'
 						WHEN contactos.area_privada = 3 THEN 'Administrador'

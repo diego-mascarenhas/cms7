@@ -6,7 +6,7 @@ class Contacto_model extends CI_Model {
 	public function getContactos($parametros = null)
 	{
 		$sql = "	
-				SELECT SQL_CALC_FOUND_ROWS con_contactos.id, IFNULL(trim(CONCAT(con_contactos.nombre, ' ', IFNULL(con_contactos.apellido, ''))), con_contactos.username) AS contacto, con_contactos.email, con_contactos.username, COALESCE(con_contactos.celular, con_contactos.telefono, empresas.telefono) AS telefono, empresas.id AS id_empresa, empresas.empresa, UNIX_TIMESTAMP(CONVERT_TZ(con_contactos.ultima_visita, '+00:00', @@global.time_zone)) AS ultima_visita,
+				SELECT SQL_CALC_FOUND_ROWS con_contactos.id, IFNULL(trim(CONCAT(con_contactos.nombre, ' ', IFNULL(con_contactos.apellido, ''))), con_contactos.username) AS contacto, con_contactos.email, con_contactos.username, COALESCE(con_contactos.celular, con_contactos.telefono, empresas.telefono) AS telefono, empresas.id AS id_empresa, empresas.empresa, UNIX_TIMESTAMP(con_contactos.ultima_visita) AS ultima_visita,
 				
 					CASE
 						WHEN con_contactos.area_privada = 2 THEN 'Reseller'
@@ -135,7 +135,7 @@ class Contacto_model extends CI_Model {
 		else
 		{
 			$sql = "	
-					SELECT con_contactos.id, con_contactos.nombre, con_contactos.apellido, con_contactos.padre, con_contactos.estado, con_contactos.documento, con_contactos.uri, con_contactos.pais, IFNULL(trim(CONCAT(con_contactos.nombre, ' ', IFNULL(con_contactos.apellido, ''))), con_contactos.username) AS contacto, con_contactos.email, COALESCE(con_contactos.celular, con_contactos.telefono, empresas.telefono) AS telefono, con_contactos.username, con_contactos.hash, empresas.id AS id_empresa, empresas.empresa, UNIX_TIMESTAMP(CONVERT_TZ(con_contactos.ultima_visita, '+00:00', @@global.time_zone)) AS ultima_visita, con_contactos.ip, con_contactos.idioma, con_contactos.timezone,
+					SELECT con_contactos.id, con_contactos.nombre, con_contactos.apellido, con_contactos.padre, con_contactos.estado, con_contactos.documento, con_contactos.uri, con_contactos.pais, IFNULL(trim(CONCAT(con_contactos.nombre, ' ', IFNULL(con_contactos.apellido, ''))), con_contactos.username) AS contacto, con_contactos.email, COALESCE(con_contactos.celular, con_contactos.telefono, empresas.telefono) AS telefono, con_contactos.username, con_contactos.hash, empresas.id AS id_empresa, empresas.empresa, UNIX_TIMESTAMP(con_contactos.ultima_visita) AS ultima_visita, con_contactos.ip, con_contactos.idioma, con_contactos.timezone,
 					
 					CASE
 					   WHEN con_contactos.area_privada = 2 THEN 'Reseller'

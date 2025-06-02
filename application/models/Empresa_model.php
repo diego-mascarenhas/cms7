@@ -6,7 +6,7 @@ class Empresa_model extends CI_Model {
 	public function getEmpresas($parametros = null)
 	{
 		$sql = "
-				SELECT SQL_CALC_FOUND_ROWS empresas.id, empresas.empresa, contactos.id AS id_contacto, trim(CONCAT(contactos.nombre, ' ', IFNULL(contactos.apellido, ''))) AS contacto, contactos.email, empresas.telefono, referidos.empresa AS referido, referidos.id AS id_referido, empresas.username_alta, UNIX_TIMESTAMP(CONVERT_TZ(empresas.fecha_alta, '+00:00', @@global.time_zone)) AS fecha_alta,
+				SELECT SQL_CALC_FOUND_ROWS empresas.id, empresas.empresa, contactos.id AS id_contacto, trim(CONCAT(contactos.nombre, ' ', IFNULL(contactos.apellido, ''))) AS contacto, contactos.email, empresas.telefono, referidos.empresa AS referido, referidos.id AS id_referido, empresas.username_alta, UNIX_TIMESTAMP(empresas.fecha_alta) AS fecha_alta,
 				
 					(SELECT GROUP_CONCAT(trim(CONCAT(contactos.nombre, ' ', IFNULL(contactos.apellido, ''))) SEPARATOR ', ')
 					FROM contactos
@@ -132,7 +132,7 @@ class Empresa_model extends CI_Model {
 		else
 		{
 			$sql = " 	
-					SELECT empresas.id, empresas.codigo, facturas_tipo.factura_tipo AS tipo_factura, empresas.id_factura_tipo, formas_pago.forma_pago, empresas.id_forma_pago, empresas.empresa, empresas.actividad, categorias_gestion.nombre_categoria AS categoria, empresas_fiscales.id AS id_empresa_fiscal, empresas_fiscales.razon_social, empresas_fiscales.cuit, empresas_fiscales.ingresos_brutos, condiciones_iva.condicion_iva, cuentas.id AS id_cuenta, cuentas.titular, cuentas.numero_documento AS documento, cuentas.cbu, contactos.id AS id_contacto, trim(CONCAT(contactos.nombre, ' ', IFNULL(contactos.apellido, ''))) AS contacto, contactos.email, empresas.telefono, empresas.whatsapp, referidos.id AS id_referido, referidos.empresa AS referido, empresas.username_alta, UNIX_TIMESTAMP(CONVERT_TZ(empresas.fecha_alta, '+00:00', @@global.time_zone)) AS fecha_alta, empresas.username_modificacion, UNIX_TIMESTAMP(CONVERT_TZ(empresas.fecha_modificacion, '+00:00', @@global.time_zone)) AS fecha_modificacion
+					SELECT empresas.id, empresas.codigo, facturas_tipo.factura_tipo AS tipo_factura, empresas.id_factura_tipo, formas_pago.forma_pago, empresas.id_forma_pago, empresas.empresa, empresas.actividad, categorias_gestion.nombre_categoria AS categoria, empresas_fiscales.id AS id_empresa_fiscal, empresas_fiscales.razon_social, empresas_fiscales.cuit, empresas_fiscales.ingresos_brutos, condiciones_iva.condicion_iva, cuentas.id AS id_cuenta, cuentas.titular, cuentas.numero_documento AS documento, cuentas.cbu, contactos.id AS id_contacto, trim(CONCAT(contactos.nombre, ' ', IFNULL(contactos.apellido, ''))) AS contacto, contactos.email, empresas.telefono, empresas.whatsapp, referidos.id AS id_referido, referidos.empresa AS referido, empresas.username_alta, UNIX_TIMESTAMP(empresas.fecha_alta) AS fecha_alta, empresas.username_modificacion, UNIX_TIMESTAMP(empresas.fecha_modificacion) AS fecha_modificacion
 					
 					FROM empresas
 					
@@ -1378,7 +1378,7 @@ public function actualizarDatosFiscales($valores)
 	public function getEmpresaSaldo($id, $dias = 0)
 	{
 		$sql = "
-				SELECT empresas.id, SUM(facturas.saldo) AS parcial, UNIX_TIMESTAMP(CONVERT_TZ(facturas.vencimiento, '+00:00', @@global.time_zone)) AS vencimiento,
+				SELECT empresas.id, SUM(facturas.saldo) AS parcial, UNIX_TIMESTAMP(facturas.vencimiento) AS vencimiento,
 								(SELECT COUNT(*)
 													FROM facturas AS facturas
 													LEFT JOIN empresas_fiscales ON facturas.id_empresa_fiscal = empresas_fiscales.id
@@ -1423,7 +1423,7 @@ public function actualizarDatosFiscales($valores)
 	public function getEmpresasDeudoras($dias = 45)
 	{
 		$sql = "
-				SELECT empresas.id, empresas.empresa, SUM(facturas.saldo) AS parcial, UNIX_TIMESTAMP(CONVERT_TZ(facturas.vencimiento, '+00:00', @@global.time_zone)) AS vencimiento, contactos.id AS id_contacto, IFNULL(trim(CONCAT(contactos.nombre, ' ', IFNULL(contactos.apellido, ''))), contactos.username) AS contacto, contactos.email, (SELECT COUNT(*)
+				SELECT empresas.id, empresas.empresa, SUM(facturas.saldo) AS parcial, UNIX_TIMESTAMP(facturas.vencimiento) AS vencimiento, contactos.id AS id_contacto, IFNULL(trim(CONCAT(contactos.nombre, ' ', IFNULL(contactos.apellido, ''))), contactos.username) AS contacto, contactos.email, (SELECT COUNT(*)
 													FROM facturas AS facturas
 													LEFT JOIN empresas_fiscales ON facturas.id_empresa_fiscal = empresas_fiscales.id
 													WHERE empresas_fiscales.id_empresa = empresas.id
