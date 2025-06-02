@@ -30,6 +30,14 @@ class Facturas extends MY_Controller {
 				$parametros['excluir_notas'] = true;
 			}
 			
+			// Special handling for cancelled invoices (estado=3)
+			if ($parametros['estado'] == 3) {
+				$parametros['pendiente'] = false; // Don't filter by pending status
+				$parametros['excluir_notas'] = false; // Don't exclude any notes
+				$parametros['order_by'] = 'facturas.fecha'; // Order by date
+				$parametros['order'] = 'DESC'; // Show newest first
+			}
+			
 			// Get invoice totals
 			$data['totales'] = $this->factura_model->getTotalFacturado();
 			
@@ -572,6 +580,65 @@ class Facturas extends MY_Controller {
 	
 					$this->load->view('/header');
 					$this->load->view('/administracion/facturas/marcar_como_impresa', $data);
+					$this->load->view('/footer');
+				}
+			}
+		}
+		elseif ($this->is_logged_in())
+		{
+			$this->load->view('/401');
+		}
+		else
+		{
+			redirect(base_url('user/login'));
+		}
+	}
+	
+	
+	public function marcar_como_anulada($id)
+	{
+		if ($this->is_logged_in('reseller'))
+		{
+			// models
+			$this->load->model('factura_model');
+			
+			// helpers and libraries
+			$this->load->helper('form');
+			$this->load->library('form_validation');
+			$this->config->set_item('language', $this->usuario->idioma);
+			
+			// set validation rules
+			$this->form_validation->set_rules('id', 'ID', 'required');
+			
+			if ($this->form_validation->run() === false)
+			{
+				// form values
+				$data['detalle'] = $this->factura_model->getFacturaDetalle($id);
+				
+				$this->load->view('/header');
+				$this->load->view('/administracion/facturas/marcar_como_anulada', $data);
+				$this->load->view('/footer');
+			}
+			else
+			{
+				// models
+				$this->load->model('sys_model');
+			
+				if ($data = $this->sys_model->verificarPropiedad($this->input->post('id'), 'facturas'))
+				{
+					$res = $this->factura_model->cambiarEstado($this->input->post('id'), 3);
+					
+					redirect(base_url('administracion/facturas/detalle/' . $this->input->post('id')));
+				}
+				else
+				{
+					// form values
+					$data['detalle'] = $this->factura_model->getFacturaDetalle($id);
+				
+					$data['error'] = 'Ha habido un problema, por favor intenta más tarde';
+	
+					$this->load->view('/header');
+					$this->load->view('/administracion/facturas/marcar_como_anulada', $data);
 					$this->load->view('/footer');
 				}
 			}

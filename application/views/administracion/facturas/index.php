@@ -18,6 +18,7 @@
                         <a href="<?php echo base_url('administracion/facturas/?estado=2&pendiente=true&operacion=v'); ?>" class="btn btn-success btn-sm">Pendientes de Venta</a>
                         <a href="<?php echo base_url('administracion/facturas/?estado=1'); ?>" class="btn btn-warning btn-sm">Sin imprimir</a>
                         <a href="<?php echo base_url('administracion/facturas/?estado=8'); ?>" class="btn btn-info btn-sm">Nuevas facturas</a>
+                        <a href="<?php echo base_url('administracion/facturas/?estado=3'); ?>" class="btn btn-default btn-sm">Facturas anuladas</a>
                     </div>
                 </div>
 	        </div>
@@ -135,7 +136,12 @@
 				                                        }
 					                                ?>
 			                                    </td>
-		                                        <td class="text-center"><span class="label <?php echo $factura['estado_ui_class']; ?>"><?php echo $factura['estado']; ?></span></td>
+		                                        <td class="text-center">
+		                                            <span class="label <?php echo $factura['estado_ui_class']; ?>"><?php echo $factura['estado']; ?></span>
+		                                            <?php if ($factura['estado'] == 'Imprimir'): ?>
+		                                            <a href="<?php echo base_url('administracion/facturas/marcar_como_anulada/'); ?><?php echo $factura['id']; ?>" class="btn btn-xs btn-danger m-l-xs"><i class="fa fa-ban"></i> Anular</a>
+		                                            <?php endif; ?>
+		                                        </td>
 		                                    </tr>
 											<? } ?>
 	                                    </tbody>
