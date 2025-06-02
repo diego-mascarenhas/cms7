@@ -27,7 +27,7 @@
 				<!-- Totales de facturación -->
 				<div class="row">
 					<div class="col-lg-3">
-						<div class="widget style1 navy-bg">
+						<div class="widget style1 blue-bg">
 							<div class="row">
 								<div class="col-xs-4">
 									<i class="fa fa-money fa-4x"></i>
@@ -58,12 +58,12 @@
 						<div class="widget style1 lazur-bg">
 							<div class="row">
 								<div class="col-xs-4">
-									<i class="fa fa-arrow-circle-o-down fa-4x"></i>
+									<i class="fa fa-credit-card fa-4x"></i>
 								</div>
 								<div class="col-xs-8 text-right">
-									<span>Pendiente de cobro</span>
-									<h2 class="font-bold">ARS $<?php echo number_format(isset($totales['pendiente_cobro']) ? $totales['pendiente_cobro'] : 0, 0, ',', '.'); ?></h2>
-									<small>Mes anterior: ARS $<?php echo number_format(isset($totales['pendiente_cobro_anterior']) ? $totales['pendiente_cobro_anterior'] : 0, 0, ',', '.'); ?></small>
+									<span>Pagos recibidos</span>
+									<h2 class="font-bold">ARS $<?php echo number_format(isset($totales['pagos_recibidos']) ? $totales['pagos_recibidos'] : 0, 0, ',', '.'); ?></h2>
+									<small>Mes anterior: ARS $<?php echo number_format(isset($totales['pagos_recibidos_anterior']) ? $totales['pagos_recibidos_anterior'] : 0, 0, ',', '.'); ?></small>
 								</div>
 							</div>
 						</div>
@@ -72,12 +72,12 @@
 						<div class="widget style1 yellow-bg">
 							<div class="row">
 								<div class="col-xs-4">
-									<i class="fa fa-arrow-circle-o-up fa-4x"></i>
+									<i class="fa fa-money fa-4x"></i>
 								</div>
 								<div class="col-xs-8 text-right">
-									<span>Pendiente de pago</span>
-									<h2 class="font-bold">ARS $<?php echo number_format(isset($totales['pendiente_pago']) ? $totales['pendiente_pago'] : 0, 0, ',', '.'); ?></h2>
-									<small>Mes anterior: ARS $<?php echo number_format(isset($totales['pendiente_pago_anterior']) ? $totales['pendiente_pago_anterior'] : 0, 0, ',', '.'); ?></small>
+									<span>Pagos realizados</span>
+									<h2 class="font-bold">ARS $<?php echo number_format(isset($totales['pagos_realizados']) ? $totales['pagos_realizados'] : 0, 0, ',', '.'); ?></h2>
+									<small>Mes anterior: ARS $<?php echo number_format(isset($totales['pagos_realizados_anterior']) ? $totales['pagos_realizados_anterior'] : 0, 0, ',', '.'); ?></small>
 								</div>
 							</div>
 						</div>

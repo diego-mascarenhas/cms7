@@ -1611,14 +1611,15 @@ class Factura_model extends CI_Model {
 					SUM(CASE WHEN facturas.operacion = 'C' THEN facturas.total_neto * facturas.cambio ELSE 0 END) AS total_compras,
 					SUM(CASE WHEN facturas.operacion = 'V' THEN facturas.total_neto * facturas.cambio ELSE 0 END) AS total_ventas,
 					SUM(CASE WHEN facturas.operacion = 'C' THEN facturas.saldo * facturas.cambio ELSE 0 END) AS pendiente_pago,
-					SUM(CASE WHEN facturas.operacion = 'V' THEN facturas.saldo * facturas.cambio ELSE 0 END) AS pendiente_cobro
+					SUM(CASE WHEN facturas.operacion = 'V' THEN facturas.saldo * facturas.cambio ELSE 0 END) AS pendiente_cobro,
+					SUM(CASE WHEN facturas.operacion = 'V' THEN (facturas.total_neto - facturas.saldo) * facturas.cambio ELSE 0 END) AS pagos_recibidos,
+					SUM(CASE WHEN facturas.operacion = 'C' THEN (facturas.total_neto - facturas.saldo) * facturas.cambio ELSE 0 END) AS pagos_realizados
 				FROM facturas
 				LEFT JOIN empresas_fiscales ON facturas.id_empresa_fiscal = empresas_fiscales.id
 				LEFT JOIN empresas ON empresas_fiscales.id_empresa = empresas.id
 				LEFT JOIN sys_monedas ON facturas.id_moneda = sys_monedas.id
 				WHERE facturas.grupo = ?
 				AND (facturas.estado = 1 OR facturas.estado = 2)
-				AND facturas.saldo > 0
 				AND empresas.estado > 1
 				AND MONTH(facturas.fecha) = MONTH(CURRENT_DATE())
 				AND YEAR(facturas.fecha) = YEAR(CURRENT_DATE())
@@ -1643,14 +1644,15 @@ class Factura_model extends CI_Model {
 					SUM(CASE WHEN facturas.operacion = 'C' THEN facturas.total_neto * facturas.cambio ELSE 0 END) AS total_compras_anterior,
 					SUM(CASE WHEN facturas.operacion = 'V' THEN facturas.total_neto * facturas.cambio ELSE 0 END) AS total_ventas_anterior,
 					SUM(CASE WHEN facturas.operacion = 'C' THEN facturas.saldo * facturas.cambio ELSE 0 END) AS pendiente_pago_anterior,
-					SUM(CASE WHEN facturas.operacion = 'V' THEN facturas.saldo * facturas.cambio ELSE 0 END) AS pendiente_cobro_anterior
+					SUM(CASE WHEN facturas.operacion = 'V' THEN facturas.saldo * facturas.cambio ELSE 0 END) AS pendiente_cobro_anterior,
+					SUM(CASE WHEN facturas.operacion = 'V' THEN (facturas.total_neto - facturas.saldo) * facturas.cambio ELSE 0 END) AS pagos_recibidos_anterior,
+					SUM(CASE WHEN facturas.operacion = 'C' THEN (facturas.total_neto - facturas.saldo) * facturas.cambio ELSE 0 END) AS pagos_realizados_anterior
 				FROM facturas
 				LEFT JOIN empresas_fiscales ON facturas.id_empresa_fiscal = empresas_fiscales.id
 				LEFT JOIN empresas ON empresas_fiscales.id_empresa = empresas.id
 				LEFT JOIN sys_monedas ON facturas.id_moneda = sys_monedas.id
 				WHERE facturas.grupo = ?
 				AND (facturas.estado = 1 OR facturas.estado = 2)
-				AND facturas.saldo > 0
 				AND empresas.estado > 1
 				AND (
 					(MONTH(facturas.fecha) = MONTH(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH)) 
