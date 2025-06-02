@@ -112,7 +112,27 @@ if (!empty($hash)) {
 // Buscar factura por ID
 echo '<h2>Obteniendo datos de la factura ID: ' . htmlspecialchars($id) . '</h2>';
 
-$query = "SELECT * FROM facturas WHERE id = " . $mysqli->real_escape_string($id);
+$query = "SELECT 
+           facturas.*,
+           facturas_tipo.impuesto, 
+           facturas_tipo.cuit, 
+           facturas_tipo.id_afip,
+           facturas_tipo.factura_tipo,
+           empresas_fiscales.razon_social, 
+           empresas_fiscales.domicilio, 
+           empresas_fiscales.codigo_postal,
+           empresas_fiscales.provincia, 
+           empresas_fiscales.pais, 
+           condiciones_iva.condicion_iva,
+           empresas_fiscales.cuit as documento_numero,
+           sys_monedas.moneda
+          FROM facturas
+          LEFT JOIN facturas_tipo ON facturas.id_factura_tipo = facturas_tipo.id
+          LEFT JOIN empresas_fiscales ON facturas.id_empresa_fiscal = empresas_fiscales.id
+          LEFT JOIN condiciones_iva ON empresas_fiscales.id_condicion_iva = condiciones_iva.id
+          LEFT JOIN sys_monedas ON facturas.id_moneda = sys_monedas.id
+          WHERE facturas.id = " . $mysqli->real_escape_string($id);
+
 echo '<p>Ejecutando consulta: <code>' . htmlspecialchars($query) . '</code></p>';
 
 $result = $mysqli->query($query);
@@ -222,14 +242,12 @@ $query = "SELECT
            empresas_fiscales.provincia, 
            empresas_fiscales.pais, 
            condiciones_iva.condicion_iva,
-           documentos_tipo.id AS id_documento_tipo, 
-           empresas_fiscales.documento_numero,
+           empresas_fiscales.cuit as documento_numero,
            sys_monedas.moneda
           FROM facturas
           LEFT JOIN facturas_tipo ON facturas.id_factura_tipo = facturas_tipo.id
           LEFT JOIN empresas_fiscales ON facturas.id_empresa_fiscal = empresas_fiscales.id
           LEFT JOIN condiciones_iva ON empresas_fiscales.id_condicion_iva = condiciones_iva.id
-          LEFT JOIN documentos_tipo ON empresas_fiscales.id_documento_tipo = documentos_tipo.id
           LEFT JOIN sys_monedas ON facturas.id_moneda = sys_monedas.id
           WHERE facturas.id = " . $mysqli->real_escape_string($id);
 
