@@ -23,7 +23,7 @@
 						<tbody>
 							<tr>
 								<td style="width:328px;">
-									<h1><img src="/home/forge/cms.revisionalpha.com/pdfs/templates/revisionalpha/images/revision-alpha.png" alt="REVISION ALPHA" height="35"></h1><br>
+									<h1><img src="https://cms.revisionalpha.com/pdfs/templates/revisionalpha/images/revision-alpha.png" alt="REVISION ALPHA" height="35"></h1><br>
 								</td>
 								<td style="width:100px;">&nbsp;</td>
 								<td style="width:328px;">
@@ -53,7 +53,7 @@
 							</tr>
 							<tr>
 								<td colspan="3">
-									<img src="/home/forge/cms.revisionalpha.com/pdfs/templates/revisionalpha/images/factura-A.jpg" alt="Factura A" width="752">
+									<img src="https://cms.revisionalpha.com/pdfs/templates/revisionalpha/images/factura-A.jpg" alt="Factura A" width="752">
 								</td>
 							</tr>
 						</tbody>

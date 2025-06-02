@@ -7,6 +7,7 @@ error_reporting(E_ALL);
 // Incluir archivos necesarios
 require_once('config.php');
 require_once('funciones.php');
+require_once('html2pdf/_tcpdf_5.0.002/qrcode.php'); // Incluir la biblioteca QRcode
 
 // Obtener el hash de la factura
 $hash = isset($_GET['id']) ? $_GET['id'] : '';
@@ -131,6 +132,61 @@ function corregirRutasHTML($html)
 	return $html;
 }
 
+// Generar código QR para AFIP
+function generarQR($datos) {
+	// Codificar datos en base64
+	$base64 = base64_encode(json_encode($datos));
+	
+	// URL de la API de QR de AFIP
+	$urlQR = "https://www.afip.gob.ar/fe/qr/?p=" . $base64;
+	
+	// Crear objeto QRcode con la URL
+	$qrcode = new QRcode($urlQR, 'L');
+	$qrcode_array = $qrcode->getBarcodeArray();
+	
+	// Generar HTML para el código QR
+	$html = '<div style="text-align:center;">';
+	$html .= '<div style="border:1px solid #000;width:150px;height:150px;margin:0 auto;">';
+	$html .= '<table style="border-collapse:collapse;width:130px;height:130px;margin:10px auto;">';
+	
+	// Generar tabla para mostrar el código QR (cada celda es un módulo)
+	$width = $qrcode_array['num_cols'];
+	$height = $qrcode_array['num_rows'];
+	
+	for ($r = 0; $r < $height; $r++) {
+		$html .= '<tr style="height:' . (130/$height) . 'px">';
+		for ($c = 0; $c < $width; $c++) {
+			$color = ($qrcode_array['bcode'][$r][$c] == 1) ? '#000' : '#fff';
+			$html .= '<td style="width:' . (130/$width) . 'px;background-color:' . $color . '"></td>';
+		}
+		$html .= '</tr>';
+	}
+	
+	$html .= '</table>';
+	$html .= '</div>';
+	$html .= '<p style="font-size:9px;margin-top:5px">Código QR AFIP</p>';
+	$html .= '</div>';
+	
+	return $html;
+}
+
+// Armar código QR para AFIP
+$codigoqr = array(
+	'ver' => 1,
+	'fecha' => date("Y-m-d", strtotime($factura['fecha'])),
+	'cuit' => 30716710072,
+	'ptoVta' => intval(str_pad($factura['numero_talonario'], 4, 0, STR_PAD_LEFT)),
+	'tipoCmp' => intval($factura['id_afip']),
+	'nroCmp' => intval(str_pad($factura['numero_factura'], 8, 0, STR_PAD_LEFT)),
+	'importe' => floatval($factura['total_neto']),
+	'moneda' => 'PES',
+	'ctz' => 1,
+	'tipoDocRec' => intval($factura['id_documento_tipo']),
+	'nroDocRec' => floatval(str_replace('-', '', $factura['documento_numero'])),
+	'tipoCodAut' => 'E',
+	'codAut' => floatval($factura['cae_numero'])
+);
+
 // Cargar la plantilla directamente (sin cURL)
 $_POST = [
 	'numero_talonario' => str_pad($factura['numero_talonario'], 4, 0, STR_PAD_LEFT),
@@ -155,27 +211,12 @@ $_POST = [
 	'CAE' => $cae['CAE'],
 	'CAEFchVto' => date('d/m/Y', strtotime($cae['CAEFchVto'])),
 	'numeroCodigoBarras' => $numeroCodigoBarras,
-	'moneda' => $factura['moneda']
+	'moneda' => $factura['moneda'],
+	'qr_code' => generarQR($codigoqr) // Generar código QR usando la clase
 ];
 
-// Armar código QR para AFIP
-$codigoqr = array(
-	'ver' => 1,
-	'fecha' => date("Y-m-d", strtotime($factura['fecha'])),
-	'cuit' => 30716710072,
-	'ptoVta' => intval(str_pad($factura['numero_talonario'], 4, 0, STR_PAD_LEFT)),
-	'tipoCmp' => intval($factura['id_afip']),
-	'nroCmp' => intval(str_pad($factura['numero_factura'], 8, 0, STR_PAD_LEFT)),
-	'importe' => floatval($factura['total_neto']),
-	'moneda' => 'PES',
-	'ctz' => 1,
-	'tipoDocRec' => intval($factura['id_documento_tipo']),
-	'nroDocRec' => floatval($factura['documento_numero']),
-	'tipoCodAut' => 'E',
-	'codAut' => floatval($factura['cae_numero'])
-);
-$codigoqrjson = json_encode($codigoqr);
-$codigoqrjson_base64 = "https://www.afip.gob.ar/fe/qr/?p=" . base64_encode($codigoqrjson);
+// URL del código QR para AFIP
+$codigoqrjson_base64 = "https://www.afip.gob.ar/fe/qr/?p=". base64_encode(json_encode($codigoqr));
 $_POST['codigoqrjson_base64'] = $codigoqrjson_base64;
 
 // Generar HTML directamente
@@ -185,6 +226,17 @@ $html = ob_get_clean();
 
 // Corregir rutas de imágenes
 $html = corregirRutasHTML($html);
+
+// Reemplazar el tag <barcode> por la imagen del código QR
+if (strpos($html, '<barcode') !== false) {
+	$html = preg_replace('/<barcode.*?<\/barcode>/s', $_POST['qr_code'], $html);
+}
+
+// Agregar el código QR si no está presente ya
+if (strpos($html, 'Código QR AFIP') === false && strpos($html, '</tbody></table></td></tr>') !== false) {
+	$qrHtml = '<tr><td style="text-align: center;">' . $_POST['qr_code'] . '</td></tr>';
+	$html = str_replace('</tbody></table></td></tr>', $qrHtml . '</tbody></table></td></tr>', $html);
+}
 
 // Mostrar HTML
 echo '<!DOCTYPE html><html><head><meta charset="utf-8"><title>Factura HTML</title></head><body>';
