@@ -11,7 +11,8 @@ class Hosting_model extends CI_Model {
 				
 				FROM hosting_servidores
 				
-				WHERE hosting_servidores.id = ?	
+				WHERE hosting_servidores.id = ?
+				AND hosting_servidores.pass IS NOT NULL
 			";
 		
 		

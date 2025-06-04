@@ -361,9 +361,18 @@ class Cpanel
 		{
 			$res['error'] = $data['error'];
 		}
-		else
+		else if (isset($data['result']) && is_array($data['result']) && !empty($data['result']))
 		{
 			$res = $data['result'][0];
+		}
+		else
+		{
+			// Provide a default response if 'result' is not in the expected format
+			$res['status'] = 0;
+			$res['statusmsg'] = 'Unknown response format from cPanel API';
+			if (isset($data)) {
+				$res['raw_response'] = $data;
+			}
 		}
 		
 		return (!empty($res)) ? $res : null;
