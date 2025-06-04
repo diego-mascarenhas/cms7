@@ -63,6 +63,21 @@ class Servicios extends MY_Controller {
 			$this->load->helper('text');
 			
 			$data['detalle'] = $this->servicio_model->getServicioDetalle($id);
+			
+			// Parse JSON data field if it exists
+			if (isset($data['detalle']['data']) && !empty($data['detalle']['data'])) {
+				$json_data = json_decode($data['detalle']['data'], true);
+				if (is_array($json_data)) {
+					// Add empresa from JSON if not already set
+					if (!isset($data['detalle']['empresa']) && isset($json_data['empresa'])) {
+						$data['detalle']['empresa'] = $json_data['empresa'];
+					}
+					
+					// Merge JSON data with detalle array
+					$data['detalle'] = array_merge($data['detalle'], $json_data);
+				}
+			}
+			
 			$data['notas'] = $this->nota_model->getNotas(array('id_tipo'=>114, 'id_referencia'=>$id));
 			
 			$this->load->view('/header');
@@ -77,6 +92,21 @@ class Servicios extends MY_Controller {
 			
 			
 			$data['detalle'] = $this->servicio_model->getServicioDetalle($id);
+			
+			// Parse JSON data field if it exists
+			if (isset($data['detalle']['data']) && !empty($data['detalle']['data'])) {
+				$json_data = json_decode($data['detalle']['data'], true);
+				if (is_array($json_data)) {
+					// Add empresa from JSON if not already set
+					if (!isset($data['detalle']['empresa']) && isset($json_data['empresa'])) {
+						$data['detalle']['empresa'] = $json_data['empresa'];
+					}
+					
+					// Merge JSON data with detalle array
+					$data['detalle'] = array_merge($data['detalle'], $json_data);
+				}
+			}
+			
 			if (isset($data['detalle']['host'])) $data['nagios'] = $this->hosting_model->getNagiosStatsLive(array('host'=>$data['detalle']['host']));
 			
 			$this->load->view('/header');

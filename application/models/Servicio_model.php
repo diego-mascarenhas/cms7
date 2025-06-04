@@ -18,7 +18,7 @@ class Servicio_model extends CI_Model {
 					ROUND(@total*0.21, 2) as iva,
 					ROUND(@total*1.21, 2) as total_neto,
 					
-					servicios.id_empresa, empresas.empresa, frecuencias.frecuencia, servicios_estado.estado, categorias_generales.categoria, (SELECT categoria FROM categorias_generales AS padre WHERE padre.id = categorias_generales.padre) AS categoria_padre, UNIX_TIMESTAMP(servicios.fecha_alta) AS fecha_alta, UNIX_TIMESTAMP(servicios.proxima) AS proxima, sys_monedas.simbolo, servicios.estado AS id_estado,
+					servicios.id_empresa, empresas.empresa, frecuencias.frecuencia, servicios_estado.estado, categorias_generales.categoria, (SELECT categoria FROM categorias_generales AS padre WHERE padre.id = categorias_generales.padre) AS categoria_padre, UNIX_TIMESTAMP(CONVERT_TZ(servicios.fecha_alta, '+00:00', @@global.time_zone)) AS fecha_alta, UNIX_TIMESTAMP(servicios.proxima) AS proxima, sys_monedas.simbolo, servicios.estado AS id_estado,
 					
 					CASE
 					   WHEN servicios.estado = 1 THEN 'label-plain'
@@ -157,7 +157,7 @@ class Servicio_model extends CI_Model {
 		else
 		{
 			$sql = "
-					SELECT servicios.id, servicios.id_empresa, servicios.id_categoria, servicios.operacion, servicios.descripcion, servicios.host, servicios.id_moneda, servicios.valor, servicios.descuento, servicios.frecuencia, UNIX_TIMESTAMP(servicios.proxima) AS proxima, UNIX_TIMESTAMP(servicios.caduca) AS caduca, servicios.estado, servicios.id_forma_pago, servicios.convertir, servicios.autosuspender, categorias_generales.id_tipo, servicios.ultima, categorias_generales.nombre_categoria AS categoria, servicios_hosting.id AS id_servicio_hosting, servicios_hosting.domain, servicios.id_forma_pago, formas_pago.forma_pago, servicios.convertir, servicios.autosuspender,
+					SELECT servicios.id, empresas.empresa, servicios.id_empresa, servicios.id_categoria, categorias_generales.id_tipo, servicios.ultima, COALESCE(servicios.descripcion, IFNULL(trim(CONCAT(categorias_generales.descripcion, ' ', UPPER(COALESCE(servicios_hosting.domain, tienda_configuracion.titulo)))), categorias_generales.descripcion)) AS descripcion, servicios.host, frecuencias.frecuencia, servicios.frecuencia AS id_frecuencia, UNIX_TIMESTAMP(CONVERT_TZ(servicios.fecha_alta, '+00:00', @@global.time_zone)) AS fecha_alta, UNIX_TIMESTAMP(servicios.proxima) AS proxima, UNIX_TIMESTAMP(servicios.caduca) AS caduca, servicios_estado.estado, servicios.estado AS id_estado, categorias_generales.categoria, servicios_hosting.id AS id_servicio_hosting, servicios_hosting.domain, servicios.id_forma_pago, formas_pago.forma_pago, servicios.convertir, servicios.autosuspender,
 					
 					
 					@moneda:=IF(servicios.valor>0, IF(servicios.convertir, 1, servicios.id_moneda), IF(categorias_generales.convertir, 1, categorias_generales.id_moneda)) AS id_moneda,
@@ -512,7 +512,7 @@ class Servicio_model extends CI_Model {
 		$sql = "
 				SELECT servicios.id, empresas.empresa, contactos.id AS id_contacto, contactos.username, contactos.hash,
 				
-				COALESCE(servicios.descripcion, IFNULL(trim(CONCAT(categorias_generales.descripcion, ' ', UPPER(COALESCE(servicios_hosting.domain, tienda_configuracion.titulo)))), categorias_generales.descripcion)) AS descripcion, frecuencias.frecuencia, servicios.frecuencia AS id_frecuencia, UNIX_TIMESTAMP(servicios.fecha_alta) AS fecha_alta, UNIX_TIMESTAMP(servicios.proxima) AS proxima,
+				COALESCE(servicios.descripcion, IFNULL(trim(CONCAT(categorias_generales.descripcion, ' ', UPPER(COALESCE(servicios_hosting.domain, tienda_configuracion.titulo)))), categorias_generales.descripcion)) AS descripcion, frecuencias.frecuencia, servicios.frecuencia AS id_frecuencia, UNIX_TIMESTAMP(CONVERT_TZ(servicios.fecha_alta, '+00:00', @@global.time_zone)) AS fecha_alta, UNIX_TIMESTAMP(servicios.proxima) AS proxima,
 				
 				categorias_generales.categoria, sys_monedas.moneda, sys_monedas.simbolo, 
 		

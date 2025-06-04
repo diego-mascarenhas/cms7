@@ -70,13 +70,13 @@
 		                                <?php echo form_dropdown('frecuencia', $frecuencias, (isset($detalle['frecuencia'])) ? $detalle['frecuencia'] : null, 'class="form-control m-b"'); ?>
 		                            </div>
 		                            <label class="col-sm-2 control-label">Próxima</label>
-                                    <div class="col-sm-2">
+                                    <div class="col-sm-4">
 		                                <div class="input-group date dia">
 	                                    	<span class="input-group-addon"><i class="fa fa-calendar"></i></span><input type="text" class="form-control" name="proxima" value="<?php echo formatear_fecha($detalle['proxima'], 'd-m-Y', null, $this->usuario->timezone); ?>">
 	                                	</div>
 		                            </div>
 		                            <label class="col-sm-2 control-label">Caduca</label>
-                                    <div class="col-sm-2">
+                                    <div class="col-sm-4">
 		                                <div class="input-group date dia">
 	                                    	<span class="input-group-addon"><i class="fa fa-calendar"></i></span><input type="text" class="form-control" name="caduca" value="<?php echo formatear_fecha($detalle['caduca'], 'd-m-Y', null, $this->usuario->timezone); ?>">
 	                                	</div>
@@ -124,7 +124,7 @@
 	                            </div>
 	                            <div class="hr-line-dashed"></div>
 	                            
-	                            <?php //if ($this->usuario->perfil == 'reseller' && !isset($detalle['api'])) { ?>
+	                            <?php if ($this->usuario->perfil == 'reseller' && !isset($detalle['api'])) { ?>
 	                            <div class="form-group">
 		                            <label class="col-sm-2 control-label">Estados</label>
 	                                <div class="col-sm-10">
@@ -147,7 +147,7 @@
 		                            </div>
 	                            </div>
 	                            <div class="hr-line-dashed"></div>
-	                            <?php //} ?>
+	                            <?php } ?>
 	                            
 	                            <div class="form-group">
 	                                <div class="col-sm-4 col-sm-offset-2">
