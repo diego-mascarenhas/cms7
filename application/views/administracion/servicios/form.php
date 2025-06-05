@@ -92,10 +92,11 @@
 	                            </div>
 	                            <div class="hr-line-dashed"></div>
 	                            
+	                            <?php if ($this->usuario->id == 475) { ?>
 	                            <div class="form-group">
 		                            <label class="col-sm-2 control-label">Moneda</label>
 	                                <div class="col-sm-2">
-		                                <?php echo form_dropdown('id_moneda', $monedas, (isset($detalle['id_moneda'])) ? $detalle['id_moneda'] : null, 'class="form-control m-b"'); ?>
+		                                <?php echo form_dropdown('id_moneda', $monedas, (isset($detalle['id_moneda'])) ? $detalle['id_moneda'] : null, 'class="form-control"'); ?>
 		                            </div>
 		                            <label class="col-sm-2 control-label">Valor</label>
 	                                <div class="col-sm-2">
@@ -111,7 +112,7 @@
 	                            <div class="form-group">
 		                            <label class="col-sm-2 control-label">Forma de pago</label>
 	                                <div class="col-sm-4">
-		                                <?php echo form_dropdown('id_forma_pago', $formas_pago, (isset($detalle['id_forma_pago'])) ? $detalle['id_forma_pago'] : null, 'class="form-control m-b"'); ?>
+		                                <?php echo form_dropdown('id_forma_pago', $formas_pago, (isset($detalle['id_forma_pago'])) ? $detalle['id_forma_pago'] : null, 'class="form-control"'); ?>
                                     </div>
                                     <label class="col-sm-2 control-label">Convertir a pesos</label>
 	                                <div class="col-sm-1">
@@ -123,6 +124,7 @@
                                     </div>
 	                            </div>
 	                            <div class="hr-line-dashed"></div>
+	                            <?php } ?>
 	                            
 	                            <?php if ($this->usuario->perfil == 'reseller' && !isset($detalle['api'])) { ?>
 	                            <div class="form-group">

@@ -48,12 +48,13 @@ class Hosting extends MY_Controller {
 			$data['detalle'] = $this->hosting_model->getPlanDetalle($id);
 			
 			
-			if ($data['detalle']['id_servidor'])
-			{
+			if (isset($data['detalle']['id_servidor']) && $data['detalle']['id_servidor']) {
 				$config = $this->hosting_model->getCredenciales($data['detalle']['id_servidor']);
-				$this->load->library('Cpanel', $config);
-			
-				$data['emails'] = $this->cpanel->listpopswithdisk($data['detalle']['user']);
+				
+				if ($config) {
+					$this->load->library('Cpanel', $config);
+					$data['emails'] = $this->cpanel->listpopswithdisk($data['detalle']['user']);
+				}
 			}
 			
 			$this->load->view('/header');
