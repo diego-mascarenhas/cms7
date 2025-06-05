@@ -365,6 +365,12 @@ class Cpanel
 		{
 			$res = $data['result'][0];
 		}
+		else if (isset($data['status']) && $data['status'] === 0 && isset($data['statusmsg']))
+		{
+			// Pass through the actual error message from the API
+			$res['status'] = 0;
+			$res['statusmsg'] = $data['statusmsg'];
+		}
 		else
 		{
 			// Provide a default response if 'result' is not in the expected format

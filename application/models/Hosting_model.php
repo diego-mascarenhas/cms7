@@ -189,10 +189,10 @@ class Hosting_model extends CI_Model {
 					   WHEN servicios.estado = 1 AND servicios_hosting.suspended IS NULL THEN 'label-danger'
 					   WHEN servicios.estado = 1 AND servicios_hosting.suspended = 2 THEN 'label-plain'
 					   WHEN servicios.estado = 2 THEN 'label-danger'
-					   WHEN servicios.estado = 3 THEN 'label-warning'
+					   WHEN servicios.estado = 3 THEN 'label-success'
 					   WHEN servicios.estado = 4 AND servicios_hosting.suspended IS NULL THEN 'label-primary'
 					   WHEN servicios.estado = 4 AND servicios_hosting.suspended = 1 THEN 'label-danger'
-					   WHEN servicios.estado = 4 AND servicios_hosting.suspended = 2 THEN 'label-danger'
+					   WHEN servicios.estado = 4 AND servicios_hosting.suspended = 2 THEN 'label-warning'
 					END AS estado_ui_class,
 				
 					CASE
@@ -203,7 +203,7 @@ class Hosting_model extends CI_Model {
 					   WHEN servicios.estado = 3 THEN 'Activar'
 					   WHEN servicios.estado = 4 AND servicios_hosting.suspended IS NULL THEN 'Activo'
 					   WHEN servicios.estado = 4 AND servicios_hosting.suspended = 1 THEN 'Se factura y no está activo'
-					   WHEN servicios.estado = 4 AND servicios_hosting.suspended = 2 THEN 'Se factura y está eliminado'
+					   WHEN servicios.estado = 4 AND servicios_hosting.suspended = 2 THEN 'No está vinculado'
 					END AS estado,
 					
 					CASE
@@ -335,10 +335,10 @@ class Hosting_model extends CI_Model {
 						   WHEN servicios.estado = 1 AND servicios_hosting.suspended IS NULL THEN 'label-danger'
 						   WHEN servicios.estado = 1 AND servicios_hosting.suspended = 2 THEN 'label-plain'
 						   WHEN servicios.estado = 2 THEN 'label-danger'
-						   WHEN servicios.estado = 3 THEN 'label-warning'
+						   WHEN servicios.estado = 3 THEN 'label-success'
 						   WHEN servicios.estado = 4 AND servicios_hosting.suspended IS NULL THEN 'label-primary'
 						   WHEN servicios.estado = 4 AND servicios_hosting.suspended = 1 THEN 'label-danger'
-						   WHEN servicios.estado = 4 AND servicios_hosting.suspended = 2 THEN 'label-danger'
+						   WHEN servicios.estado = 4 AND servicios_hosting.suspended = 2 THEN 'label-warning'
 						END AS estado_ui_class,
 					
 						CASE
