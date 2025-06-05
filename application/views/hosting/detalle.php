@@ -20,6 +20,7 @@
 	                    <?php if ($this->usuario->perfil == 'reseller') { ?>
 	                    	<a href="<?php echo base_url('hosting/cpanel-password-reset/' . $detalle['id']); ?>" class="btn btn-primary btn-sm"> Cambiar contraseña</a>
                         <?php } ?>
+                        <a href="<?php echo base_url('administracion/servicios/detalle/' . $detalle['id_servicio']); ?>" class="btn btn-success btn-sm">Ver servicio</a>
                         <a href="<?php echo base_url('hosting/recalcular/' . $detalle['id']); ?>" class="btn btn-primary btn-sm">Recalcular estadísticas</a>
                     </div>
                 </div>
