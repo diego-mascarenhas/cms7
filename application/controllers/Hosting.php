@@ -17,6 +17,16 @@ class Hosting extends MY_Controller {
 			$parametros['page'] = $this->input->get('page');
 			$parametros['search'] = $this->input->get('search');
 			
+			// Add filter parameters
+			$parametros['estado'] = $this->input->get('estado');
+			$parametros['suspended'] = $this->input->get('suspended');
+			$parametros['eliminados'] = $this->input->get('eliminados');
+			
+			// Por defecto, mostrar todos excepto los de estado 1 (suspendidos)
+			if (!isset($parametros['estado']) && !isset($parametros['suspended']) && !isset($parametros['eliminados'])) {
+				$parametros['excluir_estado'] = 1;
+			}
+			
 			$data['hosting'] = $this->hosting_model->getPlanes($parametros);
 			
 			$config['total_rows'] = $this->hosting_model->total();

@@ -259,6 +259,31 @@ class Hosting_model extends CI_Model {
 				$sql .= " AND servicios.estado > 0";
 			}
 			
+			// Excluir un estado específico (para mostrar todos menos ese estado)
+			if (isset($parametros['excluir_estado'])) 
+			{
+				$sql .= " AND servicios.estado != ?";
+				$placeholders[] = $parametros['excluir_estado'];
+			}
+			
+			// Filtro por suspendidos
+			if (isset($parametros['suspended']) && $parametros['suspended'] == 1) 
+			{
+				$sql .= " AND servicios_hosting.suspended = 1";
+			}
+			
+			// Filtro por eliminados
+			if (isset($parametros['eliminados']) && $parametros['eliminados'] == 1) 
+			{
+				$sql .= " AND servicios_hosting.suspended = 2";
+			}
+			
+			// Por defecto, no mostrar eliminados
+			if (isset($parametros['no_eliminados']) && $parametros['no_eliminados'] == true) 
+			{
+				$sql .= " AND (servicios_hosting.suspended IS NULL OR servicios_hosting.suspended != 2)";
+			}
+			
 			if (!empty($parametros['dashboard']))
 			{
 				$sql .= " AND diskused > 0 AND bandwidthused > 0";
@@ -682,8 +707,8 @@ class Hosting_model extends CI_Model {
 					AND fecha_modificacion != ?
 				";
 				
-			// update legacy
-			$res = $this->db->query($sql, array($obj['last_check'], $obj['last_problem_id'], $obj['last_check']));
+				// update legacy
+				$res = $this->db->query($sql, array($obj['last_check'], $obj['last_problem_id'], $obj['last_check']));
 		}
 		
 		return (!empty($res)) ? $res : null;
