@@ -1,8 +1,4 @@
 <?php
-// Habilitamos la visualización de errores para depuración (temporalmente)
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
 
 // Incluimos archivos necesarios
 require_once 'config.php';
@@ -17,7 +13,6 @@ function logError($message) {
 		echo "<p>ERROR: " . htmlspecialchars($message) . "</p>";
 	}
 }
-
 
 // Función para mostrar datos de manera legible
 function prettyPrint($data)
@@ -62,14 +57,14 @@ if (!empty($hash) && $hash != 'index')
 	}
 
 	// Mostrar hash de la factura
-	echo "Hash de la factura: " . $hash;
+	// echo "Hash de la factura: " . $hash;
 }
 
 
 // Conectar a la base de datos
-echo '<h2>Conectando a la base de datos</h2>';
-echo '<p>Host: ' . htmlspecialchars(CMS5_DB_HOST) . '<br>';
-echo 'Base de datos: ' . htmlspecialchars(CMS5_DB_NAME) . '</p>';
+// echo '<h2>Conectando a la base de datos</h2>';
+// echo '<p>Host: ' . htmlspecialchars(CMS5_DB_HOST) . '<br>';
+// echo 'Base de datos: ' . htmlspecialchars(CMS5_DB_NAME) . '</p>';
 
 $mysqli = new mysqli(CMS5_DB_HOST, CMS5_DB_USER, CMS5_DB_PASSWORD, CMS5_DB_NAME, CMS5_DB_PORT);
 if ($mysqli->connect_error)
@@ -77,7 +72,7 @@ if ($mysqli->connect_error)
     echo '<div class="error">Error de conexión: ' . htmlspecialchars($mysqli->connect_error) . '</div>';
     exit;
 }
-echo '<p class="success">Conexión a la base de datos exitosa</p>';
+// echo '<p class="success">Conexión a la base de datos exitosa</p>';
 
 $mysqli->set_charset("utf8");
 
@@ -89,7 +84,7 @@ if (!empty($hash))
               FROM facturas 
               WHERE md5(CONCAT(facturas.grupo, facturas.id)) = '" . $mysqli->real_escape_string($hash) . "'";
 
-    echo '<p>Ejecutando consulta: <code>' . htmlspecialchars($query) . '</code></p>';
+    // echo '<p>Ejecutando consulta: <code>' . htmlspecialchars($query) . '</code></p>';
 
     $result = $mysqli->query($query);
     if (!$result)
@@ -101,10 +96,10 @@ if (!empty($hash))
     if ($result->num_rows > 0)
     {
         $row = $result->fetch_assoc();
-        echo '<p class="success">Factura encontrada por hash.</p>';
-        echo '<p>ID de la factura: <span class="highlight">' . $row['id'] . '</span></p>';
-        echo '<p>Grupo: <span class="highlight">' . $row['grupo'] . '</span></p>';
-        echo '<p>Hash calculado: <span class="highlight">' . $row['calculated_hash'] . '</span></p>';
+        // echo '<p class="success">Factura encontrada por hash.</p>';
+        // echo '<p>ID de la factura: <span class="highlight">' . $row['id'] . '</span></p>';
+        // echo '<p>Grupo: <span class="highlight">' . $row['grupo'] . '</span></p>';
+        // echo '<p>Hash calculado: <span class="highlight">' . $row['calculated_hash'] . '</span></p>';
 
         // Usar el ID encontrado
         $id = $row['id'];
@@ -119,150 +114,8 @@ if (!empty($hash))
 }
 
 
-// Buscar factura por ID
-echo '<h2>Obteniendo datos de la factura ID: ' . htmlspecialchars($id) . '</h2>';
-
-$query = "SELECT 
-           facturas.*,
-           facturas_tipo.impuesto, 
-           facturas_tipo.cuit, 
-           facturas_tipo.id_afip,
-           facturas_tipo.factura_tipo,
-           empresas_fiscales.razon_social, 
-           empresas_fiscales.domicilio, 
-           empresas_fiscales.codigo_postal,
-           empresas_fiscales.provincia, 
-           empresas_fiscales.pais, 
-           condiciones_iva.condicion_iva,
-           empresas_fiscales.cuit as documento_numero,
-           sys_monedas.moneda
-          FROM facturas
-          LEFT JOIN facturas_tipo ON facturas.id_factura_tipo = facturas_tipo.id
-          LEFT JOIN empresas_fiscales ON facturas.id_empresa_fiscal = empresas_fiscales.id
-          LEFT JOIN condiciones_iva ON empresas_fiscales.id_condicion_iva = condiciones_iva.id
-          LEFT JOIN sys_monedas ON facturas.id_moneda = sys_monedas.id
-          WHERE facturas.id = " . $mysqli->real_escape_string($id);
-
-echo '<p>Ejecutando consulta: <code>' . htmlspecialchars($query) . '</code></p>';
-
-$result = $mysqli->query($query);
-if (!$result)
-{
-    echo '<div class="error">Error en la consulta: ' . htmlspecialchars($mysqli->error) . '</div>';
-    exit;
-}
-
-if ($result->num_rows == 0)
-{
-    echo '<div class="error">No se encontró ninguna factura con el ID proporcionado.</div>';
-    exit;
-}
-
-$factura = $result->fetch_assoc();
-$result->free();
-
-
-echo '<h3>Datos básicos de la factura:</h3>';
-prettyPrint($factura);
-
-
-// Calcular hash MD5
-$hash_calculado = md5($factura['grupo'] . $factura['id']);
-echo '<h3>Hash MD5 calculado:</h3>';
-echo '<p>grupo + id = ' . $factura['grupo'] . ' + ' . $factura['id'] . ' = <span class="highlight">' . $hash_calculado . '</span></p>';
-echo '<p>URL para acceder a esta factura: <a href="index.php?accion=ver&id=' . $hash_calculado . '" target="_blank">index.php?accion=ver&id=' . $hash_calculado . '</a></p>';
-
-// Obtener datos adicionales relacionados con la factura
-echo '<h2>Obteniendo datos relacionados</h2>';
-
-// Datos del tipo de factura
-$query = "SELECT * FROM facturas_tipo WHERE id = " . $mysqli->real_escape_string($factura['id_factura_tipo']);
-echo '<p>Ejecutando consulta: <code>' . htmlspecialchars($query) . '</code></p>';
-
-$result = $mysqli->query($query);
-if (!$result)
-{
-    echo '<div class="error">Error en la consulta: ' . htmlspecialchars($mysqli->error) . '</div>';
-}
-else
-{
-    if ($result->num_rows > 0)
-    {
-        $factura_tipo = $result->fetch_assoc();
-        echo '<h3>Datos del tipo de factura:</h3>';
-        prettyPrint($factura_tipo);
-    }
-    else
-    {
-        echo '<p class="error">No se encontró el tipo de factura.</p>';
-    }
-    $result->free();
-}
-
-
-// Datos del cliente
-$query = "SELECT * FROM empresas_fiscales WHERE id = " . $mysqli->real_escape_string($factura['id_empresa_fiscal']);
-echo '<p>Ejecutando consulta: <code>' . htmlspecialchars($query) . '</code></p>';
-
-$result = $mysqli->query($query);
-if (!$result)
-{
-    echo '<div class="error">Error en la consulta: ' . htmlspecialchars($mysqli->error) . '</div>';
-}
-else
-{
-    if ($result->num_rows > 0)
-    {
-        $empresa_fiscal = $result->fetch_assoc();
-        echo '<h3>Datos del cliente:</h3>';
-        prettyPrint($empresa_fiscal);
-    }
-    else
-    {
-        echo '<p class="error">No se encontró la empresa fiscal.</p>';
-    }
-    $result->free();
-}
-
-
-// Items de la factura
-$query = "SELECT * FROM facturas_items WHERE id_factura = " . $mysqli->real_escape_string($id);
-echo '<p>Ejecutando consulta: <code>' . htmlspecialchars($query) . '</code></p>';
-
-$result = $mysqli->query($query);
-if (!$result)
-{
-    echo '<div class="error">Error en la consulta: ' . htmlspecialchars($mysqli->error) . '</div>';
-}
-else
-{
-    echo '<h3>Items de la factura:</h3>';
-    if ($result->num_rows > 0)
-    {
-        echo '<table>';
-        echo '<tr><th>ID</th><th>Descripción</th><th>Valor</th><th>Descuento</th></tr>';
-
-        while ($item = $result->fetch_assoc())
-        {
-            echo '<tr>';
-            echo '<td>' . $item['id'] . '</td>';
-            echo '<td>' . $item['descripcion'] . '</td>';
-            echo '<td>' . $item['valor'] . '</td>';
-            echo '<td>' . $item['descuento'] . '</td>';
-            echo '</tr>';
-        }
-
-        echo '</table>';
-    }
-    else
-    {
-        echo '<p class="error">No se encontraron items para esta factura.</p>';
-    }
-    $result->free();
-}
-
 // Construir array completo para generar PDF
-echo '<h2>Construyendo array completo para generar PDF</h2>';
+// echo '<h2>Construyendo array completo para generar PDF</h2>';
 
 // Obtener datos completos con joins
 $query = "SELECT 
@@ -286,7 +139,7 @@ $query = "SELECT
           LEFT JOIN sys_monedas ON facturas.id_moneda = sys_monedas.id
           WHERE facturas.id = " . $mysqli->real_escape_string($id);
 
-echo '<p>Ejecutando consulta: <code>' . htmlspecialchars($query) . '</code></p>';
+// echo '<p>Ejecutando consulta: <code>' . htmlspecialchars($query) . '</code></p>';
 
 $result = $mysqli->query($query);
 if (!$result)
@@ -299,6 +152,12 @@ else
     {
         $factura_completa = $result->fetch_assoc();
 
+		$factura_completa['numero_talonario'] = str_pad($factura_completa['numero_talonario'], 4, 0, STR_PAD_LEFT);
+		$factura_completa['numero_factura'] = str_pad($factura_completa['numero_factura'], 8, 0, STR_PAD_LEFT);
+		$factura_completa['fecha'] = date('d/m/Y', strtotime($factura_completa['fecha']));
+		$factura_completa['vencimiento'] = date('d/m/Y', strtotime($factura_completa['vencimiento']));
+
+		
         // Obtener items
         $query_items = "SELECT 
                     facturas_items.descripcion, 
@@ -323,20 +182,25 @@ else
             $items_result->free();
         }
 
-        $factura_completa['items'] = $items;
+        $factura_completa['items'] = json_encode($items);
 
-        echo '<h3>Array completo para generar PDF:</h3>';
-        prettyPrint($factura_completa);
+        // echo '<h3>Array completo para generar PDF:</h3>';
+        // prettyPrint($factura_completa);
 
         // Construir array CAE
+		$factura_completa['CAE'] = $factura_completa['cae_numero'];
+		$factura_completa['CAEFchVto'] = $factura_completa['cae_vencimiento'];
+		$factura_completa['CbteDesde'] = $factura_completa['numero_factura'];
+		$factura_completa['numeroCodigoBarras'] = '123213213213213213';
+
         $cae = [
             'CAE' => $factura_completa['cae_numero'],
             'CAEFchVto' => $factura_completa['cae_vencimiento'],
-            'CbteDesde' => $factura_completa['numero_factura']
+            'CbteDesde' => $factura_completa['numero_factura'],
         ];
 
-        echo '<h3>Array CAE para generar PDF:</h3>';
-        prettyPrint($cae);
+        // echo '<h3>Array CAE para generar PDF:</h3>';
+        // prettyPrint($cae);
 
         // Determinar la plantilla
         $template_file = $factura_completa['cuit'] . '_' .
@@ -344,19 +208,23 @@ else
             str_pad($factura_completa['numero_talonario'], 4, 0, STR_PAD_LEFT) . '.php';
         $template_path = 'templates/revisionalpha/' . $template_file;
 
-        echo '<h3>Plantilla que se usaría:</h3>';
-        echo '<p>Archivo: <span class="highlight">' . htmlspecialchars($template_path) . '</span></p>';
-        echo '<p>¿Existe? ' . (file_exists($template_path) ? '<span class="success">Sí</span>' : '<span class="error">No</span>') . '</p>';
+        // echo '<h3>Plantilla que se usaría:</h3>';
+        // echo '<p>Archivo: <span class="highlight">' . htmlspecialchars($template_path) . '</span></p>';
+        // echo '<p>¿Existe? ' . (file_exists($template_path) ? '<span class="success">Sí</span>' : '<span class="error">No</span>') . '</p>';
 
         // Construir ruta del PDF
-        $pdf_name = 'COMPROBANTE ' . $factura_completa['factura_tipo'] . ' Nº ' .
+        $pdf_name = 'REVISION ALPHA ' . $factura_completa['factura_tipo'] . ' ' .
             str_pad($factura_completa['numero_talonario'], 4, 0, STR_PAD_LEFT) . '-' .
             str_pad($factura_completa['numero_factura'], 8, 0, STR_PAD_LEFT) . '.PDF';
 
-        $pdf_path = 'pdfs/' . $factura_completa['cuit'] . '_' .
-            str_pad($factura_completa['id_afip'], 2, 0, STR_PAD_LEFT) . '_' .
-            str_pad($factura_completa['numero_talonario'], 4, 0, STR_PAD_LEFT) . '_' .
-            str_pad($factura_completa['numero_factura'], 8, 0, STR_PAD_LEFT) . '.pdf';
+        // $pdf_path = 'pdfs/' . $factura_completa['cuit'] . '_' .
+        //     str_pad($factura_completa['id_afip'], 2, 0, STR_PAD_LEFT) . '_' .
+        //     str_pad($factura_completa['numero_talonario'], 4, 0, STR_PAD_LEFT) . '_' .
+        //     str_pad($factura_completa['numero_factura'], 8, 0, STR_PAD_LEFT) . '.pdf';
+
+        // Incluir el generador de PDF y pasarle los datos
+		// echo $factura_completa;
+		// echo $cae_data;
     }
     else
     {
@@ -365,4 +233,112 @@ else
     $result->free();
 }
 
-?>
+// Include the HTML2PDF library
+require_once('html2pdf/html2pdf.class.php');
+
+// Sample data that would normally come from a form or database
+// $_POST = [
+//     'numero_talonario' => '0001',
+//     'numero_factura' => '00000123',
+//     'vencimiento' => '30/11/2023',
+//     'fecha' => date('d/m/Y'),
+//     'razon_social' => 'Cliente Ejemplo S.A.',
+//     'domicilio' => 'Av. Corrientes 1234, CABA',
+//     'condicion_iva' => 'Responsable Inscripto',
+//     'id_documento_tipo' => '80',
+//     'documento_numero' => '30123456789',
+//     'items' => json_encode([
+//         ['descripcion' => 'Servicio de desarrollo web', 'valor' => 50000],
+//         ['descripcion' => 'Mantenimiento mensual', 'valor' => 25000],
+//     ]),
+//     'bruto' => 75000,
+//     'descuento' => 0,
+//     'subtotal210' => 75000,
+//     'imp210' => 15750,
+//     'total_neto' => 90750,
+//     'CAE' => '71234567890123',
+//     'CAEFchVto' => '10/12/2023',
+//     'numeroCodigoBarras' => '307167100720001000001237123456789012320231210'
+// ];
+
+$_POST = $factura_completa;
+
+// Add custom fonts and styling based on revisionalpha brand styles
+$customStyles = <<<EOD
+<style type="text/css">
+    @font-face {
+        font-family: 'proxima-l';
+        src: url('https://cms.revisionalpha.com/assets/fonts/proxima-nova-light.otf') format('opentype');
+        font-weight: normal;
+        font-style: normal;
+    }
+    
+    @font-face {
+        font-family: 'proxima-r';
+        src: url('https://cms.revisionalpha.com/assets/fonts/proxima-nova-regular.otf') format('opentype');
+        font-weight: normal;
+        font-style: normal;
+    }
+    
+    @font-face {
+        font-family: 'proxima-sb';
+        src: url('https://cms.revisionalpha.com/assets/fonts/proxima-nova-semibold.otf') format('opentype');
+        font-weight: normal;
+        font-style: normal;
+    }
+    
+    @font-face {
+        font-family: 'proxima-b';
+        src: url('https://cms.revisionalpha.com/assets/fonts/proxima-nova-bold.otf') format('opentype');
+        font-weight: normal;
+        font-style: normal;
+    }
+    
+    .tw-light { font-family: 'proxima-l'; }
+    .tw-regular { font-family: 'proxima-r'; }
+    .tw-bold { font-family: 'proxima-b'; }
+    .tw-semibold, strong { font-family: 'proxima-sb'; font-weight: normal; }
+    
+    .tc-red-5 { color: #FF1A1D !important; }
+    .bc-red-5 { background-color: #FF1A1D !important; }
+    
+    h1, h2, h3, h4 { font-family: 'proxima-sb'; }
+    body { font-family: 'proxima-r'; color: #808080; }
+    
+    .section-title { display: block; font-family: 'proxima-l'; font-size: 40px; line-height: 1.3; margin: 0; }
+    .section-title.section-title-small { font-size: 26px; line-height: 1.5; }
+    .section-title.section-title-full { font-size: 26px; font-family: 'proxima-sb'; border-bottom: 3px solid #FF1A1D; text-transform: uppercase; }
+    .section-title > span { display: inline-block; border-bottom: 3px solid #FF1A1D; }
+    
+    .general-title { display: block; font-family: 'proxima-sb'; font-size: 40px; line-height: 1.3; margin: 0; }
+    .general-title > span { display: inline-block; border-bottom: 3px solid lightgrey; padding-bottom: 15px; }
+    
+    .form-subtitle { font-size: 20px; font-family: 'proxima-l'; text-transform: uppercase; margin-bottom: 15px; color: #5CA7D7; }
+</style>
+EOD;
+
+try
+{
+    // Initialize HTML2PDF with Portrait orientation, A4 format, Spanish language
+    $html2pdf = new HTML2PDF('P', 'A4', 'es');
+    
+    // Set default font to helvetica instead of Arial (helvetica is included by default in TCPDF)
+    $html2pdf->setDefaultFont('helvetica');
+    
+    // Buffer the template output with custom styles
+    ob_start();
+    echo $customStyles;
+    // include('templates/revisionalpha/30716710072_01_0001.php');
+	include($template_path);
+    $content = ob_get_clean();
+    
+    // Add the template content to the PDF
+    $html2pdf->writeHTML($content);
+    
+    // Output the PDF (D: force download, I: display in browser)
+    $html2pdf->Output($pdf_name, 'I');
+}
+catch(HTML2PDF_exception $e)
+{
+    echo $e->getMessage();
+}
