@@ -38,7 +38,7 @@
 							</tr>
 							<tr>
 								<td>
-									<p>revision alpha S.A.S.<br>
+									<p>REVISION ALPHA S.A.S.<br>
 									Vuelta de Obligado 2443 Of. 403, CABA<br>
 									+54.11 5274.8490<br>
 									I.V.A. Responsable Inscripto</p>

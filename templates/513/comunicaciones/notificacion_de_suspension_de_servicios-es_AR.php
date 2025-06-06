@@ -29,7 +29,7 @@
 		<br>
 		<br>
 		<strong>Banco:</strong> Galicia<br>
-		<strong>Titular:</strong> revision alpha S.A.S.<br>
+		<strong>Titular:</strong> REVISION ALPHA S.A.S.<br>
 		<strong>C.U.I.T.:</strong> 30-71671007-2<br>
 		<strong>Cuenta Corriente:</strong> 12416-2 019-8<br>
 		<strong>CBU:</strong> 00700191 20000012416286<br>
