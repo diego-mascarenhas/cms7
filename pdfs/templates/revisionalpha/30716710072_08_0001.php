@@ -3,16 +3,33 @@
 
 	#wrap > table td { vertical-align:top; }
 
-	p, td, th { font-size:12px; line-height:1.5; }
-	h2 { font-size:20px; }
-	h3 { font-size:14px; }
+	p, td, th { font-size:12px; line-height:1.5; font-family:'proxima-r'; }
+	h2 { font-size:20px; font-family:'proxima-sb'; }
+	h3 { font-size:14px; font-family:'proxima-sb'; }
 
 	.table-info { border:1px solid #DDD; border-radius:5px; }
 	.table-info td, .table-info th { padding:8px 12px; }
 
-	.table-detalle {  }
+	.table-detalle { width:100%; }
 	.table-detalle td, .table-detalle th { padding:8px 12px; }
-	.table-detalle th { border-left:1px solid #DDD; border-top:1px solid #DDD; border-bottom:1px solid #DDD; }
+	.table-detalle th { border-left:1px solid #DDD; border-top:1px solid #DDD; border-bottom:1px solid #DDD; font-family:'proxima-sb'; }
+	
+	.text-sm { font-size:14px; }
+	.text-xs { font-size:12px; }
+	
+	.tc-red-5 { color:#FF1A1D !important; }
+	.tw-light { font-family:'proxima-l'; }
+	.tw-regular { font-family:'proxima-r'; }
+	.tw-bold { font-family:'proxima-b'; }
+	.tw-semibold, strong { font-family:'proxima-sb'; font-weight:normal; }
+	
+	.section-title { display:block; font-family:'proxima-l'; font-size:40px; line-height:1.3; margin:0; }
+	.section-title.section-title-small { font-size:26px; line-height:1.5; }
+	.section-title.section-title-full { font-size:26px; font-family:'proxima-sb'; border-bottom: 3px solid #FF1A1D; text-transform:uppercase; }
+	.section-title > span { display:inline-block; border-bottom:3px solid #FF1A1D; }
+	
+	.general-title { display:block; font-family:'proxima-sb'; font-size:40px; line-height:1.3; margin:0; }
+	.general-title > span { display:inline-block; border-bottom:3px solid lightgrey; padding-bottom:15px; }
 </style>
 <div id="wrap" style="height:100%;">
 	<table cellspacing="0">
@@ -23,12 +40,12 @@
 						<tbody>
 							<tr>
 								<td style="width:328px;">
-									<h1><img src="/home/forge/cms.revisionalpha.com/pdfs/templates/revisionalpha/images/revision-alpha.png" alt="REVISION ALPHA" height="35"></h1><br>
+									<h1><img src="https://cms.revisionalpha.com/pdfs/templates/revisionalpha/images/revision-alpha.png" alt="REVISION ALPHA" height="35"></h1><br>
 								</td>
 								<td style="width:100px;">&nbsp;</td>
 								<td style="width:328px;">
-									<h2>NOTA DE CR&Eacute;DITO N&deg; <?php echo $_POST['numero_talonario']; ?>-<?php echo $_POST['numero_factura']; ?></h2>
-									<h3><?php if ( !empty( $_POST['vencimiento'] ) ) : ?>
+									<h2 class="tw-semibold">NOTA DE DÉBITO A N&deg; <?php echo $_POST['numero_talonario']; ?>-<?php echo $_POST['numero_factura']; ?></h2>
+									<h3 class="tw-regular"><?php if ( !empty( $_POST['vencimiento'] ) ) : ?>
 											VTO: <?php echo $_POST['vencimiento']; ?>
 										<?php else : ?>
 											&nbsp;
@@ -38,10 +55,10 @@
 							</tr>
 							<tr>
 								<td>
-									<p>REVISION ALPHA S.A.S.<br>
-									Vuelta de Obligado 2443 Of. 403, CABA<br>
+									<p class="tw-semibold tc-red-5">REVISION ALPHA S.A.S.<br>
+									<span class="tw-regular" style="color:#808080;">Vuelta de Obligado 2443 Of. 403, CABA<br>
 									+54.11 5274.8490<br>
-									I.V.A. Responsable Inscripto</p>
+									I.V.A. Responsable Inscripto</span></p>
 								</td>
 								<td>&nbsp;</td>
 								<td>
@@ -53,7 +70,7 @@
 							</tr>
 							<tr>
 								<td colspan="3">
-									<img src="/home/forge/cms.revisionalpha.com/pdfs/templates/revisionalpha/images/factura-B.jpg" alt="Factura B" width="752">
+									<div style="height:40px;"></div>
 								</td>
 							</tr>
 						</tbody>
@@ -114,7 +131,7 @@
 							<?php foreach (json_decode($_POST['items']) as $item) { ?>
 							<tr>
 								<td align="left"><div style="width:520px;"><?php echo $item->descripcion; ?></div></td>
-								<td align="right">$<?php echo number_format( $item->valor+($item->valor*$item->impuesto)/100 , 2, ',', '.' ); ?></td>
+								<td align="right">$<?php echo number_format( $item->valor, 2, ',', '.' ); ?></td>
 							</tr>
 							<?php } ?>
 						</tbody>
@@ -135,15 +152,19 @@
 													<p><strong>Subtotal:</strong><br>
 													<?php if ( $_POST['descuento'] > 0 ) : ?>
 													<strong>Descuento:</strong><br>
+													<strong>Subtotal con descuento:</strong><br>
 													<?php endif; ?>
+													<strong>IVA 21%:</strong><br>
 													<strong>Importe Total:</strong></p>
 												</td>
 												<td style="width:112px;" align="right">
-													<p>$<?php echo number_format( $_POST['bruto']+($_POST['bruto']*$_POST['impuesto'])/100, 2, ',', '.' ); ?><br>
+													<p>$<?php echo number_format( $_POST['bruto'], 2, ',', '.' ); ?><br>
 													<?php if ( $_POST['descuento'] > 0 ) : ?>
-													$<?php echo number_format( $_POST['descuento']+($_POST['descuento']*$_POST['impuesto'])/100, 2, ',', '.' ); ?><br>
+													$<?php echo number_format( $_POST['descuento'], 2, ',', '.' ); ?><br>
+													$<?php echo number_format( $_POST['subtotal210'], 2, ',', '.' ); ?><br>
 													<?php endif; ?>
-													$<?php echo number_format( $_POST['total_neto'], 2, ',', '.' ); ?></p>
+													$<?php echo number_format( $_POST['imp210'], 2, ',', '.' ); ?><br>
+													<span class="tw-semibold tc-red-5">$<?php echo number_format( $_POST['total_neto'], 2, ',', '.' ); ?></span></p>
 												</td>
 											</tr>
 										</tbody>
@@ -159,7 +180,7 @@
 										<tbody>
 											<tr>
 												<td style="width:451px;">
-													<p>CAE N&deg;: <?php echo $_POST['CAE']; ?><br>
+													<p class="tw-semibold">CAE N&deg;: <?php echo $_POST['CAE']; ?><br>
 													Vto. de CAE: <?php echo $_POST['CAEFchVto']; ?></p>
 												</td>
 												<td style="width:305px;" align="center">
