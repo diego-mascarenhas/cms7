@@ -193,7 +193,6 @@ else
 		$factura_completa['CAE'] = $factura_completa['cae_numero'];
 		$factura_completa['CAEFchVto'] = $factura_completa['cae_vencimiento'];
 		$factura_completa['CbteDesde'] = $factura_completa['numero_factura'];
-		$factura_completa['numeroCodigoBarras'] = '307167100720001000001237123456789012320231210';
 
 		$cae = [
 			'CAE' => $factura_completa['cae_numero'],
@@ -201,9 +200,23 @@ else
 			'CbteDesde' => $factura_completa['numero_factura'],
 		];
 
+
 		// echo '<h3>Array CAE para generar PDF:</h3>';
 		// prettyPrint($cae);
 
+
+		// codigo de barras
+		$numeroCodigoBarras = $factura['cuit'];
+		$numeroCodigoBarras .= str_pad($factura['id_afip'], 2, 0, STR_PAD_LEFT);
+		$numeroCodigoBarras .= str_pad($factura['numero_talonario'], 4, 0, STR_PAD_LEFT);
+		$numeroCodigoBarras .= $cae['CAE'];
+		$numeroCodigoBarras .= $cae['CAEFchVto'];
+		$codigoVerificador = DigitoVerificador($numeroCodigoBarras);
+		$numeroCodigoBarras .= $codigoVerificador;
+
+		$factura_completa['numeroCodigoBarras'] =$numeroCodigoBarras;
+
+		
 		// Determinar la plantilla
 		$template_file = $factura_completa['cuit'] . '_' .
 			str_pad($factura_completa['id_afip'], 2, 0, STR_PAD_LEFT) . '_' .
@@ -344,3 +357,33 @@ catch (HTML2PDF_exception $e)
 {
 	echo $e->getMessage();
 }
+
+
+// $numeroCodigoBarras = $factura['cuit'];
+// $numeroCodigoBarras .= str_pad($factura['id_afip'], 2, 0, STR_PAD_LEFT);
+// $numeroCodigoBarras .= str_pad($factura['numero_talonario'], 4, 0, STR_PAD_LEFT);
+// $numeroCodigoBarras .= $cae['CAE'];
+// $numeroCodigoBarras .= $cae['CAEFchVto'];
+// $codigoVerificador = DigitoVerificador($numeroCodigoBarras);
+// $numeroCodigoBarras .= $codigoVerificador;
+
+
+// arma qr 
+// $codigoqr = array(
+// 	'ver' => 1,
+// 	'fecha' => date("Y-m-d", strtotime($factura['fecha'])),
+// 	'cuit' => 30716710072, 
+// 	'ptoVta' => intval(str_pad($factura['numero_talonario'], 4, 0, STR_PAD_LEFT)),
+// 	'tipoCmp' => intval($factura['id_afip']),
+// 	'nroCmp' => intval(str_pad($factura['numero_factura'], 8, 0, STR_PAD_LEFT)),
+// 	'importe' => floatval($factura['total_neto']),
+// 	'moneda' => 'PES',
+// 	'ctz' => 1,
+// 	'tipoDocRec' => intval($factura['id_documento_tipo']),
+// 	'nroDocRec' => floatval($factura['documento_numero']),
+// 	'tipoCodAut' => 'E',
+// 	'codAut' => floatval($factura['cae_numero'])
+//  );
+//  $codigoqrjson = json_encode($codigoqr);
+//  $codigoqrjson_base64 = "https://www.afip.gob.ar/fe/qr/?p=". base64_encode($codigoqrjson);
+//  $envio['codigoqrjson_base64'] = $codigoqrjson_base64;
