@@ -20,9 +20,9 @@
 	            </div>
 	            <div class="col-xs-4 col-sm-4 col-md-6 col-lg-6">
                     <div class="title-action">
-	                    <?php if (isset($factura['descargar'])) { ?>
+	                    <!-- <?php if (isset($factura['descargar'])) { ?>
                         	<a href="<?php echo $factura['descargar']; ?>" class="btn btn-white"><i class="fa fa-save"></i> <?php echo $this->lang->line('variable_name'); ?>Guardar </a>
-                        <?php } ?>
+                        <?php } ?> -->
                         <?php if (isset($factura['link'])) { ?>
                         	<a href="<?php echo $factura['link']; ?>" target="_blank" class="btn btn-primary"><i class="fa fa-print"></i><?php echo $this->lang->line('variable_name'); ?> Imprimir </a>
                         <?php } ?>

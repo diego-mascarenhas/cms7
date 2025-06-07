@@ -94,12 +94,11 @@
 									<?php if ( !empty( $_POST['domicilio'] ) ) : ?>
 									<strong>Domicilio:</strong> <?php echo $_POST['domicilio']; ?><br>
 									<?php endif; ?>
-									<strong>IVA:</strong> <?php echo $_POST['condicion_iva']; ?></p>
+									</p>
 								</td>
 								<td style="width:160px; padding-left:0; text-align:right">
-									<p><br>
+									<p><strong>IVA:</strong> <?php echo $_POST['condicion_iva']; ?><br>
 									<?php if ( !empty( $_POST['domicilio'] ) ) : ?>
-									<br>
 									<?php endif; ?>
 									<?php if ( !empty( $_POST['documento_numero'] ) ) : ?>
 										<?php if ( $_POST['id_documento_tipo'] != 96 ) : ?>
@@ -128,6 +127,7 @@
 							</tr>
 						</thead>
 						<tbody>
+							<tr><td colspan="2"></td></tr>
 							<?php foreach (json_decode($_POST['items']) as $item) { ?>
 							<tr>
 								<td align="left"><div style="width:520px;"><?php echo $item->descripcion; ?></div></td>
@@ -166,20 +166,20 @@
 											<tr>
 												<td style="width:545px;" align="right">
 													<p><strong>Subtotal:</strong><br>
-													<?php if ( $_POST['descuento'] > 0 ) : ?>
+													<?php if ( $_POST['descuento'] > 0 ) { ?>
 													<strong>Descuento:</strong><br>
 													<strong>Subtotal con descuento:</strong><br>
-													<?php endif; ?>
+													<?php } ?>
 													<strong>IVA 21%:</strong><br>
 													<strong>Importe Total:</strong></p>
 												</td>
 												<td style="width:112px;" align="right">
 													<p>$<?php echo number_format( $_POST['bruto'], 2, ',', '.' ); ?><br>
-													<?php if ( $_POST['descuento'] > 0 ) : ?>
+													<?php if ( $_POST['descuento'] > 0 ) { ?>
 													$<?php echo number_format( $_POST['descuento'], 2, ',', '.' ); ?><br>
-													$<?php echo number_format( $_POST['subtotal210'], 2, ',', '.' ); ?><br>
-													<?php endif; ?>
-													$<?php echo number_format( $_POST['imp210'], 2, ',', '.' ); ?><br>
+													$<?php echo number_format( $_POST['SUBTOTAL210'], 2, ',', '.' ); ?><br>
+													<?php } ?>
+													$<?php echo number_format( $_POST['IMP210'], 2, ',', '.' ); ?><br>
 													<span class="tw-semibold tc-red-5">$<?php echo number_format( $_POST['total_neto'], 2, ',', '.' ); ?></span></p>
 												</td>
 											</tr>
