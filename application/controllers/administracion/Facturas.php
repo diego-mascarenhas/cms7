@@ -83,6 +83,29 @@ class Facturas extends MY_Controller {
 			$data['notas'] = $this->nota_model->getNotas(array('id_tipo'=>115, 'id_referencia'=>$id));
 			$data['archivos'] = $this->archivo_model->getArchivos(array('id_referencia'=>115, 'id_padre'=>$id, 'per_page'=>1));
 			
+			// Buscar factura anterior del mismo cliente
+			$this->db->select('id');
+			$this->db->from('facturas');
+			$this->db->where('id_empresa_fiscal', $data['factura']['id_empresa_fiscal']);
+			$this->db->where('id <', $id);
+			$this->db->where('grupo', $data['factura']['grupo']);
+			$this->db->order_by('id', 'DESC');
+			$this->db->limit(1);
+			$query = $this->db->get();
+			
+			if ($query->num_rows() > 0) {
+				$anterior_cliente = $query->row_array();
+				$data['factura']['anterior_cliente']['id'] = $anterior_cliente['id'];
+				$data['factura']['anterior_cliente']['detalle'] = $this->factura_model->getFacturaDetalle($anterior_cliente['id']);
+				
+				// Calcular porcentaje de diferencia
+				if ($data['factura']['anterior_cliente']['detalle']['total_neto'] > 0) {
+					$diferencia = $data['factura']['total_neto'] - $data['factura']['anterior_cliente']['detalle']['total_neto'];
+					$data['factura']['anterior_cliente']['diferencia'] = $diferencia;
+					$data['factura']['anterior_cliente']['porcentaje'] = round(($diferencia / $data['factura']['anterior_cliente']['detalle']['total_neto']) * 100, 2);
+				}
+			}
+			
 			if ($data['factura']['error'])
 			{
 				if ($data['factura']['anterior']['id'] = $this->factura_model->anterior($data['factura']['grupo'], $data['factura']['operacion'], $data['factura']['id_factura_tipo'], $data['factura']['numero_talonario'], $data['factura']['id']))

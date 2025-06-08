@@ -210,6 +210,31 @@
 	                                </tbody>
 	                            </table>
 	                            
+
+	                            
+	                            <?php if (isset($factura['anterior_cliente']['detalle'])) { ?>
+	                            <div class="alert alert-info m-t">
+	                                <strong>Factura anterior:</strong> 
+	                                <a href="<?php echo base_url('administracion/facturas/detalle/' . $factura['anterior_cliente']['id']); ?>" target="_blank">
+	                                    <?php echo $factura['anterior_cliente']['detalle']['comprobante']; ?>
+	                                </a>
+	                                <br>
+	                                <strong>Fecha:</strong> <?php echo formatear_fecha($factura['anterior_cliente']['detalle']['fecha'], 'd-m-Y', null, $this->usuario->timezone); ?>
+	                                <br>
+	                                <strong>Importe Total:</strong> <?php echo $factura['simbolo']; ?><?php echo $factura['anterior_cliente']['detalle']['total_neto']; ?>
+
+	                                
+	                                <?php if (isset($factura['anterior_cliente']['diferencia'])) { ?>
+	                                <br>
+	                                <strong>Diferencia:</strong> 
+	                                <span class="<?php echo ($factura['anterior_cliente']['diferencia'] >= 0) ? 'text-success' : 'text-danger'; ?>">
+	                                    <?php echo ($factura['anterior_cliente']['diferencia'] >= 0) ? '+' : ''; ?><?php echo $factura['simbolo']; ?><?php echo number_format(abs($factura['anterior_cliente']['diferencia']), 2); ?> 
+	                                    (<?php echo ($factura['anterior_cliente']['porcentaje'] >= 0) ? '+' : ''; ?><?php echo $factura['anterior_cliente']['porcentaje']; ?>%)
+	                                </span>
+	                                <?php } ?>
+	                            </div>
+	                            <?php } ?>
+	                            
 								<?php if (isset($factura['observaciones'])) { ?>
 	                            <div class="well m-t"><strong>Observaciones</strong>
 	                                <?php echo $factura['observaciones']; ?>
