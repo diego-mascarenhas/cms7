@@ -1,9 +1,3 @@
-<?php
-// No need for these requires in the template anymore
-// require_once('funciones.php');
-// require_once('html2pdf/_tcpdf_5.0.002/qrcode.php');
-?>
-
 <style type="text/css">
 	* {
 		margin: 0;
@@ -129,6 +123,9 @@
 	}
 </style>
 <div id="wrap" style="height:100%;">
+	<!-- Espacio adicional al inicio del documento -->
+	<div style="height:15px;"></div>
+	
 	<table cellspacing="0">
 		<tbody>
 			<tr>
@@ -136,14 +133,13 @@
 					<table cellspacing="0">
 						<tbody>
 							<tr>
-								<td style="width:328px;">
+								<td style="width:328px; padding-left: 10px;">
 									<h1><img src="https://cms.revisionalpha.com/pdfs/templates/revisionalpha/images/revision-alpha.png"
 											alt="REVISION ALPHA" height="35"></h1><br>
 								</td>
 								<td style="width:100px;">&nbsp;</td>
 								<td style="width:328px;">
-									<h2 class="tw-semibold">FACTURA A N&deg;
-										<?php echo $_POST['numero_talonario']; ?>-<?php echo $_POST['numero_factura']; ?>
+									<h2 class="tw-semibold">FACTURA A <?php echo $_POST['numero_talonario']; ?>-<?php echo $_POST['numero_factura']; ?>
 									</h2>
 									<h3 class="tw-regular"><?php if (!empty($_POST['vencimiento'])): ?>
 											VTO: <?php echo $_POST['vencimiento']; ?>
@@ -154,7 +150,7 @@
 								</td>
 							</tr>
 							<tr>
-								<td>
+								<td style="padding-left: 10px;">
 									<p class="tw-semibold tc-red-5">REVISION ALPHA S.A.S.<br>
 										<span class="tw-regular" style="color:#808080;">Vuelta de Obligado 2443 Of. 403,
 											CABA<br>
@@ -319,27 +315,26 @@
 									<table cellspacing="0">
 										<tbody>
 											<tr>
-												<td style="width:451px;">
-													<p class="tw-semibold">CAE N&deg;: <?php echo $_POST['CAE']; ?><br>
-														Vto. de CAE: <?php echo $_POST['CAEFchVto']; ?></p>
-												</td>
-												<td style="width:305px;" align="center">
+												<td style="width:150px;" align="center">
 													<?php
 													if (isset($_POST['qr']))
 													{
 														echo $_POST['qr'];
-														// echo generarQR($_POST['qr']);
 													}
 													else
 													{
 														?>
 														<barcode type="I25"
 															value="<?php echo $_POST['numeroCodigoBarras']; ?>" label="none"
-															style="width:80mm; height:8mm; font-size: 1mm"></barcode>
+															style="width:50px; height:50px; font-size: 1mm"></barcode>
 														<?php
 													}
 													?>
-													<br><?php echo $_POST['numeroCodigoBarras']; ?>
+												</td>
+												<td style="width:451px; padding-left: 20px;">
+													<p class="tw-semibold">CAE N&deg;: <?php echo $_POST['CAE']; ?><br>
+														Vto. de CAE: <?php echo $_POST['CAEFchVto']; ?><br>
+														<?php echo $_POST['numeroCodigoBarras']; ?></p>
 												</td>
 											</tr>
 										</tbody>

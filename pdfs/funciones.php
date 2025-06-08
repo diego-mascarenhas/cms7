@@ -71,28 +71,33 @@ function generarQR($datos, $output_type = 'html', $save_path = null)
         }
     }
     
-    // Si queremos HTML (comportamiento por defecto)
+    // Si queremos HTML (comportamiento por defecto) - VERSIÓN MEJORADA
     $qrcode_array = $qrcode->getBarcodeArray();
     
-    // Generar solo la tabla QR sin marcos ni texto
-    $html = '<table style="border-collapse:collapse;width:130px;height:130px;">';
-
-    // Generar tabla para mostrar el código QR (cada celda es un módulo)
+    // Obtener dimensiones
     $width = $qrcode_array['num_cols'];
     $height = $qrcode_array['num_rows'];
-
-    for ($r = 0; $r < $height; $r++)
-    {
-        $html .= '<tr style="height:' . (130 / $height) . 'px">';
-        for ($c = 0; $c < $width; $c++)
-        {
-            $color = ($qrcode_array['bcode'][$r][$c] == 1) ? '#000' : '#fff';
-            $html .= '<td style="width:' . (130 / $width) . 'px;background-color:' . $color . '"></td>';
+    
+    // Tamaño
+    $total_size = 50; // tamaño total en píxeles
+    $cell_size = $total_size / $width; // calcular tamaño de celda para que todo sume 20px
+    
+    // Generar tabla con tamaño fijo y sin espacios entre celdas
+    $html = '<div style="text-align:center;margin:0 auto;">';
+    $html .= '<table style="border-collapse:collapse; margin:0 auto; width:'.$total_size.'px; height:'.$total_size.'px; table-layout:fixed;">';
+    
+    // Generar filas y columnas
+    for ($r = 0; $r < $height; $r++) {
+        $html .= '<tr style="padding:0; margin:0; height:'.($total_size/$height).'px;">';
+        for ($c = 0; $c < $width; $c++) {
+            $color = ($qrcode_array['bcode'][$r][$c] == 1) ? '#000000' : '#FFFFFF';
+            $html .= '<td style="padding:0; margin:0; width:'.($total_size/$width).'px; height:'.($total_size/$height).'px; background-color:'.$color.';"></td>';
         }
         $html .= '</tr>';
     }
-
+    
     $html .= '</table>';
+    $html .= '</div>';
 
     return $html;
 }

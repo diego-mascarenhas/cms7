@@ -3,6 +3,7 @@
 // Incluimos archivos necesarios
 require_once('config.php');
 require_once('funciones.php');
+require_once('html2pdf/html2pdf.class.php');
 require_once('html2pdf/_tcpdf_5.0.002/qrcode.php'); // Incluir la biblioteca QRcode
 
 // Función para registrar errores en log
@@ -235,8 +236,11 @@ else
 			'codAut' => floatval($factura['cae_numero'])
 		);
 
-		// $factura['qr'] = "https://www.afip.gob.ar/fe/qr/?p=" . base64_encode(json_encode($codigoqr));
-		// echo generarQR($factura['qr']);
+		$url = "https://www.afip.gob.ar/fe/qr/?p=" . base64_encode(json_encode($codigoqr));
+		//$url = "https://www.revisionalpha.com";
+
+		// Generar el código QR para la URL
+		$factura['qr']  = generarQR($url);
 
 		// Determinar la plantilla
 		$template_file = $factura['cuit'] . '_' .
@@ -370,7 +374,7 @@ try
 	$content = ob_get_clean();
 
 	// Add the template content to the PDF
-	$html2pdf->writeHTML($content);
+	$html2pdf->writeHTML($content, false);
 
 	// Output the PDF (D: force download, I: display in browser)
 	$html2pdf->Output($pdf_name, 'I');
