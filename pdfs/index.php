@@ -1,8 +1,9 @@
 <?php
 
 // Incluimos archivos necesarios
-require_once 'config.php';
-require_once 'funciones.php';
+require_once('config.php');
+require_once('funciones.php');
+require_once('html2pdf/_tcpdf_5.0.002/qrcode.php'); // Incluir la biblioteca QRcode
 
 // Función para registrar errores en log
 function logError($message)
@@ -206,17 +207,36 @@ else
 
 
 		// codigo de barras
-		$numeroCodigoBarras = $factura['cuit'];
-		$numeroCodigoBarras .= str_pad($factura['id_afip'], 2, 0, STR_PAD_LEFT);
-		$numeroCodigoBarras .= str_pad($factura['numero_talonario'], 4, 0, STR_PAD_LEFT);
-		$numeroCodigoBarras .= $cae['CAE'];
-		$numeroCodigoBarras .= $cae['CAEFchVto'];
-		$codigoVerificador = DigitoVerificador($numeroCodigoBarras);
-		$numeroCodigoBarras .= $codigoVerificador;
+		// $numeroCodigoBarras = $factura['cuit'];
+		// $numeroCodigoBarras .= str_pad($factura['id_afip'], 2, 0, STR_PAD_LEFT);
+		// $numeroCodigoBarras .= str_pad($factura['numero_talonario'], 4, 0, STR_PAD_LEFT);
+		// $numeroCodigoBarras .= $cae['CAE'];
+		// $numeroCodigoBarras .= $cae['CAEFchVto'];
+		// $codigoVerificador = DigitoVerificador($numeroCodigoBarras);
+		// $numeroCodigoBarras .= $codigoVerificador;
 
-		$factura_completa['numeroCodigoBarras'] =$numeroCodigoBarras;
+		// $factura_completa['numeroCodigoBarras'] = $numeroCodigoBarras;
 
-		
+		// Armar código QR para AFIP
+		$codigoqr = array(
+			'ver' => 1,
+			'fecha' => date("Y-m-d", strtotime($factura_completa['fecha'])),
+			'cuit' => 30716710072,
+			'ptoVta' => intval(str_pad($factura_completa['numero_talonario'], 4, 0, STR_PAD_LEFT)),
+			'tipoCmp' => intval($factura_completa['id_afip']),
+			'nroCmp' => intval(str_pad($factura_completa['numero_factura'], 8, 0, STR_PAD_LEFT)),
+			'importe' => floatval($factura_completa['total_neto']),
+			'moneda' => 'PES',
+			'ctz' => 1,
+			'tipoDocRec' => intval($factura_completa['id_documento_tipo']),
+			'nroDocRec' => floatval(str_replace('-', '', $factura_completa['documento_numero'])),
+			'tipoCodAut' => 'E',
+			'codAut' => floatval($factura_completa['cae_numero'])
+		);
+
+		$factura_completa['qr'] = "https://www.afip.gob.ar/fe/qr/?p=" . base64_encode(json_encode($codigoqr));
+		echo generarQR($factura_completa['qr']);
+
 		// Determinar la plantilla
 		$template_file = $factura_completa['cuit'] . '_' .
 			str_pad($factura_completa['id_afip'], 2, 0, STR_PAD_LEFT) . '_' .
@@ -343,6 +363,7 @@ try
 	// Buffer the template output with custom styles
 	ob_start();
 	echo $customStyles;
+	
 	// include('templates/revisionalpha/30716710072_01_0001.php');
 	include($template_path);
 	$content = ob_get_clean();
