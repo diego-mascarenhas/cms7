@@ -153,12 +153,12 @@ else
 {
 	if ($result->num_rows > 0)
 	{
-		$factura_completa = $result->fetch_assoc();
+		$factura = $result->fetch_assoc();
 
-		$factura_completa['numero_talonario'] = str_pad($factura_completa['numero_talonario'], 4, 0, STR_PAD_LEFT);
-		$factura_completa['numero_factura'] = str_pad($factura_completa['numero_factura'], 8, 0, STR_PAD_LEFT);
-		$factura_completa['fecha'] = date('d/m/Y', strtotime($factura_completa['fecha']));
-		$factura_completa['vencimiento'] = date('d/m/Y', strtotime($factura_completa['vencimiento']));
+		$factura['numero_talonario'] = str_pad($factura['numero_talonario'], 4, 0, STR_PAD_LEFT);
+		$factura['numero_factura'] = str_pad($factura['numero_factura'], 8, 0, STR_PAD_LEFT);
+		$factura['fecha'] = date('d/m/Y', strtotime($factura['fecha']));
+		$factura['vencimiento'] = date('d/m/Y', strtotime($factura['vencimiento']));
 
 
 		// Obtener items
@@ -185,20 +185,20 @@ else
 			$items_result->free();
 		}
 
-		$factura_completa['items'] = json_encode($items);
+		$factura['items'] = json_encode($items);
 
 		// echo '<h3>Array completo para generar PDF:</h3>';
-		// prettyPrint($factura_completa);
+		// prettyPrint($factura);
 
 		// Construir array CAE
-		$factura_completa['CAE'] = $factura_completa['cae_numero'];
-		$factura_completa['CAEFchVto'] = $factura_completa['cae_vencimiento'];
-		$factura_completa['CbteDesde'] = $factura_completa['numero_factura'];
+		$factura['CAE'] = $factura['cae_numero'];
+		$factura['CAEFchVto'] = $factura['cae_vencimiento'];
+		$factura['CbteDesde'] = $factura['numero_factura'];
 
 		$cae = [
-			'CAE' => $factura_completa['cae_numero'],
-			'CAEFchVto' => $factura_completa['cae_vencimiento'],
-			'CbteDesde' => $factura_completa['numero_factura'],
+			'CAE' => $factura['cae_numero'],
+			'CAEFchVto' => $factura['cae_vencimiento'],
+			'CbteDesde' => $factura['numero_factura'],
 		];
 
 
@@ -207,40 +207,41 @@ else
 
 
 		// codigo de barras
-		// $numeroCodigoBarras = $factura['cuit'];
-		// $numeroCodigoBarras .= str_pad($factura['id_afip'], 2, 0, STR_PAD_LEFT);
-		// $numeroCodigoBarras .= str_pad($factura['numero_talonario'], 4, 0, STR_PAD_LEFT);
-		// $numeroCodigoBarras .= $cae['CAE'];
-		// $numeroCodigoBarras .= $cae['CAEFchVto'];
-		// $codigoVerificador = DigitoVerificador($numeroCodigoBarras);
-		// $numeroCodigoBarras .= $codigoVerificador;
+		$numeroCodigoBarras = $factura['cuit'];
+		$numeroCodigoBarras .= str_pad($factura['id_afip'], 2, 0, STR_PAD_LEFT);
+		$numeroCodigoBarras .= str_pad($factura['numero_talonario'], 4, 0, STR_PAD_LEFT);
+		$numeroCodigoBarras .= $cae['CAE'];
+		$numeroCodigoBarras .= $cae['CAEFchVto'];
+		$codigoVerificador = DigitoVerificador($numeroCodigoBarras);
+		$numeroCodigoBarras .= $codigoVerificador;
 
-		// $factura_completa['numeroCodigoBarras'] = $numeroCodigoBarras;
+		$factura['numeroCodigoBarras'] = $numeroCodigoBarras;
 
+		
 		// Armar código QR para AFIP
 		$codigoqr = array(
 			'ver' => 1,
-			'fecha' => date("Y-m-d", strtotime($factura_completa['fecha'])),
+			'fecha' => date("Y-m-d", strtotime($factura['fecha'])),
 			'cuit' => 30716710072,
-			'ptoVta' => intval(str_pad($factura_completa['numero_talonario'], 4, 0, STR_PAD_LEFT)),
-			'tipoCmp' => intval($factura_completa['id_afip']),
-			'nroCmp' => intval(str_pad($factura_completa['numero_factura'], 8, 0, STR_PAD_LEFT)),
-			'importe' => floatval($factura_completa['total_neto']),
+			'ptoVta' => intval(str_pad($factura['numero_talonario'], 4, 0, STR_PAD_LEFT)),
+			'tipoCmp' => intval($factura['id_afip']),
+			'nroCmp' => intval(str_pad($factura['numero_factura'], 8, 0, STR_PAD_LEFT)),
+			'importe' => floatval($factura['total_neto']),
 			'moneda' => 'PES',
 			'ctz' => 1,
-			'tipoDocRec' => intval($factura_completa['id_documento_tipo']),
-			'nroDocRec' => floatval(str_replace('-', '', $factura_completa['documento_numero'])),
+			'tipoDocRec' => intval($factura['id_documento_tipo']),
+			'nroDocRec' => floatval(str_replace('-', '', $factura['documento_numero'])),
 			'tipoCodAut' => 'E',
-			'codAut' => floatval($factura_completa['cae_numero'])
+			'codAut' => floatval($factura['cae_numero'])
 		);
 
-		$factura_completa['qr'] = "https://www.afip.gob.ar/fe/qr/?p=" . base64_encode(json_encode($codigoqr));
-		echo generarQR($factura_completa['qr']);
+		// $factura['qr'] = "https://www.afip.gob.ar/fe/qr/?p=" . base64_encode(json_encode($codigoqr));
+		// echo generarQR($factura['qr']);
 
 		// Determinar la plantilla
-		$template_file = $factura_completa['cuit'] . '_' .
-			str_pad($factura_completa['id_afip'], 2, 0, STR_PAD_LEFT) . '_' .
-			str_pad($factura_completa['numero_talonario'], 4, 0, STR_PAD_LEFT) . '.php';
+		$template_file = $factura['cuit'] . '_' .
+			str_pad($factura['id_afip'], 2, 0, STR_PAD_LEFT) . '_' .
+			str_pad($factura['numero_talonario'], 4, 0, STR_PAD_LEFT) . '.php';
 		$template_path = 'templates/revisionalpha/' . $template_file;
 
 		// echo '<h3>Plantilla que se usaría:</h3>';
@@ -248,17 +249,17 @@ else
 		// echo '<p>¿Existe? ' . (file_exists($template_path) ? '<span class="success">Sí</span>' : '<span class="error">No</span>') . '</p>';
 
 		// Construir ruta del PDF
-		$pdf_name = 'REVISION ALPHA ' . $factura_completa['factura_tipo'] . ' ' .
-			str_pad($factura_completa['numero_talonario'], 4, 0, STR_PAD_LEFT) . '-' .
-			str_pad($factura_completa['numero_factura'], 8, 0, STR_PAD_LEFT) . '.PDF';
+		$pdf_name = 'REVISION ALPHA ' . $factura['factura_tipo'] . ' ' .
+			str_pad($factura['numero_talonario'], 4, 0, STR_PAD_LEFT) . '-' .
+			str_pad($factura['numero_factura'], 8, 0, STR_PAD_LEFT) . '.PDF';
 
-		// $pdf_path = 'pdfs/' . $factura_completa['cuit'] . '_' .
-		//     str_pad($factura_completa['id_afip'], 2, 0, STR_PAD_LEFT) . '_' .
-		//     str_pad($factura_completa['numero_talonario'], 4, 0, STR_PAD_LEFT) . '_' .
-		//     str_pad($factura_completa['numero_factura'], 8, 0, STR_PAD_LEFT) . '.pdf';
+		// $pdf_path = 'pdfs/' . $factura['cuit'] . '_' .
+		//     str_pad($factura['id_afip'], 2, 0, STR_PAD_LEFT) . '_' .
+		//     str_pad($factura['numero_talonario'], 4, 0, STR_PAD_LEFT) . '_' .
+		//     str_pad($factura['numero_factura'], 8, 0, STR_PAD_LEFT) . '.pdf';
 
 		// Incluir el generador de PDF y pasarle los datos
-		// echo $factura_completa;
+		// echo $factura;
 		// echo $cae_data;
 	}
 	else
@@ -296,7 +297,7 @@ require_once('html2pdf/html2pdf.class.php');
 //     'numeroCodigoBarras' => '307167100720001000001237123456789012320231210'
 // ];
 
-$_POST = $factura_completa;
+$_POST = $factura;
 
 // Add custom fonts and styling based on revisionalpha brand styles
 $customStyles = <<<EOD
