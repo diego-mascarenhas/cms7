@@ -8,6 +8,9 @@ class Plesk {
     private $port = 8443;
     private $protocol = 'https';
     private $CI;
+    public $debug = false;
+    public $last_request = '';
+    public $last_response = '';
     
     public function __construct($config = array())
     {
@@ -40,6 +43,8 @@ class Plesk {
      */
     private function makeRequest($request)
     {
+        $this->last_request = $request;
+        
         $url = $this->protocol . '://' . $this->host . ':' . $this->port . '/enterprise/control/agent.php';
         
         $headers = array(
@@ -59,6 +64,8 @@ class Plesk {
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
         
         $response = curl_exec($ch);
+        $this->last_response = $response;
+        
         $error = curl_error($ch);
         curl_close($ch);
         
@@ -66,11 +73,32 @@ class Plesk {
             return array('error' => $error);
         }
         
+        if ($this->debug) {
+            echo "<h3>Request</h3>";
+            echo "<pre>" . htmlspecialchars($request) . "</pre>";
+            echo "<h3>Response</h3>";
+            echo "<pre>" . htmlspecialchars($response) . "</pre>";
+        }
+        
         // Parse XML response to array
         $xml = simplexml_load_string($response);
-        $result = json_decode(json_encode($xml), true);
+        $json = json_encode($xml);
+        $result = json_decode($json, true);
         
         return $result;
+    }
+    
+    /**
+     * Get the raw XML request and response from the last API call
+     * 
+     * @return array Last request and response
+     */
+    public function getLastRawData() 
+    {
+        return array(
+            'request' => $this->last_request,
+            'response' => $this->last_response
+        );
     }
     
     /**
@@ -160,34 +188,37 @@ class Plesk {
      */
     public function listpops($domain)
     {
+        // Corregido según la documentación de Plesk API
         $request = '<?xml version="1.0" encoding="UTF-8"?>
         <packet>
             <mail>
-                <get_mail_account>
+                <get_info>
                     <filter>
                         <site-name>' . htmlspecialchars($domain) . '</site-name>
                     </filter>
-                    <dataset>
-                        <gen_info/>
-                    </dataset>
-                </get_mail_account>
+                    <mailbox/>
+                </get_info>
             </mail>
         </packet>';
         
         $response = $this->makeRequest($request);
         
-        if (isset($response['mail']['get_mail_account']['result'])) {
+        if (isset($response['mail']['get_info']['result'])) {
             $emails = array();
-            $results = $response['mail']['get_mail_account']['result'];
+            $results = $response['mail']['get_info']['result'];
             
             // Handle single or multiple results
             if (isset($results['status'])) {
                 // Single result
-                $emails[] = $this->formatEmailData($results);
+                if (isset($results['mailbox']) && !empty($results['mailbox'])) {
+                    $emails[] = $this->formatEmailData($results);
+                }
             } else {
                 // Multiple results
                 foreach ($results as $result) {
-                    $emails[] = $this->formatEmailData($result);
+                    if (isset($result['mailbox']) && !empty($result['mailbox'])) {
+                        $emails[] = $this->formatEmailData($result);
+                    }
                 }
             }
             
@@ -205,34 +236,8 @@ class Plesk {
      */
     public function listpopswithdisk($domain)
     {
-        $emails = $this->listpops($domain);
-        
-        if (!empty($emails)) {
-            foreach ($emails as &$email) {
-                // Add disk usage info by getting mailbox size
-                $request = '<?xml version="1.0" encoding="UTF-8"?>
-                <packet>
-                    <mail>
-                        <get_mailbox_size>
-                            <filter>
-                                <site-name>' . htmlspecialchars($domain) . '</site-name>
-                                <mailname>' . htmlspecialchars($email['account']) . '</mailname>
-                            </filter>
-                        </get_mailbox_size>
-                    </mail>
-                </packet>';
-                
-                $response = $this->makeRequest($request);
-                
-                if (isset($response['mail']['get_mailbox_size']['result']['mailbox'])) {
-                    $email['diskused'] = $response['mail']['get_mailbox_size']['result']['mailbox']['size'] / 1024 / 1024; // Convert to MB
-                } else {
-                    $email['diskused'] = 0;
-                }
-            }
-        }
-        
-        return $emails;
+        // Plesk API ya proporciona información de uso de disco en la llamada listpops
+        return $this->listpops($domain);
     }
     
     /**
@@ -274,6 +279,7 @@ class Plesk {
     {
         list($email_user, $email_domain) = explode('@', $data['email']);
         
+        // Corregido según la documentación de Plesk API
         $request = '<?xml version="1.0" encoding="UTF-8"?>
         <packet>
             <mail>
@@ -282,14 +288,67 @@ class Plesk {
                         <site-name>' . htmlspecialchars($domain) . '</site-name>
                         <mailname>' . htmlspecialchars($email_user) . '</mailname>
                     </filter>
-                    <values>
+                    <mailbox>
                         <password>' . htmlspecialchars($data['password']) . '</password>
-                    </values>
+                    </mailbox>
                 </update>
             </mail>
         </packet>';
         
         return $this->makeRequest($request);
+    }
+    
+    /**
+     * Get server stats for a domain
+     *
+     * @param string $domain Domain name
+     * @return array Stats data
+     */
+    public function stats($domain)
+    {
+        $request = '<?xml version="1.0" encoding="UTF-8"?>
+        <packet>
+            <webspace>
+                <get>
+                    <filter>
+                        <name>' . htmlspecialchars($domain) . '</name>
+                    </filter>
+                    <dataset>
+                        <stat/>
+                    </dataset>
+                </get>
+            </webspace>
+        </packet>';
+        
+        $response = $this->makeRequest($request);
+        
+        if (isset($response['webspace']['get']['result']['data']['stat'])) {
+            return $response['webspace']['get']['result']['data']['stat'];
+        }
+        
+        return array();
+    }
+    
+    /**
+     * Get disk usage
+     *
+     * @param string $domain Domain name
+     * @return array Disk usage data
+     */
+    public function diskusage($domain)
+    {
+        return $this->stats($domain);
+    }
+    
+    /**
+     * Get bandwidth usage
+     *
+     * @param string $domain Domain name
+     * @return array Bandwidth usage data
+     */
+    public function bandwidthusage($domain)
+    {
+        return $this->stats($domain);
     }
     
     /**
@@ -307,20 +366,20 @@ class Plesk {
             $account['user'] = $info['name'];
             $account['domain'] = $info['name'];
             $account['ip'] = isset($info['dns_ip_address']) ? $info['dns_ip_address'] : '';
-            $account['suspended'] = (isset($info['status']) && $info['status'] == 'active') ? 0 : 1;
-            $account['suspendreason'] = isset($info['status']) && $info['status'] != 'active' ? $info['status'] : '';
+            $account['suspended'] = (isset($info['status']) && $info['status'] == '0') ? 0 : 1;
+            $account['suspendreason'] = isset($info['status']) && $info['status'] != '0' ? 'Suspended' : '';
         }
         
         if (isset($data['data']['stat'])) {
             $stat = $data['data']['stat'];
-            $account['diskused'] = isset($stat['disk_space']) ? $stat['disk_space'] / 1024 / 1024 : 0; // Convert to MB
-            $account['bandwidth'] = isset($stat['max_traffic']) ? $stat['max_traffic'] / 1024 / 1024 : 0; // Convert to MB
+            $account['diskused'] = isset($stat['real_size']) ? round($stat['real_size'] / 1024 / 1024) : 0; // Convert to MB
+            $account['bandwidth'] = isset($stat['traffic']) ? round($stat['traffic'] / 1024 / 1024) : 0; // Convert to MB
         }
         
         if (isset($data['data']['limits'])) {
             $limits = $data['data']['limits'];
-            $account['disklimit'] = isset($limits['disk_space']) ? $limits['disk_space'] / 1024 / 1024 : 0; // Convert to MB
-            $account['bwlimit'] = isset($limits['max_traffic']) ? $limits['max_traffic'] / 1024 / 1024 : 0; // Convert to MB
+            $account['disklimit'] = isset($limits['disk_space']) ? round($limits['disk_space'] / 1024 / 1024) : 0; // Convert to MB
+            $account['bwlimit'] = isset($limits['max_traffic']) ? round($limits['max_traffic'] / 1024 / 1024) : 0; // Convert to MB
         }
         
         return $account;
@@ -336,12 +395,19 @@ class Plesk {
     {
         $email = array();
         
-        if (isset($data['data']['gen_info'])) {
-            $info = $data['data']['gen_info'];
-            $email['account'] = $info['name'];
-            $email['domain'] = $info['domain'];
-            $email['email'] = $info['name'] . '@' . $info['domain'];
-            $email['suspended'] = (isset($info['status']) && $info['status'] == 'active') ? 0 : 1;
+        if (isset($data['mailbox'])) {
+            foreach ($data['mailbox'] as $mailbox) {
+                $name = $mailbox['name'];
+                $domain = $data['name'];
+                
+                $email[] = array(
+                    'account' => $name,
+                    'domain' => $domain,
+                    'email' => $name . '@' . $domain,
+                    'suspended' => isset($mailbox['active']) && $mailbox['active'] == 'true' ? 0 : 1,
+                    'diskused' => isset($mailbox['usage']) ? round($mailbox['usage'] / 1024 / 1024) : 0 // Convert to MB
+                );
+            }
         }
         
         return $email;
