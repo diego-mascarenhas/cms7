@@ -62,8 +62,17 @@ class Hosting extends MY_Controller {
 				$config = $this->hosting_model->getCredenciales($data['detalle']['id_servidor']);
 				
 				if ($config) {
-					$this->load->library('Cpanel', $config);
-					$data['emails'] = $this->cpanel->listpopswithdisk($data['detalle']['user']);
+					// Determinar qué tipo de panel tiene el servidor
+					$panel_type = $this->hosting_model->getPanelType($data['detalle']['id_servidor']);
+					
+					if ($panel_type == 'plesk') {
+						$this->load->library('Plesk', $config);
+						$data['emails'] = $this->plesk->listpopswithdisk($data['detalle']['user']);
+					} else {
+						// Por defecto, usar cPanel
+						$this->load->library('Cpanel', $config);
+						$data['emails'] = $this->cpanel->listpopswithdisk($data['detalle']['user']);
+					}
 				}
 			}
 			

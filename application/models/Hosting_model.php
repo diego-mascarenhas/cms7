@@ -31,6 +31,29 @@ class Hosting_model extends CI_Model {
 	}
 	
 	
+	/**
+	 * Determina el tipo de panel que usa un servidor
+	 *
+	 * @param int $id_servidor ID del servidor
+	 * @return string Tipo de panel ('cpanel' o 'plesk')
+	 */
+	public function getPanelType($id_servidor)
+	{
+		$this->db->select('panel_type');
+		$this->db->from('hosting_servidores');
+		$this->db->where('id', $id_servidor);
+		
+		$query = $this->db->get();
+		
+		if ($query->num_rows() > 0) {
+			return $query->row()->panel_type;
+		}
+		
+		// Por defecto, asumimos cPanel
+		return 'cpanel';
+	}
+	
+	
 	public function getWhmCredenciales($id)
 	{
 		$sql = "	
