@@ -13,12 +13,12 @@
 		                </ol>
 		            </div>
 		            <div class="col-xs-4 col-sm-4 col-md-6 col-lg-6">
-	                    <!-- <div class="title-action">
+	                    <div class="title-action">
 	                        <a href="<?php echo ($this->usuario->perfil == 'reseller') ? base_url('administracion/contactos/?order_by=nombre&order=ASC') : base_url('tickets/ingresar/'); ?>" class="btn btn-primary btn-sm"><?php echo $this->lang->line('cms_users-crear-ticket'); ?></a>
-	                    </div> -->
-						<div class="title-action">
-	                        <a href="<?php echo ($this->usuario->perfil == 'reseller') ? base_url('administracion/contactos/?order_by=nombre&order=ASC') : 'https://wa.me/12202137800'; ?>" target="_blank" class="btn btn-primary btn-sm"><?php echo $this->lang->line('cms_users-crear-ticket'); ?></a>
 	                    </div>
+						<!-- <div class="title-action">
+	                        <a href="<?php echo ($this->usuario->perfil == 'reseller') ? base_url('administracion/contactos/?order_by=nombre&order=ASC') : 'https://wa.me/12202137800'; ?>" target="_blank" class="btn btn-primary btn-sm"><?php echo $this->lang->line('cms_users-crear-ticket'); ?></a>
+	                    </div> -->
 	                </div>
 		        </div>				
 				
