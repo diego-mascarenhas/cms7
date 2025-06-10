@@ -3,7 +3,7 @@
 										<br><br><br>
 										Atte.<br>
 										<span>--<br>
-										<strong>ADMINISTRACI&Oacute;N</strong> | REVISION ALPHA<br>
+										<strong>ADMINISTRACIÓN</strong> | REVISION ALPHA<br>
 										Donado 840, CABA | +54 11.5219.0345<br>
 										Miami Beach, Fl 33119 | +001.305 534.5678<br>
                                         González Besada 39 Oviedo, Asturias | +34 722.372.858</span>

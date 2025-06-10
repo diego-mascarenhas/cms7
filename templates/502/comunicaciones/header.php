@@ -1,6 +1,7 @@
 <html>
 <head>
 	<title>revision alpha | Comunicaciones</title>
+	<meta charset="utf-8">
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<style>
 	* { padding:0; margin:0; line-height:1.5; }
@@ -37,10 +38,10 @@
 										<?php
 										( date('w') == 1 ) ? $dia = 'Lunes' : null;
 										( date('w') == 2 ) ? $dia = 'Martes' : null;
-										( date('w') == 3 ) ? $dia = 'Mi&eacute;rcoles' : null;
+										( date('w') == 3 ) ? $dia = 'Miércoles' : null;
 										( date('w') == 4 ) ? $dia = 'Jueves' : null;
 										( date('w') == 5 ) ? $dia = 'Viernes' : null;
-										( date('w') == 6 ) ? $dia = 'S&aacute;bado' : null;
+										( date('w') == 6 ) ? $dia = 'Sábado' : null;
 										( date('w') == 0 ) ? $dia = 'Domingo' : null;
 										
 										( date('n') == 1 ) ? $mes = 'Enero' : null;
@@ -57,7 +58,7 @@
 										( date('n') == 12 ) ? $mes = 'Diciembre' : null;
 										?>
 										<span><strong><?php echo $dia . ' ' . date('d') . ' de ' . $mes . ' de ' . date('Y'); ?></strong></span><br>
-										<span><em>Administraci&oacute;n</em></span>
+										<span><em>Administración</em></span>
 									</td>
 								</tr>
 								<tr>

@@ -8,6 +8,9 @@ $config['smtp'] = array('protocol' => 'smtp',
 						'smtp_pass' => 'vRptd2rqBn1',
 						'mailtype' => 'html',
 						'charset' => 'utf-8',
-						'wordwrap' => true,
+						'wordwrap' => false,
+						'crlf' => "\n",
+						'newline' => "\r\n",
+						'encoding' => '8bit',
 						'nodebug' => false
 						);
