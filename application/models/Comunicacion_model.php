@@ -292,37 +292,36 @@ class Comunicacion_model extends CI_Model {
 		$this->load->config('smtp');
 		$this->load->library('email', $this->config->item('smtp'));
 		
-		$track_url = base_url();;
+		$track_url = base_url();
 		
 		$res = $this->getComunicacionTemplate($id);
 		
-		$this->email->set_newline("\r\n");
-		$this->email->from($res['remitente_email'], $res['remitente_nombre']);
-		$this->email->to($res['email'], $res['contacto']);
-		$this->email->subject($res['asunto']);
-		$this->email->message(preg_replace('/(<body.*?(?=>)>)/i', '$1' . '<img src="' . $track_url . 'com' . $res['id'] . '.gif' . '" border="0" height="1" width="1" />', $res['template']));
-		//if (isset($res['mensaje'])) $this->email->set_alt_message($res['mensaje']);
-		
-		$this->email->set_header('Track-ID', $res['id']);
-		
-		
-		if (!$this->email->send($this->config->item('smtp')['nodebug']))
-		{
-			$res['debug'] = $this->email->print_debugger();
+		if (isset($res)) {
+			$this->email->set_newline("\r\n");
+			$this->email->from($res['remitente_email'], $res['remitente_nombre']);
+			$this->email->to($res['email'], $res['contacto']);
+			$this->email->subject($res['asunto']);
+			$this->email->message(preg_replace('/(<body.*?(?=>)>)/i', '$1' . '<img src="' . $track_url . 'com' . $res['id'] . '.gif' . '" border="0" height="1" width="1" />', $res['template']));
+			//if (isset($res['mensaje'])) $this->email->set_alt_message($res['mensaje']);
 			
-			$comunicacion['estado'] = 4;
-		}
-		else
-		{
-			if (!$this->config->item('smtp')['nodebug']) $comunicacion['debug'] = $this->email->print_debugger(array('headers', 'subject', 'body'));
+			$this->email->set_header('Track-ID', $res['id']);
 			
-			$comunicacion['asunto'] = $res['asunto'];
-			$comunicacion['enviado'] = now();
-			
-			$comunicacion['estado'] = 2;
-		}
+			// Intentar enviar el email sin pasar el parámetro nodebug
+			if (!$this->email->send()) {
+				$comunicacion['debug'] = $this->email->print_debugger();
+				$comunicacion['estado'] = 4; // Error
+			} else {
+				if (!$this->config->item('smtp')['nodebug']) {
+					$comunicacion['debug'] = $this->email->print_debugger(array('headers', 'subject', 'body'));
+				}
+				
+				$comunicacion['asunto'] = $res['asunto'];
+				$comunicacion['enviado'] = now();
+				$comunicacion['estado'] = 2; // Enviado
+			}
 
-		$res = $this->db->update('comunicaciones', $comunicacion, array('id'=>$res['id']));
+			$res = $this->db->update('comunicaciones', $comunicacion, array('id'=>$res['id']));
+		}
 		
 		return (!empty($res)) ? $res : null;
 	}

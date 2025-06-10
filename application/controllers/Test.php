@@ -17,7 +17,7 @@ class Test extends CI_Controller {
 
         // Configurar el email
         $this->email->set_newline("\r\n");
-        $this->email->from('administracion@revisionalpha.com', 'Administración Revision Alpha');
+        $this->email->from('administracion@revisionalpha.com', 'REVISION ALPHA');
         $this->email->to('revisionalpha@gmail.com');
         $this->email->subject('Test de Email - ' . date('Y-m-d H:i:s'));
 
