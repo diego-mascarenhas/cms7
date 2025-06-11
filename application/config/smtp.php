@@ -7,10 +7,14 @@ $config['smtp'] = array('protocol' => 'smtp',
 						'smtp_user' => 'administracion@revisionalpha.com',
 						'smtp_pass' => 'vRptd2rqBn1',
 						'mailtype' => 'html',
-						'charset' => 'utf-8',
-						'wordwrap' => false,
+						'charset' => 'UTF-8',
+						'wordwrap' => FALSE,
 						'crlf' => "\n",
 						'newline' => "\r\n",
-						'encoding' => '8bit',
-						'nodebug' => false
+						'encoding' => 'base64',
+						'nodebug' => false,
+						'isHtml' => TRUE,
+						'priority' => 3,
+						'content_type' => 'text/html',
+						'altText' => false
 						);

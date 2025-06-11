@@ -301,6 +301,7 @@ class Comunicacion_model extends CI_Model {
 			$this->email->from($res['remitente_email'], $res['remitente_nombre']);
 			$this->email->to($res['email'], $res['contacto']);
 			$this->email->subject($res['asunto']);
+			$this->email->set_header('Content-Transfer-Encoding', 'base64');
 			$this->email->message(preg_replace('/(<body.*?(?=>)>)/i', '$1' . '<img src="' . $track_url . 'com' . $res['id'] . '.gif' . '" border="0" height="1" width="1" />', $res['template']));
 			//if (isset($res['mensaje'])) $this->email->set_alt_message($res['mensaje']);
 			

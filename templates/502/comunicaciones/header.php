@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
 	<title>revision alpha | Comunicaciones</title>
@@ -31,7 +32,7 @@
 								<tr>
 									<td><h1>
 										<!-- <img src="https://cms.revisionalpha.com/templates/502/comunicaciones/images/revision-alpha.png" alt="revision alpha" width="252" height="35" style="display:block; position:relative;"></h1> -->
-										<img src="https://cms.revisionalpha.com/templates/502/comunicaciones/images/revision-alpha.svg" alt="revision alpha" height="50" style="display:block; position:relative;">
+										<img src="https://cms.revisionalpha.com/revision-alpha.svg" alt="revision alpha" height="50" style="display:block; position:relative;">
 									</h1>
 									</td>
 									<td align="right">
