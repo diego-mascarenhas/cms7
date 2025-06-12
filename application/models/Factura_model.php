@@ -1620,6 +1620,7 @@ class Factura_model extends CI_Model {
 				LEFT JOIN sys_monedas ON facturas.id_moneda = sys_monedas.id
 				WHERE facturas.grupo = ?
 				AND (facturas.estado = 1 OR facturas.estado = 2)
+				AND NOT EXISTS (SELECT * FROM facturas AS nota WHERE nota.padre = facturas.id)
 				AND empresas.estado > 1
 				AND MONTH(facturas.fecha) = MONTH(CURRENT_DATE())
 				AND YEAR(facturas.fecha) = YEAR(CURRENT_DATE())
@@ -1653,6 +1654,7 @@ class Factura_model extends CI_Model {
 				LEFT JOIN sys_monedas ON facturas.id_moneda = sys_monedas.id
 				WHERE facturas.grupo = ?
 				AND (facturas.estado = 1 OR facturas.estado = 2)
+				AND NOT EXISTS (SELECT * FROM facturas AS nota WHERE nota.padre = facturas.id)
 				AND empresas.estado > 1
 				AND (
 					(MONTH(facturas.fecha) = MONTH(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH)) 
