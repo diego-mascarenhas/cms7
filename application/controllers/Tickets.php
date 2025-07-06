@@ -67,6 +67,11 @@ class Tickets extends MY_Controller {
 				
 				if ($this->form_validation->run() === false)
 				{
+					// Mark ticket as opened by agent when viewing (if agent is viewing)
+					if ($this->ticket_model->isAgent($this->usuario->id)) {
+						$this->ticket_model->markTicketAsOpened($id, $this->usuario->id);
+					}
+
 					// form values
 					foreach ($this->ticket_model->getTicketItems($data['detalle']['id']) as $item)
 					{
@@ -102,6 +107,12 @@ class Tickets extends MY_Controller {
 						
 						$this->ticket_model->cambiarEstado($id, 3);
 						$this->ticket_model->setInicio($id);
+						
+						// Mark ticket as replied by agent when responding (if agent is responding)
+						if ($this->ticket_model->isAgent($this->usuario->id)) {
+							$this->ticket_model->markTicketAsReplied($id, $this->usuario->id, $data['id']);
+						}
+						
 						$contactos = $this->ticket_model->notificarNuevaRespuesta($data['id']);
 						
 	

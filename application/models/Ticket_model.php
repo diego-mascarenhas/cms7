@@ -1018,6 +1018,139 @@ class Ticket_model extends CI_Model {
 		
 		return (!empty($res)) ? $res : null;
 	}
+
+	/**
+	 * Mark a ticket as opened by an agent
+	 * Updates all user messages (non-agent) in the ticket as opened
+	 */
+	public function markTicketAsOpened($ticket_id, $agent_contact_id)
+	{
+		// Get agent contact IDs to identify user messages
+		$agent_ids = $this->getAgentContactIds();
+		
+		// Get user messages (non-agent) for this ticket
+		$sql = "
+			SELECT tickets_items.id as item_id
+			FROM tickets_items
+			WHERE tickets_items.id_ticket = ?
+			AND tickets_items.id_contacto NOT IN (" . implode(',', $agent_ids) . ")
+		";
+		
+		$query = $this->db->query($sql, array($ticket_id));
+		
+		if ($query) {
+			$user_messages = $query->result_array();
+			$updated_count = 0;
+			
+			foreach ($user_messages as $message) {
+				// Check if stats record exists
+				$stats_query = $this->db->get_where('tickets_items_stats', array('id_tickets_item' => $message['item_id']));
+				
+				if ($stats_query->num_rows() > 0) {
+					// Update existing record
+					$this->db->where('id_tickets_item', $message['item_id']);
+					$this->db->where('opened IS NULL'); // Only update if not already opened
+					$result = $this->db->update('tickets_items_stats', array('opened' => date('Y-m-d H:i:s')));
+					if ($result) $updated_count++;
+				} else {
+					// Create new record
+					$data = array(
+						'id_tickets_item' => $message['item_id'],
+						'opened' => date('Y-m-d H:i:s')
+					);
+					$this->db->insert('tickets_items_stats', $data);
+					$updated_count++;
+				}
+			}
+			
+			return $updated_count;
+		}
+		
+		return false;
+	}
+
+	/**
+	 * Mark a ticket as replied by an agent
+	 * Updates all user messages (non-agent) in the ticket as replied
+	 */
+	public function markTicketAsReplied($ticket_id, $agent_contact_id, $response_item_id = null)
+	{
+		// Get agent contact IDs to identify user messages
+		$agent_ids = $this->getAgentContactIds();
+		
+		// Get user messages (non-agent) for this ticket
+		$sql = "
+			SELECT tickets_items.id as item_id
+			FROM tickets_items
+			WHERE tickets_items.id_ticket = ?
+			AND tickets_items.id_contacto NOT IN (" . implode(',', $agent_ids) . ")
+		";
+		
+		$query = $this->db->query($sql, array($ticket_id));
+		
+		if ($query) {
+			$user_messages = $query->result_array();
+			$updated_count = 0;
+			
+			foreach ($user_messages as $message) {
+				// Check if stats record exists
+				$stats_query = $this->db->get_where('tickets_items_stats', array('id_tickets_item' => $message['item_id']));
+				
+				if ($stats_query->num_rows() > 0) {
+					// Update existing record
+					$this->db->where('id_tickets_item', $message['item_id']);
+					$this->db->where('replied IS NULL'); // Only update if not already replied
+					$result = $this->db->update('tickets_items_stats', array('replied' => date('Y-m-d H:i:s')));
+					if ($result) $updated_count++;
+				} else {
+					// Create new record
+					$data = array(
+						'id_tickets_item' => $message['item_id'],
+						'replied' => date('Y-m-d H:i:s')
+					);
+					$this->db->insert('tickets_items_stats', $data);
+					$updated_count++;
+				}
+			}
+			
+			return $updated_count;
+		}
+		
+		return false;
+	}
+
+	/**
+	 * Get agent contact IDs for filtering user messages
+	 */
+	private function getAgentContactIds()
+	{
+		$sql = "
+			SELECT DISTINCT id_contacto
+			FROM tickets_agentes_rel_areas
+			WHERE grupo = 502
+		";
+		
+		$query = $this->db->query($sql);
+		
+		if ($query) {
+			$agent_ids = array();
+			foreach ($query->result_array() as $row) {
+				$agent_ids[] = $row['id_contacto'];
+			}
+			return $agent_ids;
+		}
+		
+		return array();
+	}
+
+	/**
+	 * Check if a contact is an agent
+	 */
+	public function isAgent($contact_id)
+	{
+		$agent_ids = $this->getAgentContactIds();
+		return in_array($contact_id, $agent_ids);
+	}
 	
 	
 	public function getAlertasCriticas($intervalo = 3600) // 1 Hora
