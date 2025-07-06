@@ -249,15 +249,15 @@ class Ticket_model extends CI_Model {
 	}
 	
 	
-	public function getTicketItemAdjuntos($id)
+		public function getTicketItemAdjuntos($id)
 	{
 		$sql = "
-	            SELECT tickets_items_adjuntos.nombre, tickets_items_adjuntos.archivo
+	            SELECT tickets_items_adjuntos.id, tickets_items_adjuntos.nombre, tickets_items_adjuntos.archivo
 	            
 	            FROM tickets_items_adjuntos
-				
-				WHERE tickets_items_adjuntos.id_ticket_item = ?
-			";
+			
+			WHERE tickets_items_adjuntos.id_ticket_item = ?
+		";
 
 		$query = $this->db->query($sql, array(
 				$id
