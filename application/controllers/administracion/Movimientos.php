@@ -382,13 +382,13 @@ class Movimientos extends MY_Controller
 				}
 				else
 				{
-					$errores[] = "Error en movimiento ID $id: " . ($resultado['message'] ?? 'Error desconocido');
+					$errores[] = "Error en pago ID: $id";
 				}
 			}
 
 			$data = array(
-				'success' => $exitosos > 0,
-				'message' => "Se aprobaron $exitosos de $procesados pagos",
+				'success' => true,
+				'message' => "Procesados: $procesados pagos. Exitosos: $exitosos. Errores: " . count($errores),
 				'procesados' => $procesados,
 				'exitosos' => $exitosos,
 				'errores' => $errores
@@ -398,9 +398,61 @@ class Movimientos extends MY_Controller
 		}
 		else
 		{
-			$data = array('success' => false, 'message' => 'No autorizado');
-			echo json_encode($data);
+			show_404();
 		}
+	}
+
+
+	public function descargar_comprobante($id)
+	{
+		// Verificar permisos
+		if (!$this->_verificar_permisos()) {
+			show_error('No tiene permisos para acceder a esta funcionalidad', 403);
+			return;
+		}
+
+		// Verificar que el ID sea válido
+		if (!is_numeric($id) || $id <= 0) {
+			show_error('ID de movimiento inválido', 400);
+			return;
+		}
+
+		// Obtener información del movimiento
+		$movimiento = $this->movimiento_model->get_movimiento_con_comprobante($id);
+
+		if (!$movimiento) {
+			show_error('Movimiento no encontrado', 404);
+			return;
+		}
+
+		if (empty($movimiento->comprobante)) {
+			show_error('El movimiento no tiene comprobante de pago adjunto', 404);
+			return;
+		}
+
+		// URL del comprobante en el frontend
+		$frontend_url = 'https://www.revisionalpha.com/storage/payment-receipts/' . $movimiento->comprobante;
+
+		// Verificar que el archivo existe haciendo una petición HEAD
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, $frontend_url);
+		curl_setopt($ch, CURLOPT_NOBODY, true);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+		
+		$result = curl_exec($ch);
+		$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+		curl_close($ch);
+
+		if ($http_code !== 200) {
+			show_error('El archivo del comprobante no fue encontrado en el servidor', 404);
+			return;
+		}
+
+		// Redireccionar al archivo en el frontend
+		redirect($frontend_url);
 	}
 
 
@@ -592,6 +644,15 @@ class Movimientos extends MY_Controller
 		echo '<pre>' . print_r($data, true) . '</pre>';
 	}
 
+
+	/**
+     * Verificar permisos del usuario
+     * @return bool True si tiene permisos, False en caso contrario
+     */
+    private function _verificar_permisos()
+    {
+        return $this->is_logged_in('reseller') || $this->is_logged_in('admin');
+    }
 
 
 }

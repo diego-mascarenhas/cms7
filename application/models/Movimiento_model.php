@@ -6,7 +6,7 @@ class Movimiento_model extends CI_Model {
 	public function getMovimientos($parametros = null)
 	{
 		$sql = "	
-				SELECT SQL_CALC_FOUND_ROWS movimientos.id, UNIX_TIMESTAMP(movimientos.fecha) AS fecha, movimientos.id_empresa, movimientos.valor, empresas.empresa, formas_pago.forma_pago, formas_pago.id AS id_forma_pago, CONCAT(facturas_tipo.factura_tipo, ' ', lpad(facturas.numero_talonario, 4, '0'), '-', lpad(IF(facturas.numero_factura, facturas.numero_factura, '********'), 8, '0')) AS comprobante, cuentas.nombre_cuenta AS cuenta, movimientos.id_factura, sys_monedas.simbolo, movimientos.estado AS id_estado,
+				SELECT SQL_CALC_FOUND_ROWS movimientos.id, UNIX_TIMESTAMP(movimientos.fecha) AS fecha, movimientos.id_empresa, movimientos.valor, movimientos.comprobante, empresas.empresa, formas_pago.forma_pago, formas_pago.id AS id_forma_pago, CONCAT(facturas_tipo.factura_tipo, ' ', lpad(facturas.numero_talonario, 4, '0'), '-', lpad(IF(facturas.numero_factura, facturas.numero_factura, '********'), 8, '0')) AS comprobante_factura, cuentas.nombre_cuenta AS cuenta, movimientos.id_factura, sys_monedas.simbolo, movimientos.estado AS id_estado,
 
 					CASE
 					   WHEN movimientos.estado = 1 THEN 'label-warning'
@@ -174,7 +174,7 @@ class Movimiento_model extends CI_Model {
 		else
 		{
 			$sql = "	
-					SELECT movimientos.id, UNIX_TIMESTAMP(movimientos.fecha) AS fecha, movimientos.id_empresa, movimientos.valor, empresas.empresa, formas_pago.forma_pago, formas_pago.id AS id_forma_pago, CONCAT(facturas_tipo.factura_tipo, ' ', lpad(facturas.numero_talonario, 4, '0'), '-', lpad(facturas.numero_factura, 8, '0')) as comprobante, cuentas.nombre_cuenta AS cuenta, movimientos.id_factura, sys_monedas.simbolo, movimientos.estado AS id_estado,
+					SELECT movimientos.id, UNIX_TIMESTAMP(movimientos.fecha) AS fecha, movimientos.id_empresa, movimientos.valor, movimientos.comprobante, empresas.empresa, formas_pago.forma_pago, formas_pago.id AS id_forma_pago, CONCAT(facturas_tipo.factura_tipo, ' ', lpad(facturas.numero_talonario, 4, '0'), '-', lpad(facturas.numero_factura, 8, '0')) as comprobante_factura, cuentas.nombre_cuenta AS cuenta, movimientos.id_factura, sys_monedas.simbolo, movimientos.estado AS id_estado,
 	
 						CASE
 						   WHEN movimientos.estado = 1 THEN 'label-warning'
@@ -1345,4 +1345,104 @@ class Movimiento_model extends CI_Model {
 	}
 	
 	
+	public function actualizarComprobantePago($id, $nombre_archivo)
+	{
+		$data = array(
+			'comprobante_pago' => $nombre_archivo,
+			'fecha_modificacion' => unix_to_human(now(), true, 'eu'),
+			'username_modificacion' => $this->usuario->username
+		);
+		
+		$where = array(
+			'id' => $id,
+			'grupo' => $this->usuario->grupo
+		);
+		
+		// Verificar permisos adicionales para usuarios admin
+		if ($this->usuario->perfil == 'admin')
+		{
+			$where['id_empresa'] = $this->usuario->id_empresa;
+		}
+		
+		$result = $this->db->update('movimientos', $data, $where);
+		
+		if ($result && $this->db->affected_rows() > 0)
+		{
+			return array('success' => true, 'message' => 'Comprobante actualizado correctamente');
+		}
+		else
+		{
+			return array('success' => false, 'message' => 'No se pudo actualizar el comprobante');
+		}
+	}
+	
+	
+	public function eliminarComprobantePago($id)
+	{
+		// Primero obtener el nombre del archivo para eliminarlo físicamente
+		$movimiento = $this->getMovimientoDetalleRaw($id);
+		
+		if (!$movimiento || empty($movimiento['comprobante_pago']))
+		{
+			return array('success' => false, 'message' => 'No se encontró comprobante para eliminar');
+		}
+		
+		$data = array(
+			'comprobante_pago' => null,
+			'fecha_modificacion' => unix_to_human(now(), true, 'eu'),
+			'username_modificacion' => $this->usuario->username
+		);
+		
+		$where = array(
+			'id' => $id,
+			'grupo' => $this->usuario->grupo
+		);
+		
+		// Verificar permisos adicionales para usuarios admin
+		if ($this->usuario->perfil == 'admin')
+		{
+			$where['id_empresa'] = $this->usuario->id_empresa;
+		}
+		
+		$result = $this->db->update('movimientos', $data, $where);
+		
+		if ($result && $this->db->affected_rows() > 0)
+		{
+			// Intentar eliminar el archivo físico
+			$ruta_archivo = FCPATH . 'uploads/comprobantes/' . $movimiento['comprobante_pago'];
+			if (file_exists($ruta_archivo))
+			{
+				unlink($ruta_archivo);
+			}
+			
+			return array('success' => true, 'message' => 'Comprobante eliminado correctamente');
+		}
+		else
+		{
+			return array('success' => false, 'message' => 'No se pudo eliminar el comprobante');
+		}
+	}
+
+    /**
+     * Obtener información del movimiento con comprobante
+     * @param int $id ID del movimiento
+     * @return object|null Objeto con información del movimiento o null si no se encuentra
+     */
+    public function get_movimiento_con_comprobante($id)
+    {
+        $this->db->select('id, grupo, id_empresa, fecha, id_factura, valor, observaciones, comprobante, estado');
+        $this->db->from('movimientos');
+        $this->db->where('id', $id);
+        $this->db->where('grupo', $this->usuario->grupo);
+        
+        $query = $this->db->get();
+        
+        if ($query->num_rows() > 0) {
+            return $query->row();
+        }
+        
+        return null;
+    }
+
+
 }

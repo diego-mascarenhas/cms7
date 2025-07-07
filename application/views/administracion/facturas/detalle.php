@@ -257,6 +257,7 @@
 		                                    <th>Fecha</th>
 	                                        <th>Forma de Pago</th>
 	                                        <th class="text-right">Valor</th>
+	                                        <th class="text-center">Comprobante de Pago</th>
 	                                        <th class="text-center">Estado</th>
 	                                    </tr>
 	                                    </thead>
@@ -266,9 +267,24 @@
 			                                    <td><?php echo formatear_fecha($movimiento['fecha'], 'd-m-Y', null, $this->usuario->timezone); ?></td>
 		                                        <td><?php echo $movimiento['forma_pago']; ?> (<?php echo $movimiento['cuenta']; ?>)</td>
 		                                        <td class="text-right"><?php echo $movimiento['simbolo']; ?><?php echo $movimiento['valor']; ?></td>
+		                                        <td class="text-center">
+		                                            <?php if (!empty($movimiento['comprobante'])): ?>
+		                                                <a href="https://www.revisionalpha.com/storage/payment-receipts/<?php echo $movimiento['comprobante']; ?>" 
+		                                                   target="_blank"
+		                                                   class="btn btn-sm green tooltipped" 
+		                                                   data-position="top" 
+		                                                   data-tooltip="Descargar comprobante de pago">
+		                                                    <i class="fa fa-download"></i>
+		                                                </a>
+		                                            <?php else: ?>
+		                                                <span class="btn btn-sm grey lighten-2 disabled" style="color: #999;">
+		                                                    <i class="fa fa-minus"></i>
+		                                                </span>
+		                                            <?php endif; ?>
+		                                        </td>
 		                                        <td class="text-center"><span class="label <?php echo $movimiento['estado_ui_class']; ?>"><?php echo $movimiento['estado']; ?></span></td>
 		                                    </tr>
-											<? } ?>
+		                                <?php } ?>
 	                                    </tbody>
 	                                </table>
 	                            </div>

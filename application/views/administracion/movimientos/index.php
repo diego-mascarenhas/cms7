@@ -43,7 +43,7 @@
 		                                	<?php foreach ($movimientos as $movimiento) { ?>
 		                                    <tr>
 			                                    <td><?php echo formatear_fecha($movimiento['fecha'], 'd-m-Y', null, $this->usuario->timezone); ?></td>
-			                                    <td><a href="<?php echo base_url('administracion/facturas/detalle/'); ?><?php echo $movimiento['id_factura']; ?>"><?php echo $movimiento['comprobante']; ?></a></td>
+			                                                                            <td><a href="<?php echo base_url('administracion/facturas/detalle/'); ?><?php echo $movimiento['id_factura']; ?>"><?php echo $movimiento['comprobante_factura']; ?></a></td>
 		                                        <td><a href="<?php echo base_url('administracion/empresas/detalle/'); ?><?php echo $movimiento['id_empresa']; ?>"><?php echo $movimiento['empresa']; ?></a></td>
 		                                        <td>
 			                                        <span class="badge <?php echo $movimiento['operacion_ui_class']; ?>"><?php echo $movimiento['operacion']; ?></span> <?php echo $movimiento['forma_pago']; ?> (<?php echo $movimiento['cuenta']; ?>)

@@ -51,6 +51,14 @@
 			                    <div class="ibox-content">
 		                            <div class="table-responsive">
 		                                <table class="table table-striped footable">
+		                                    <thead>
+		                                    <tr>
+			                                    <th>Fecha</th>
+		                                        <th>Forma de Pago</th>
+		                                        <th class="text-right">Valor</th>
+		                                        <th class="text-center">Estado</th>
+		                                    </tr>
+		                                    </thead>
 		                                    <tbody>
 			                                    <tr>
 				                                    <td><?php echo formatear_fecha($factura['fecha'], 'd-m-Y', null, $this->usuario->timezone); ?></td>
@@ -82,8 +90,8 @@
 				                                    <tr>
 					                                    <td><?php echo formatear_fecha($movimiento['fecha'], 'd-m-Y', null, $this->usuario->timezone); ?></td>
 				                                        <td><?php echo $movimiento['forma_pago']; ?></td>
-				                                        <td class="text-right"><?php echo $movimiento['simbolo']; ?><?php echo $movimiento['valor']; ?></td>
-				                                        <td class="text-center">
+				                                                                                <td class="text-right"><?php echo $movimiento['simbolo']; ?><?php echo $movimiento['valor']; ?></td>
+                                        <td class="text-center">
 					                                        <?php if ($movimiento['id_estado'] == 1 && ($movimiento['id_forma_pago'] != 12 && $movimiento['id_forma_pago'] != 13)) { ?>
 					                                        	<a href="#" onclick="conciliarPago(<?php echo $movimiento['id']; ?>)" class="check-link"><i class="fa fa-square-o"></i> </a>
 					                                        <?php } ?>
@@ -97,6 +105,7 @@
 														<td>&nbsp;</td>
 														<td>&nbsp;</td>
 					                                    <td class="text-right"><?php echo $factura['simbolo']; ?><?php echo $factura['saldo']; ?></td>
+					                                    <td>&nbsp;</td>
 					                                    <td>&nbsp;</td>
 				                                    </tr>
 		                                    </tbody>
