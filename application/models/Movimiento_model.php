@@ -766,12 +766,35 @@ class Movimiento_model extends CI_Model {
 			$data['estado'] = 2;
 			
 			$data['fecha_modificacion'] = unix_to_human(now(), true, 'eu');
-			$data['username_modificacion'] = (!empty($valores['username_modificacion'])) ? $valores['username_modificacion'] : $this->usuario->username;
+			$data['username_modificacion'] = $this->usuario->username;
+			
+			// Actualizar el movimiento
+			$res = $this->db->update('movimientos', $data, array('id'=>$id, 'grupo'=>$this->usuario->grupo));
+			
+			if ($res)
+			{
+				// Obtener información del movimiento para actualizar factura si existe
+				$movimiento = $this->getMovimientoDetalleRaw($id);
+				
+				if (!empty($movimiento['id_factura']))
+				{
+					// Cargar modelo de factura y actualizar saldo
+					$CI =& get_instance();
+					$CI->load->model('factura_model');
+					$CI->factura_model->actualizarFacturaSaldo($movimiento['id_factura']);
+				}
+				
+				return array('success' => true, 'message' => 'Pago aprobado correctamente');
+			}
+			else
+			{
+				return array('success' => false, 'message' => 'Error al aprobar el pago');
+			}
 		}
-		
-		$res = $this->db->update('movimientos', $data, array('id'=>$id, 'grupo'=>$this->usuario->grupo)); // CORREGIR PERMISOS
-
-		return (!empty($res)) ? $res : null;
+		else
+		{
+			return array('success' => false, 'message' => 'El pago ya está aprobado');
+		}
 	}
 	
 	

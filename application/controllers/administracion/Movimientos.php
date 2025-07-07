@@ -351,6 +351,59 @@ class Movimientos extends MY_Controller
 	}
 
 
+	public function conciliar_pago_masivo()
+	{
+		if ($this->is_logged_in('reseller'))
+		{
+			// models
+			$this->load->model('movimiento_model');
+
+			$ids = $this->input->post('ids');
+			
+			if (empty($ids) || !is_array($ids))
+			{
+				$data = array('success' => false, 'message' => 'No se enviaron IDs válidos');
+				echo json_encode($data);
+				return;
+			}
+
+			$procesados = 0;
+			$exitosos = 0;
+			$errores = array();
+
+			foreach ($ids as $id)
+			{
+				$procesados++;
+				$resultado = $this->movimiento_model->conciliarPago($id);
+				
+				if ($resultado && $resultado['success'])
+				{
+					$exitosos++;
+				}
+				else
+				{
+					$errores[] = "Error en movimiento ID $id: " . ($resultado['message'] ?? 'Error desconocido');
+				}
+			}
+
+			$data = array(
+				'success' => $exitosos > 0,
+				'message' => "Se aprobaron $exitosos de $procesados pagos",
+				'procesados' => $procesados,
+				'exitosos' => $exitosos,
+				'errores' => $errores
+			);
+
+			echo json_encode($data);
+		}
+		else
+		{
+			$data = array('success' => false, 'message' => 'No autorizado');
+			echo json_encode($data);
+		}
+	}
+
+
 	public function convertir_moneda()
 	{
 		// models

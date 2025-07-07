@@ -15,6 +15,9 @@
 	            <div class="col-xs-4 col-sm-4 col-md-6 col-lg-6">
                     <div class="title-action">
                         <a href="<?php echo base_url('administracion/movimientos/transferir/'); ?>" class="btn btn-primary btn-sm">Transferir</a>
+                        <button onclick="aprobarTodosPendientes()" class="btn btn-success btn-sm" id="btnAprobarTodos" style="display: none;">
+                            <i class="fa fa-check-circle"></i> Aprobar Todos los Pendientes
+                        </button>
                     </div>
                 </div>
 	        </div>
@@ -73,13 +76,136 @@
 	        
 	        <script>
 	    function conciliarPago(id) { 
+			// Cambiar el ícono a loading
+			var link = $('a[onclick="conciliarPago(' + id + ')"]');
+			var originalIcon = link.find('i');
+			originalIcon.removeClass('fa-square-o').addClass('fa-spinner fa-spin');
+			link.css('pointer-events', 'none'); // Disable click durante la operación
+			
 			$.ajax( {
 			    type: 'POST',
 			    url: 'movimientos/conciliar-pago/',
 			    data: "id="+id,
+			    dataType: 'json',
 			    success: function(data) {
-			        //alert(data);
+			        if (data.success) {
+			        	// Cambiar el ícono a check
+			        	originalIcon.removeClass('fa-spinner fa-spin').addClass('fa-check-circle text-success');
+			        	
+			        	// Actualizar el estado visual
+			        	var estadoSpan = link.next('span');
+			        	estadoSpan.removeClass('label-warning').addClass('label-primary').text('Aprobado');
+			        	
+			        	// Mostrar mensaje de éxito
+			        	toastr.success(data.message, 'Éxito');
+			        	
+			        	// Verificar si quedan pagos pendientes
+			        	verificarPagosPendientes();
+			        	
+			        	// Opcional: Recargar la página después de 2 segundos
+			        	setTimeout(function() {
+			        		window.location.reload();
+			        	}, 2000);
+			        	
+			        } else {
+			        	// Restaurar el ícono original
+			        	originalIcon.removeClass('fa-spinner fa-spin').addClass('fa-square-o');
+			        	link.css('pointer-events', 'auto');
+			        	
+			        	// Mostrar mensaje de error
+			        	toastr.error(data.message, 'Error');
+			        }
+			    },
+			    error: function(xhr, status, error) {
+			        // Restaurar el ícono original
+			        originalIcon.removeClass('fa-spinner fa-spin').addClass('fa-square-o');
+			        link.css('pointer-events', 'auto');
+			        
+			        // Mostrar mensaje de error
+			        toastr.error('Error al procesar la solicitud', 'Error');
 			    }
 			});
 		}
+		
+		function aprobarTodosPendientes() {
+			if (!confirm('¿Está seguro de que desea aprobar todos los pagos pendientes? Esta acción no se puede deshacer.')) {
+				return;
+			}
+			
+			var pagosPendientes = [];
+			$('a.check-link').each(function() {
+				var onclick = $(this).attr('onclick');
+				var id = onclick.match(/\d+/)[0];
+				pagosPendientes.push(id);
+			});
+			
+			if (pagosPendientes.length === 0) {
+				toastr.info('No hay pagos pendientes para aprobar', 'Información');
+				return;
+			}
+			
+			// Disable el botón durante el proceso
+			$('#btnAprobarTodos').prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Procesando...');
+			
+			var procesados = 0;
+			var exitosos = 0;
+			
+			pagosPendientes.forEach(function(id) {
+				$.ajax({
+					type: 'POST',
+					url: 'movimientos/conciliar-pago/',
+					data: "id=" + id,
+					dataType: 'json',
+					success: function(data) {
+						procesados++;
+						if (data.success) {
+							exitosos++;
+						}
+						
+						// Si se procesaron todos
+						if (procesados === pagosPendientes.length) {
+							$('#btnAprobarTodos').prop('disabled', false).html('<i class="fa fa-check-circle"></i> Aprobar Todos los Pendientes');
+							
+							if (exitosos > 0) {
+								toastr.success('Se aprobaron ' + exitosos + ' de ' + pagosPendientes.length + ' pagos', 'Proceso Completado');
+								setTimeout(function() {
+									window.location.reload();
+								}, 1500);
+							} else {
+								toastr.error('No se pudo aprobar ningún pago', 'Error');
+							}
+						}
+					},
+					error: function() {
+						procesados++;
+						
+						// Si se procesaron todos
+						if (procesados === pagosPendientes.length) {
+							$('#btnAprobarTodos').prop('disabled', false).html('<i class="fa fa-check-circle"></i> Aprobar Todos los Pendientes');
+							toastr.success('Se aprobaron ' + exitosos + ' de ' + pagosPendientes.length + ' pagos', 'Proceso Completado');
+							
+							if (exitosos > 0) {
+								setTimeout(function() {
+									window.location.reload();
+								}, 1500);
+							}
+						}
+					}
+				});
+			});
+		}
+		
+		function verificarPagosPendientes() {
+			var pagosPendientes = $('a.check-link').length;
+			if (pagosPendientes > 1) {
+				$('#btnAprobarTodos').show();
+			} else {
+				$('#btnAprobarTodos').hide();
+			}
+		}
+		
+		// Verificar al cargar la página si hay pagos pendientes
+		$(document).ready(function() {
+			verificarPagosPendientes();
+		});
     </script>
