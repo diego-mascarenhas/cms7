@@ -269,7 +269,14 @@
 		                                        <td class="text-right"><?php echo $movimiento['simbolo']; ?><?php echo $movimiento['valor']; ?></td>
 		                                        <td class="text-center">
 		                                            <?php if (!empty($movimiento['comprobante'])): ?>
-		                                                <a href="https://www.revisionalpha.com/storage/payment-receipts/<?php echo $movimiento['comprobante']; ?>" 
+		                                                <!-- <a href="https://www.revisionalpha.com/storage/payment-receipts/<?php echo $movimiento['comprobante']; ?>" 
+		                                                   target="_blank"
+		                                                   class="btn btn-sm green tooltipped" 
+		                                                   data-position="top" 
+		                                                   data-tooltip="Descargar comprobante de pago">
+		                                                    <i class="fa fa-download"></i>
+		                                                </a> -->
+		                                                <a href="https://revisionalpha.com/storage/payment-receipts/<?php echo $movimiento['comprobante']; ?>" 
 		                                                   target="_blank"
 		                                                   class="btn btn-sm green tooltipped" 
 		                                                   data-position="top" 
