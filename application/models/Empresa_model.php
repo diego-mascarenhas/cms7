@@ -1460,13 +1460,19 @@ public function actualizarDatosFiscales($valores)
 				#AND (facturas.id_factura_tipo = 5 OR facturas.id_factura_tipo = 15 OR facturas.id_factura_tipo = 16) # FACTURA S, FACTURA A, FACTURA B
 				AND NOT EXISTS (SELECT * FROM facturas AS nota WHERE nota.padre = facturas.id)
 				AND contactos.email IS NOT NULL
+
+				AND empresas.grupo = ?
 				
 				GROUP BY empresas.id
 				ORDER BY facturas.vencimiento, facturas.id ASC
 			";
+
+		// filtros
+		$placeholders['dias'] = $dias;
+		$placeholders['grupo'] = $this->usuario->grupo;
 			
 		// consulta
-		$query = $this->db->query($sql, array($dias));
+		$query = $this->db->query($sql, $placeholders);
 
 		
 		if (!isset($res['error']) && $query)
