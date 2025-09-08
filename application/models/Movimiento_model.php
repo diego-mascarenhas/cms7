@@ -129,7 +129,9 @@ class Movimiento_model extends CI_Model {
 				$value = trim($parametros['search']);
 				
 				$sql .= " AND (facturas.numero_factura LIKE '%" . $value . "%'";
+				$sql .= " OR facturas.total_neto LIKE '%" . $value . "%'";
 				$sql .= " OR movimientos.id_externo LIKE '%" . $value . "%'";
+				$sql .= " OR movimientos.observaciones LIKE '%" . $value . "%'";
 				$sql .= " OR empresas.empresa LIKE '%" . $value . "%') ";
 			}
 			
