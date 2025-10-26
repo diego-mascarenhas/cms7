@@ -29,7 +29,7 @@
                             </div>
                             <div class="ibox-content">
                                 <h1 class="no-margins"><?php echo $facturacion['total']; ?></h1>
-                                <?php echo($comparativafactura > 1) ? '<div class="stat-percent font-bold text-info">'.$comparativafactura.' <i class="fa fa-level-up"></i>': '<div class="stat-percent font-bold text-danger">'.$comparativafactura.' <i class="fa fa-level-down"></i>';?></div>
+                                <?php echo($comparativafactura >= 1) ? '<div class="stat-percent font-bold text-info">'.$comparativafactura.' <i class="fa fa-level-up"></i>': '<div class="stat-percent font-bold text-danger">'.$comparativafactura.' <i class="fa fa-level-down"></i>';?></div>
                                 <small>Total facturas</small>
                             </div>
                         </div>
@@ -42,7 +42,7 @@
                             </div>
                             <div class="ibox-content">
                                 <h1 class="no-margins"><?php echo $pedidosmes['total']; ?></h1>
-                                <?php echo($comparativames > 1) ? '<div class="stat-percent font-bold text-info">10 <i class="fa fa-level-up"></i>': '<div class="stat-percent font-bold text-danger">'.$comparativames.' <i class="fa fa-level-down"></i>';?></div>
+                                <?php echo($comparativames >= 1) ? '<div class="stat-percent font-bold text-info">'.$comparativames.' <i class="fa fa-level-up"></i>': '<div class="stat-percent font-bold text-danger">'.$comparativames.' <i class="fa fa-level-down"></i>';?></div>
                                 <small>Cantidad de pedidos del mes</small>
                             </div>
                         </div>
@@ -54,8 +54,8 @@
                                 <h5>Promedio $ Pedidos</h5>
                             </div>
                             <div class="ibox-content">
-                                <h1 class="no-margins"><?php echo (isset($promediofacturas)) ? $promediofacturas: 0; ?></h1>
-                                <?php echo($comparativamesant > 1) ? '<div class="stat-percent font-bold text-info">'.$comparativamesant.' <i class="fa fa-level-up"></i>': '<div class="stat-percent font-bold text-danger">'.$comparativamesant.' <i class="fa fa-level-down"></i>';?></div>
+                                <h1 class="no-margins"><?php echo $promediofacturas; ?></h1>
+                                <?php echo($comparativamesant >= 1) ? '<div class="stat-percent font-bold text-info">'.$comparativamesant.' <i class="fa fa-level-up"></i>': '<div class="stat-percent font-bold text-danger">'.$comparativamesant.' <i class="fa fa-level-down"></i>';?></div>
                                 <small>Monto promedio de cada pedido</small>
                             </div>
                         </div>
@@ -68,7 +68,7 @@
                             </div>
                             <div class="ibox-content">
                                 <h1 class="no-margins"><?php echo $clientesmes['total']; ?></h1>
-                                <?php echo($comparativaclientes > 1) ? '<div class="stat-percent font-bold text-info">'.$comparativaclientes.' <i class="fa fa-level-up"></i>': '<div class="stat-percent font-bold text-danger">'.$comparativaclientes.' <i class="fa fa-level-down"></i>';?></div>
+                                <?php echo($comparativaclientes >= 1) ? '<div class="stat-percent font-bold text-info">'.$comparativaclientes.' <i class="fa fa-level-up"></i>': '<div class="stat-percent font-bold text-danger">'.$comparativaclientes.' <i class="fa fa-level-down"></i>';?></div>
                                 <small>Cantidad de Clientes registrados del Mes</small>
                             </div>
                         </div>
@@ -81,7 +81,9 @@
                 <div class="col-lg-12">
                     <div class="ibox float-e-margins">
                         <div class="ibox-title">
-                            <h5>Orders</h5>
+                            <h5>Pedidos por día del mes </h5>
+
+<!--
                             <div class="pull-right">
 		                    	<div class="btn-group">
 			                        <a class="btn btn-sm btn-white<?php echo ($periodicidad == 'todos') ? ' active':'';?>" href="<?php echo base_url('tienda/dashboard_gestion');?>">Todos </a>
@@ -90,11 +92,10 @@
 			                        <a class="btn btn-sm btn-white<?php echo ($periodicidad == 'mensual') ? ' active':'';?>" href="<?php echo base_url('tienda/dashboard_gestion/mensual/');?>">Mes </a>
 		                        </div>
                             </div>
+-->
                         </div>
                         <div class="ibox-content">
                             <div class="row">
-
-
                             <div class="col-lg-12">
 			                        <div class="ibox-content">
 			                            <div>
@@ -108,21 +109,36 @@
                     </div>
                 </div>
           </div>
-<!--
-   <script src="<?php echo base_url('assets/js/plugins/jquery-ui/jquery-ui.min.js'); ?>"></script>
+                
+    <!-- jQuery UI -->
+    <script src="<?php echo base_url('assets/js/plugins/jquery-ui/jquery-ui.min.js'); ?>"></script>
     <script src="<?php echo base_url('assets/js/plugins/chartJs/Chart.min.js'); ?>"></script>
 
    <script>
 	   $(document).ready(function() {
 		$(function () {
 		    var barData = {
-		        labels: ["1", "2", "3", "4", "5", "6", "7","8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"],
+		        labels: [<?php for($i=1; $i <= $diasactual; $i++) { echo '"'.$i.'",'; } ?> ],
 		        datasets: [
 		            {
 		                label: "Cantidad de pedidos",
 		                backgroundColor: 'rgba(84, 2, 178, 0.5)',
 		                pointBorderColor: "#fff",
-		                data: [10,7,8,4,34,25,0,10,7,8,4,34,25,0,0,7,8,4,10,7,8,4,34,25,0,10,7,8,4,34,25,0]
+		                data: [
+		                <?php 
+		                	for($i=1; $i <= $diasactual; $i++) 
+							{ 
+								foreach ($pedidospordia as $pedido)
+								{
+									if ($i == $pedido['dia']) 
+									{ 
+										echo $pedido['pedidos'].','; 
+									}
+								}
+								$buscar = in_array($i, array_column($pedidospordia, 'dia'));
+								if(!$buscar) { echo '0,'; }
+							} ?>
+						]
 		            }
 		        ]
 		    };
@@ -136,4 +152,3 @@
 	    });
      });
     </script>
- -->

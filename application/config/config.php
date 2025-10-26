@@ -23,7 +23,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | a PHP script and you can easily do that on your own.
 |
 */
-$config['base_url'] = ($_SERVER['HTTPS'] == 'on') ? 'https://'  . $_SERVER['SERVER_NAME'] . '/' : 'http://' . $_SERVER['SERVER_NAME'] . '/';
+// Dynamic base URL: Use localhost:8080 for local environment, otherwise use the production URL
+$server_name = isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : '';
+$is_local = ($server_name == 'localhost' || $server_name == '127.0.0.1' || strpos($server_name, '.local') !== false);
+
+if ($is_local) {
+    $config['base_url'] = 'http://localhost:8080/';
+} else {
+    $config['base_url'] = 'https://cms.revisionalpha.com/';
+}
 
 /*
 |--------------------------------------------------------------------------
@@ -100,7 +108,7 @@ $config['charset'] = 'UTF-8';
 | setting this variable to TRUE (boolean).  See the user guide for details.
 |
 */
-$config['enable_hooks'] = FALSE;
+$config['enable_hooks'] = TRUE;
 
 /*
 |--------------------------------------------------------------------------
@@ -213,8 +221,8 @@ $config['directory_trigger'] = 'd';
 | your log files will fill up very fast.
 |
 */
-$config['log_threshold'] = 0;
-
+$config['log_threshold'] = 4; // Para ver todo: errores, debug, etc.
+$config['log_path'] = ''; // O indicá uno absoluto si querés otro dir.
 /*
 |--------------------------------------------------------------------------
 | Error Logging Directory Path
@@ -370,9 +378,9 @@ $config['encryption_key'] = 'el22lope';
 $config['sess_driver'] = 'files';
 $config['sess_cookie_name'] = 'ci_session';
 $config['sess_expiration'] = 7776000; // 90 dÃ­as
-$config['sess_save_path'] = '/tmp';
+$config['sess_save_path'] = FCPATH . 'application/sessions'; // Change save path to a more persistent location
 $config['sess_match_ip'] = FALSE;
-$config['sess_time_to_update'] = 300;
+$config['sess_time_to_update'] = 7200; // Increase regeneration time to 2 hours
 $config['sess_regenerate_destroy'] = FALSE;
 
 /*

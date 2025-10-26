@@ -154,16 +154,18 @@
 	            <div class="ibox-content m-b-sm border-bottom">
 	                <div class="row">
 		                <?php
-			                foreach ($nagios as $obj)
-			                {
-				                ?>
-				                <div class="col-sm-4">
-					                <div class="form-group">
-						                <label class="col-sm-6 control-label"><?php echo $obj['tipo']; ?></label>
-										<span class="label label-<?php echo $obj['estado_ui_class']; ?>"><?php echo $obj['estado']; ?></span>
-					                </div>
-			                	</div>
-			                <?php
+			                if (isset($nagios) && is_array($nagios)) {
+			                    foreach ($nagios as $obj)
+			                    {
+				                    ?>
+				                    <div class="col-sm-4">
+					                    <div class="form-group">
+						                    <label class="col-sm-6 control-label"><?php echo $obj['tipo']; ?></label>
+										    <span class="label label-<?php echo $obj['estado_ui_class']; ?>"><?php echo $obj['estado']; ?></span>
+					                    </div>
+			                	    </div>
+			                    <?php
+			                    }
 			                }
 			            ?>
 		            	

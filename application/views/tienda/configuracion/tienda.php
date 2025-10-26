@@ -30,7 +30,6 @@ pre code { white-space: pre-line; }
 
        	<!-- Comienzo Tabs -->
         <div class="wrapper wrapper-content animated fadeInRight">
-            <!-- Titulo Mensajes -->
             <div class="row">
                 <?php if ($this->input->get('ok') == 1) { ?>
 				<div class="col-md-12">
@@ -113,7 +112,6 @@ pre code { white-space: pre-line; }
 			                            </div>
 		                            </div>
 							 	</div>
-
 							 	<div class="hr-line-dashed pull-left full-width"></div>
 
 							 	<div class="form-group m-b-md pull-left full-width m-t-sm">
@@ -123,7 +121,7 @@ pre code { white-space: pre-line; }
 		                                	<input type="radio" name="privada" value="1" <?php if (isset($item['privada']) && $item['privada'] == '1') echo 'checked="checked"'; ?>> <label> Sí </label>
 			                            </div>
 			                            <div class="radio radio-inline radio-primary">
-                                        	<input type="radio" name="privada" value="0" <?php if (isset($item['privada']) && $item['privada'] == '0') echo 'checked="checked"'; ?>><label> No </label>
+                                        	<input type="radio" name="privada" value="null" <?php if ($item['privada'] != '1') echo 'checked="checked"'; ?>><label> No </label>
 			                            </div>
 		                            </div>
 		                            <div class="col-md-5 col-lg-7">
@@ -143,13 +141,12 @@ pre code { white-space: pre-line; }
 			                            </div>
 		                            </div>
 		                            <div class="col-md-5 col-lg-7">
-			                            <p class="alert alert-primary pull-left">En caso que la tienda sea Privada el contenido se puede mostrar en forma de lista o bien en la vista original del sistema, en grilla.</p>
+			                            <p class="alert alert-primary pull-left">El contenido se puede mostrar en forma de grilla, mostrando todos los productos separados por categorías, o bien en modo lista con todos los productos.</p>
 		                            </div>
 	                            </div>
 								<div class="hr-line-dashed pull-left full-width"></div>
                         
 							 	<div class="form-group m-b-md pull-left full-width m-t-sm">
-
 		                            <label class="col-sm-2 control-label">Solicitar teléfono en pedido</label>
 		                            <div class="col-sm-4">
 			                            <div class="radio radio-inline radio-primary">
@@ -173,8 +170,33 @@ pre code { white-space: pre-line; }
 		                            <p class="alert alert-primary pull-left">Tengan en cuenta que pedir estos datos a vuestro cliente al momento de hacer la compra, es muy importante para acciones de marketing y comunicación futuras a través de herramientas disponibles en nuestra plataforma.  En caso de no solicitarlo, lamentablemente se perderá esa posibilidad. Es importante tener en cuenta, que los celulares actuales suelen guardar los datos completados, en consecuencia no siempre vuestro cliente tendra que volver a tipear todo, sino que el mismo telefono le hará una sugerencia de autocompletado.</p>
 	                            </div>
 								<div class="hr-line-dashed pull-left full-width"></div>
-
                         
+								<div class="form-group m-b-md pull-left full-width m-t-sm">
+								 	<label class="col-md-2 control-label">Leyenda en carro</label>
+								 	<div class="col-sm-10">
+								        <textarea name="leyenda" rows="7" class="full-width"><?php echo (isset($item['leyenda'])) ? $item['leyenda']: null; ?></textarea>
+								        <p class="alert alert-primary pull-left">La leyenda se utiliza para aclarar cuestiones asociadas al pedido, por ejemplo: "Los precios pueden variar". Se mostrará en el carro de compras, luego del listado de productos. No es un campo obligatorio y debe tener menos de 250 caracteres contando espacios y signos de puntuación.</p>
+									</div>
+								</div>
+								<div class="hr-line-dashed pull-left full-width"></div>
+
+							 	<div class="form-group m-b-md pull-left full-width m-t-sm">
+							 		<div class="col-sm-6">
+		                            <label class="col-md-4 control-label">ID Bruler</label>
+									<div class="col-md-8">
+										<input type="text" name="bruler_id" class="form-control" value="<?php echo (isset($item['bruler_id'])) ? $item['bruler_id']: null; ?>">
+									</div>
+		                            <label class="col-md-4 control-label m-t-md">ClientID Bruler</label>
+									<div class="col-md-8 m-t-md">
+										<input type="text" name="bruler_client_id" class="form-control" value="<?php echo (isset($item['bruler_client_id'])) ? $item['bruler_client_id']: null; ?>">
+									</div>
+							 		</div>
+		                            <div class="col-md-6">
+			                            <p class="alert alert-primary pull-left">Esta opción es para configurar la importación de productos desde Bruler. Para poder realizar dicha importación es necesario que complete el campo ID Bruler con el RemoteID de Bruler y el campo ClientID Bruler con el ClientID de Bruler.</p>
+		                            </div>
+	                            </div>
+								<div class="hr-line-dashed pull-left full-width"></div>
+
 							 	<div class="form-group m-b-md pull-left full-width m-t-md">
 									<label class="col-md-2 control-label">Calle</label>
 									<div class="col-md-4">
@@ -193,12 +215,10 @@ pre code { white-space: pre-line; }
 									<label class="col-md-2 control-label">País</label>
 									<div class="col-md-2">
 										<?php echo (isset($item['pais'])) ? form_dropdown('pais', $paises, $item['pais'], array('class'=>'form-control m-b')) : form_dropdown('pais', $paises, null, array('class'=>'form-control m-b')); ?></div>
-
 							 	</div>
 								<div class="hr-line-dashed pull-left full-width"></div>
 							 	
 							 	<div class="form-group m-b-md pull-left full-width m-t-md">
-			                   <!-- Imagenes Generales -->
 			                    <div class="col-sm-6">
 			                    	<div class="ibox-title bg-muted"><h5>Imagen Header</h5></div>
 									<div class="ibox-content caja-imagen-tienda">

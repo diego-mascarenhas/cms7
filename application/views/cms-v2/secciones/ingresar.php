@@ -70,7 +70,7 @@
 	                    </div>
 
 	                    <div class="col-sm-6">
-	                    	<div class="ibox-title" style="background:#f7f7f7;"><h5>Imagen</h5></div>
+	                    	<div class="ibox-title" style="background:#F5EFEF;"><h5>Imagen</h5></div>
 			                    <div class="ibox-content">
 									<?php if(!empty($item['imagen'])) { ?>
 	                            	<p>Imagen Actual</p>
@@ -90,20 +90,20 @@
 						<h2>SEO</h2>
 	                 	<div class="form-group">
 		                    <div class="col-md-4 col-sm-12 m_b_25">
-		                    	<div class="ibox-title" style="background:#f7f7f7;"><h5>T&iacute;tulo</h5> &nbsp;<button type="button" class="btn btn-info btn-circle" data-toggle="tooltip" data-placement="right" title="Entre 10 y 70 caracteres inclu&iacute;dos signos y espacios." style="margin-top:-5px;"><i class="fa fa-question"></i></button></div>
+		                    	<div class="ibox-title" style="background:#F5EFEF;"><h5>T&iacute;tulo</h5> &nbsp;<button type="button" class="btn btn-info btn-circle" data-toggle="tooltip" data-placement="right" title="Entre 10 y 70 caracteres inclu&iacute;dos signos y espacios." style="margin-top:-5px;"><i class="fa fa-question"></i></button></div>
 			                    <div class="ibox-content no-padding">
 				                    <textarea class="form-control" name="seo_titulo" rows="5"><?php echo (isset($item['seo_titulo'])) ? $item['seo_titulo']: null?></textarea>
 			                    </div>
 		                    </div>
 
 		                    <div class="col-md-4 col-sm-12 m_b_25">
-		                    	<div class="ibox-title" style="background:#f7f7f7;"><h5>Descripci&oacute;n</h5> &nbsp;<button type="button" class="btn btn-info btn-circle" data-toggle="tooltip" data-placement="right" title="Entre 30 y 300 caracteres inclu&iacute;dos signos y espacios." style="margin-top:-5px;"><i class="fa fa-question"></i></button></div>
+		                    	<div class="ibox-title" style="background:#F5EFEF;"><h5>Descripci&oacute;n</h5> &nbsp;<button type="button" class="btn btn-info btn-circle" data-toggle="tooltip" data-placement="right" title="Entre 30 y 300 caracteres inclu&iacute;dos signos y espacios." style="margin-top:-5px;"><i class="fa fa-question"></i></button></div>
 			                    <div class="ibox-content no-padding">
 				                    <textarea class="form-control" name="seo_descripcion" rows="5"><?php echo (isset($item['seo_descripcion'])) ? $item['seo_descripcion']: null?></textarea>
 			                    </div>
 		                    </div>
 		                    <div class="col-md-4 col-sm-12 m_b_25">
-		                    	<div class="ibox-title" style="background:#f7f7f7;"><h5>Keywords</h5> &nbsp;<button type="button" class="btn btn-info btn-circle" data-toggle="tooltip" data-placement="right" title="Entre 3 y 10 frases o palabras separadas por coma, hasta 600 caracteres inclu&iacute;dos signos y espacios." style="margin-top:-5px;"><i class="fa fa-question"></i></button></div>
+		                    	<div class="ibox-title" style="background:#F5EFEF;"><h5>Keywords</h5> &nbsp;<button type="button" class="btn btn-info btn-circle" data-toggle="tooltip" data-placement="right" title="Entre 3 y 10 frases o palabras separadas por coma, hasta 600 caracteres inclu&iacute;dos signos y espacios." style="margin-top:-5px;"><i class="fa fa-question"></i></button></div>
 			                    <div class="ibox-content no-padding">
 				                    <textarea class="form-control" name="seo_keywords" rows="5"><?php echo (isset($item['seo_keywords'])) ? $item['seo_keywords']: null?></textarea>
 			                    </div>

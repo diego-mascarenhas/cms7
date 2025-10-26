@@ -71,12 +71,16 @@ class Cuentas extends MY_Controller {
 			$this->load->library('form_validation');
 			$this->config->set_item('language', $this->usuario->idioma);
 	
+			// Load the helper
+			$this->load->helper('cbu');
+	
 			// set validation rules
 			$this->form_validation->set_rules('id_empresa', 'Empresa', 'trim|required|integer');
 			$this->form_validation->set_rules('titular', 'Titular', 'trim|required');
+			$this->form_validation->set_rules('numero_cuenta', 'Número de cuenta', 'trim|max_length[20]');
 			$this->form_validation->set_rules('id_documento_tipo', 'Tipo de documento', 'trim|required|integer');
 			$this->form_validation->set_rules('numero_documento', 'Número de documento', 'trim|required|integer|min_length[7]|max_length[11]');
-			$this->form_validation->set_rules('cbu', 'CBU', 'trim|required|integer|min_length[22]|max_length[22]');
+			$this->form_validation->set_rules('cbu', 'CBU', 'trim|required|integer|min_length[22]|max_length[22]|callback_validate_cbu');
 			
 			if ($this->form_validation->run() === false)
 			{
@@ -91,9 +95,13 @@ class Cuentas extends MY_Controller {
 			}
 			else
 			{
-				if ($data = $this->cuenta_model->ingresarCuenta($this->input->post()))
+				// Convert CBU before saving
+				$post_data = $this->input->post();
+				$post_data['cbu26'] = convert_cbu_to_snp($post_data['cbu']);
+				
+				if ($data = $this->cuenta_model->ingresarCuenta($post_data))
 				{
-					redirect(base_url('administracion/cuentas/detalle/' . $data['id']));
+					redirect(base_url('administracion/empresas/detalle/' . $this->input->post('id_empresa')));
 				}
 				else
 				{
@@ -122,12 +130,16 @@ class Cuentas extends MY_Controller {
 			$this->load->library('form_validation');
 			$this->config->set_item('language', $this->usuario->idioma);
 	
+			// Load the helper
+			$this->load->helper('cbu');
+	
 			// set validation rules
 			$this->form_validation->set_rules('id_empresa', 'Empresa', 'trim|required|integer');
 			$this->form_validation->set_rules('titular', 'Titular', 'trim|required');
+			$this->form_validation->set_rules('numero_cuenta', 'Número de cuenta', 'trim|max_length[20]');
 			$this->form_validation->set_rules('id_documento_tipo', 'Tipo de documento', 'trim|required|integer');
 			$this->form_validation->set_rules('numero_documento', 'Número de documento', 'trim|required|integer|min_length[7]|max_length[11]');
-			$this->form_validation->set_rules('cbu', 'CBU', 'trim|required|integer|min_length[22]|max_length[22]');
+			$this->form_validation->set_rules('cbu', 'CBU', 'trim|required|integer|min_length[22]|max_length[22]|callback_validate_cbu');
 			
 			if ($this->form_validation->run() === false)
 			{
@@ -142,9 +154,13 @@ class Cuentas extends MY_Controller {
 			}
 			else
 			{
-				if ($data = $this->cuenta_model->modificarCuenta($id, $this->input->post()))
+				// Convert CBU before saving
+				$post_data = $this->input->post();
+				$post_data['cbu26'] = convert_cbu_to_snp($post_data['cbu']);
+				
+				if ($data = $this->cuenta_model->modificarCuenta($id, $post_data))
 				{
-					redirect(base_url('administracion/cuentas/detalle/' . $id));
+					redirect(base_url('administracion/empresas/detalle/' . $this->input->post('id_empresa')));
 				}
 				else
 				{
@@ -160,5 +176,16 @@ class Cuentas extends MY_Controller {
 		}
 	}
 
+	/**
+	 * Custom validation callback for CBU format
+	 */
+	public function validate_cbu($cbu)
+	{
+		if (!preg_match('/^[0-9]{22}$/', $cbu)) {
+			$this->form_validation->set_message('validate_cbu', 'El {field} debe tener exactamente 22 dígitos numéricos');
+			return false;
+		}
+		return true;
+	}
 
 }

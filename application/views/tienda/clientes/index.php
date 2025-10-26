@@ -1,7 +1,7 @@
 <style>
 .table-responsive { padding-bottom:200px;}
 @media screen and (max-width: 767px) { 
-.table-responsive { border: 1px solid #f7f7f7; }
+.table-responsive { border: 1px solid #F5EFEF; }
 }
 </style>
 <link href="<?php echo base_url('assets/css/tienda.css'); ?>" rel="stylesheet" type="text/css">
@@ -31,7 +31,7 @@
             <div class="row">
                 <div class="col-lg-12">
 	                <div class="ibox float-e-margins">
-                    	<div class="ibox-title"><h5>Listado de Clientes</h5></div>
+                    	<div class="ibox-title"><h5>Listado de Clientes registrados</h5></div>
 	                    <div class="ibox-content">
 	                        <div class="table-responsive tabla-pedidos">
 			                    <table class="table table-striped table-bordered dataTables-listado">
@@ -150,8 +150,7 @@ $(document).ready(function(){
 	  dom: 'lBfrtip',
 	  buttons: [
 	    'csv', 'excel', 'pdf'
-	  ],        
-        pageLength: 25
+	  ]        
     });
 });
 

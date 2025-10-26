@@ -33,8 +33,12 @@
 					                        <th>Nombre</th>
 					                        <th>Apellido</th>
 					                        <th>Email</th>
+					                        <?php if(isset($detalle['id_elearning'])) { ?>
+					                        <th>Certific&oacute;</th>
+					                        <?php } else { ?>
 					                        <th>Estado</th>
-<!-- 					                        <th>Acciones</th> -->
+						                    <th>Acciones</th>
+					                        <?php } ?>
 					                    </tr>
 					                    </thead>
 					                    <tbody>
@@ -45,13 +49,17 @@
 													<td><?php echo $lista['nombre']; ?></td>
 													<td><?php echo $lista['apellido']; ?></td>
 													<td><?php echo $lista['email']; ?></td>
+													<?php if(isset($detalle['id_elearning'])) { ?>
+													<td><?php echo ($lista['certificado'] == 1) ? 'S&iacute;' : 'No'; ?></td>
+													<?php } else { ?>
 													<td><?php echo ($lista['estado'] == 1) ? 'Inactivo' : 'Activo'; ?></td>
-<!--
 													<td>
-							                        	<a href="<?php echo base_url('encuestas/contactos_modificar/' . $lista['id']); ?>" title="Modificar" class="btn btn-primary btn-sm"><i class="fa fa-pencil"></i> Modificar</a> 
-														<a title="Eliminar" id="item" href="#" data-toggle="modal" data-seccion="<?php echo $lista['nombre'].' '.$lista['apellido'];?>?" data-estado="<?php echo $lista['estado'];?>" data-id="<?php echo $lista['id'];?>" data-target="#myModalEliminarItem" class="sepV_a btn btn-primary btn-sm"><i class="fa fa-minus-circle"></i> Eliminar</a></td>
+														<?php if($lista['certificado'] < 1) { ?><a title="Eliminar" id="item" href="#" data-toggle="modal" data-seccion="<?php echo $lista['nombre'].' '.$lista['apellido'];?>?" data-estado="<?php echo $lista['estado'];?>" data-id="<?php echo $lista['id'];?>" data-evento="<?php echo $detalle['id'];?>" data-target="#myModalEliminarItem" class="sepV_a btn btn-primary btn-sm"><i class="fa fa-minus-circle"></i> Eliminar</a></td>
+														<?php } else { ?>
+														El usuario realiz¨® la certificaci¨®n.
+														<?php } ?>
 													</td>
--->
+													<?php } ?>
 						                    	</tr>
 											<?php } ?>	
 										<?php } ?>
@@ -74,11 +82,12 @@
             <h4 class="modal-title">Eliminar contenido</h4>
             </div>
             <div class="modal-body text-center">
-            <p class="pull-left">&iquest;Est&aacute; seguro de querer eliminar el contenido </p><strong> <input type="text" name="seccion" id="seccion" value="" style="border:0; background:transparent; width:auto !important; float:left;"/></strong>
+            <p class="pull-left">&iquest;Est&aacute; seguro de querer eliminar el contacto </p><strong> <input type="text" name="seccion" id="seccion" value="" style="border:0; background:transparent; width:50% !important; float:left;"/></strong>
             <br>
                 <div class="modal-footer m-t-xl">
-	                <form name="eliminar" class="form_eliminar" method="post" action="<?php echo base_url('encuestas/eliminar/'); ?>">
+	                <form name="eliminar" class="form_eliminar" method="post" action="<?php echo base_url('encuestas/eliminar_contacto/'); ?>">
                     	<input type="hidden" name="id" id="id" value="" />
+                    	<input type="hidden" name="id_evento" id="evento" value="" />
                     	<input type="hidden" name="estado" id="estado" value="" />
                     	<input type="submit" class="btn btn-primary" value="Eliminar">
                     </form>
@@ -117,7 +126,6 @@ $(document).ready(function(){
 		        "sortDescending": ": ordenar descendente"
 		    }
         },
-        pageLength: 25,
         responsive: true
     });
 });
@@ -125,9 +133,11 @@ $(document).ready(function(){
 $('#myModalEliminarItem').on('show.bs.modal', function(e) {    
      var id = $(e.relatedTarget).data().id;
      var seccion = $(e.relatedTarget).data().seccion;
+     var evento = $(e.relatedTarget).data().evento;
      var estado = $(e.relatedTarget).data().estado;
       $(e.currentTarget).find('#id').val(id);
       $(e.currentTarget).find('#seccion').val(seccion);
+      $(e.currentTarget).find('#evento').val(evento);
       $(e.currentTarget).find('#estado').val(estado);
   });
 </script>

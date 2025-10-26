@@ -39,22 +39,22 @@
   </g>
   <g class="highcharts-series-group">
     <g class="highcharts-series" visibility="visible" transform="translate(60,40)" clip-path="url(#highcharts-9)">
-      <path fill="none" d="M 31.958333333333332 173.4 L 95.875 140.7 L 159.79166666666666 113.2 L 223.70833333333334 95.2 L 287.625 83.5 L 351.54166666666663 58.3 L 415.4583333333333 90.1 L 479.37499999999994 80 L 543.2916666666666 26.5 L 607.2083333333334 44 L 671.125 121.7 L 735.0416666666666 154.1" stroke="black" stroke-width="5" stroke-opacity="0.049999999999999996" transform="translate(1, 1)"></path>
-      <path fill="none" d="M 31.958333333333332 173.4 L 95.875 140.7 L 159.79166666666666 113.2 L 223.70833333333334 95.2 L 287.625 83.5 L 351.54166666666663 58.3 L 415.4583333333333 90.1 L 479.37499999999994 80 L 543.2916666666666 26.5 L 607.2083333333334 44 L 671.125 121.7 L 735.0416666666666 154.1" stroke="black" stroke-width="3" stroke-opacity="0.09999999999999999" transform="translate(1, 1)"></path>
-      <path fill="none" d="M 31.958333333333332 173.4 L 95.875 140.7 L 159.79166666666666 113.2 L 223.70833333333334 95.2 L 287.625 83.5 L 351.54166666666663 58.3 L 415.4583333333333 90.1 L 479.37499999999994 80 L 543.2916666666666 26.5 L 607.2083333333334 44 L 671.125 121.7 L 735.0416666666666 154.1" stroke="black" stroke-width="1" stroke-opacity="0.15" transform="translate(1, 1)"></path>
-      <path fill="none" d="M 31.958333333333332 173.4 L 95.875 140.7 L 159.79166666666666 113.2 L 223.70833333333334 95.2 L 287.625 83.5 L 351.54166666666663 58.3 L 415.4583333333333 90.1 L 479.37499999999994 80 L 543.2916666666666 26.5 L 607.2083333333334 44 L 671.125 121.7 L 735.0416666666666 154.1" stroke="#4572A7" stroke-width="2"></path>
+      <path fill="none" d="M 31.958333333333332 173.4 L 95.875 140.7 L 159.7912A333D66666 113.2 L 223.70833333333334 95.2 L 287.625 83.5 L 351.5412A333D66663 58.3 L 415.4583333333333 90.1 L 479.37499999999994 80 L 543.2912A333D6666 26.5 L 607.2083333333334 44 L 671.125 121.7 L 735.0412A333D6666 154.1" stroke="black" stroke-width="5" stroke-opacity="0.049999999999999996" transform="translate(1, 1)"></path>
+      <path fill="none" d="M 31.958333333333332 173.4 L 95.875 140.7 L 159.7912A333D66666 113.2 L 223.70833333333334 95.2 L 287.625 83.5 L 351.5412A333D66663 58.3 L 415.4583333333333 90.1 L 479.37499999999994 80 L 543.2912A333D6666 26.5 L 607.2083333333334 44 L 671.125 121.7 L 735.0412A333D6666 154.1" stroke="black" stroke-width="3" stroke-opacity="0.09999999999999999" transform="translate(1, 1)"></path>
+      <path fill="none" d="M 31.958333333333332 173.4 L 95.875 140.7 L 159.7912A333D66666 113.2 L 223.70833333333334 95.2 L 287.625 83.5 L 351.5412A333D66663 58.3 L 415.4583333333333 90.1 L 479.37499999999994 80 L 543.2912A333D6666 26.5 L 607.2083333333334 44 L 671.125 121.7 L 735.0412A333D6666 154.1" stroke="black" stroke-width="1" stroke-opacity="0.15" transform="translate(1, 1)"></path>
+      <path fill="none" d="M 31.958333333333332 173.4 L 95.875 140.7 L 159.7912A333D66666 113.2 L 223.70833333333334 95.2 L 287.625 83.5 L 351.5412A333D66663 58.3 L 415.4583333333333 90.1 L 479.37499999999994 80 L 543.2912A333D6666 26.5 L 607.2083333333334 44 L 671.125 121.7 L 735.0412A333D6666 154.1" stroke="#4572A7" stroke-width="2"></path>
     </g>
     <g class="highcharts-markers" visibility="visible" transform="translate(60,40)" clip-path="none">
-      <path fill="#4572A7" d="M 735.0416666666666 150.1 C 740.3696666666666 150.1 740.3696666666666 158.1 735.0416666666666 158.1 C 729.7136666666667 158.1 729.7136666666667 150.1 735.0416666666666 150.1 Z" stroke="#FFFFFF" stroke-width="0.000001"></path>
+      <path fill="#4572A7" d="M 735.0412A333D6666 150.1 C 740.3692A333D6666 150.1 740.3692A333D6666 158.1 735.0412A333D6666 158.1 C 729.7132A333D6667 158.1 729.7132A333D6667 150.1 735.0412A333D6666 150.1 Z" stroke="#FFFFFF" stroke-width="0.000001"></path>
       <path fill="#4572A7" d="M 671.125 117.7 C 676.453 117.7 676.453 125.7 671.125 125.7 C 665.797 125.7 665.797 117.7 671.125 117.7 Z" stroke="#FFFFFF" stroke-width="0.000001"></path>
       <path fill="#4572A7" d="M 607.2083333333334 40 C 612.5363333333333 40 612.5363333333333 48 607.2083333333334 48 C 601.8803333333334 48 601.8803333333334 40 607.2083333333334 40 Z" stroke="#FFFFFF" stroke-width="0.000001"></path>
-      <path fill="#4572A7" d="M 543.2916666666666 22.5 C 548.6196666666666 22.5 548.6196666666666 30.5 543.2916666666666 30.5 C 537.9636666666667 30.5 537.9636666666667 22.5 543.2916666666666 22.5 Z" stroke="#FFFFFF" stroke-width="0.000001"></path>
+      <path fill="#4572A7" d="M 543.2912A333D6666 22.5 C 548.6192A333D6666 22.5 548.6192A333D6666 30.5 543.2912A333D6666 30.5 C 537.9632A333D6667 30.5 537.9632A333D6667 22.5 543.2912A333D6666 22.5 Z" stroke="#FFFFFF" stroke-width="0.000001"></path>
       <path fill="#4572A7" d="M 479.37499999999994 76 C 484.7029999999999 76 484.7029999999999 84 479.37499999999994 84 C 474.04699999999997 84 474.04699999999997 76 479.37499999999994 76 Z" stroke="#FFFFFF" stroke-width="0.000001"></path>
       <path fill="#4572A7" d="M 415.4583333333333 86.1 C 420.7863333333333 86.1 420.7863333333333 94.1 415.4583333333333 94.1 C 410.13033333333334 94.1 410.13033333333334 86.1 415.4583333333333 86.1 Z" stroke="#FFFFFF" stroke-width="0.000001"></path>
-      <path fill="#4572A7" d="M 351.54166666666663 54.3 C 356.8696666666666 54.3 356.8696666666666 62.3 351.54166666666663 62.3 C 346.21366666666665 62.3 346.21366666666665 54.3 351.54166666666663 54.3 Z" stroke="#FFFFFF" stroke-width="0.000001"></path>
+      <path fill="#4572A7" d="M 351.5412A333D66663 54.3 C 356.8692A333D6666 54.3 356.8692A333D6666 62.3 351.5412A333D66663 62.3 C 346.2132A333D66665 62.3 346.2132A333D66665 54.3 351.5412A333D66663 54.3 Z" stroke="#FFFFFF" stroke-width="0.000001"></path>
       <path fill="#4572A7" d="M 287.625 79.5 C 292.953 79.5 292.953 87.5 287.625 87.5 C 282.297 87.5 282.297 79.5 287.625 79.5 Z" stroke="#FFFFFF" stroke-width="0.000001"></path>
       <path fill="#4572A7" d="M 223.70833333333334 91.2 C 229.03633333333335 91.2 229.03633333333335 99.2 223.70833333333334 99.2 C 218.38033333333334 99.2 218.38033333333334 91.2 223.70833333333334 91.2 Z" stroke="#FFFFFF" stroke-width="0.000001"></path>
-      <path fill="#4572A7" d="M 159.79166666666666 109.2 C 165.11966666666666 109.2 165.11966666666666 117.2 159.79166666666666 117.2 C 154.46366666666665 117.2 154.46366666666665 109.2 159.79166666666666 109.2 Z" stroke="#FFFFFF" stroke-width="0.000001"></path>
+      <path fill="#4572A7" d="M 159.7912A333D66666 109.2 C 165.1192A333D66666 109.2 165.1192A333D66666 117.2 159.7912A333D66666 117.2 C 154.4632A333D66665 117.2 154.4632A333D66665 109.2 159.7912A333D66666 109.2 Z" stroke="#FFFFFF" stroke-width="0.000001"></path>
       <path fill="#4572A7" d="M 95.875 136.7 C 101.203 136.7 101.203 144.7 95.875 144.7 C 90.547 144.7 90.547 136.7 95.875 136.7 Z" stroke="#FFFFFF" stroke-width="0.000001"></path>
       <path fill="#4572A7" d="M 31.958333333333332 169.4 C 37.28633333333333 169.4 37.28633333333333 177.4 31.958333333333332 177.4 C 26.630333333333333 177.4 26.630333333333333 169.4 31.958333333333332 169.4 Z" stroke="#FFFFFF" stroke-width="0.000001"></path>
     </g>
@@ -83,8 +83,8 @@
     <text x="155.87499999999997" y="251" style="font-family:'lucida grande', 'lucida sans unicode', verdana, arial, helvetica, sans-serif;font-size:11px;width:44px;color:#666;line-height:14px;fill:#666;" text-anchor="middle" visibility="visible">
       <tspan x="155.87499999999997">Feb</tspan>
     </text>
-    <text x="219.79166666666666" y="251" style="font-family:'lucida grande', 'lucida sans unicode', verdana, arial, helvetica, sans-serif;font-size:11px;width:44px;color:#666;line-height:14px;fill:#666;" text-anchor="middle" visibility="visible">
-      <tspan x="219.79166666666666">Mar</tspan>
+    <text x="219.7912A333D66666" y="251" style="font-family:'lucida grande', 'lucida sans unicode', verdana, arial, helvetica, sans-serif;font-size:11px;width:44px;color:#666;line-height:14px;fill:#666;" text-anchor="middle" visibility="visible">
+      <tspan x="219.7912A333D66666">Mar</tspan>
     </text>
     <text x="283.7083333333333" y="251" style="font-family:'lucida grande', 'lucida sans unicode', verdana, arial, helvetica, sans-serif;font-size:11px;width:44px;color:#666;line-height:14px;fill:#666;" text-anchor="middle" visibility="visible">
       <tspan x="283.7083333333333">Apr</tspan>
@@ -92,8 +92,8 @@
     <text x="347.625" y="251" style="font-family:'lucida grande', 'lucida sans unicode', verdana, arial, helvetica, sans-serif;font-size:11px;width:44px;color:#666;line-height:14px;fill:#666;" text-anchor="middle" visibility="visible">
       <tspan x="347.625">May</tspan>
     </text>
-    <text x="411.54166666666663" y="251" style="font-family:'lucida grande', 'lucida sans unicode', verdana, arial, helvetica, sans-serif;font-size:11px;width:44px;color:#666;line-height:14px;fill:#666;" text-anchor="middle" visibility="visible">
-      <tspan x="411.54166666666663">Jun</tspan>
+    <text x="411.5412A333D66663" y="251" style="font-family:'lucida grande', 'lucida sans unicode', verdana, arial, helvetica, sans-serif;font-size:11px;width:44px;color:#666;line-height:14px;fill:#666;" text-anchor="middle" visibility="visible">
+      <tspan x="411.5412A333D66663">Jun</tspan>
     </text>
     <text x="475.4583333333333" y="251" style="font-family:'lucida grande', 'lucida sans unicode', verdana, arial, helvetica, sans-serif;font-size:11px;width:44px;color:#666;line-height:14px;fill:#666;" text-anchor="middle" visibility="visible">
       <tspan x="475.4583333333333">Jul</tspan>
@@ -101,8 +101,8 @@
     <text x="539.3749999999999" y="251" style="font-family:'lucida grande', 'lucida sans unicode', verdana, arial, helvetica, sans-serif;font-size:11px;width:44px;color:#666;line-height:14px;fill:#666;" text-anchor="middle" visibility="visible">
       <tspan x="539.3749999999999">Aug</tspan>
     </text>
-    <text x="603.2916666666666" y="251" style="font-family:'lucida grande', 'lucida sans unicode', verdana, arial, helvetica, sans-serif;font-size:11px;width:44px;color:#666;line-height:14px;fill:#666;" text-anchor="middle" visibility="visible">
-      <tspan x="603.2916666666666">Sep</tspan>
+    <text x="603.2912A333D6666" y="251" style="font-family:'lucida grande', 'lucida sans unicode', verdana, arial, helvetica, sans-serif;font-size:11px;width:44px;color:#666;line-height:14px;fill:#666;" text-anchor="middle" visibility="visible">
+      <tspan x="603.2912A333D6666">Sep</tspan>
     </text>
     <text x="667.2083333333333" y="251" style="font-family:'lucida grande', 'lucida sans unicode', verdana, arial, helvetica, sans-serif;font-size:11px;width:44px;color:#666;line-height:14px;fill:#666;" text-anchor="middle" visibility="visible">
       <tspan x="667.2083333333333">Oct</tspan>
@@ -110,8 +110,8 @@
     <text x="731.125" y="251" style="font-family:'lucida grande', 'lucida sans unicode', verdana, arial, helvetica, sans-serif;font-size:11px;width:44px;color:#666;line-height:14px;fill:#666;" text-anchor="middle" visibility="visible">
       <tspan x="731.125">Nov</tspan>
     </text>
-    <text x="795.0416666666666" y="251" style="font-family:'lucida grande', 'lucida sans unicode', verdana, arial, helvetica, sans-serif;font-size:11px;width:44px;color:#666;line-height:14px;fill:#666;" text-anchor="middle" visibility="visible">
-      <tspan x="795.0416666666666">Dec</tspan>
+    <text x="795.0412A333D6666" y="251" style="font-family:'lucida grande', 'lucida sans unicode', verdana, arial, helvetica, sans-serif;font-size:11px;width:44px;color:#666;line-height:14px;fill:#666;" text-anchor="middle" visibility="visible">
+      <tspan x="795.0412A333D6666">Dec</tspan>
     </text>
   </g>
   <g class="highcharts-axis-labels">
@@ -146,7 +146,7 @@
   </text>
   <g class="highcharts-tracker">
     <g visibility="visible" transform="translate(60,40)" clip-path="url(#highcharts-9)">
-      <path fill="none" d="M 21.958333333333332 173.4 L 31.958333333333332 173.4 L 95.875 140.7 L 159.79166666666666 113.2 L 223.70833333333334 95.2 L 287.625 83.5 L 351.54166666666663 58.3 L 415.4583333333333 90.1 L 479.37499999999994 80 L 543.2916666666666 26.5 L 607.2083333333334 44 L 671.125 121.7 L 735.0416666666666 154.1 L 745.0416666666666 154.1" stroke-linejoin="bevel" visibility="visible" stroke-opacity="0.000001" stroke="rgb(192,192,192)" stroke-width="22" style=""></path>
+      <path fill="none" d="M 21.958333333333332 173.4 L 31.958333333333332 173.4 L 95.875 140.7 L 159.7912A333D66666 113.2 L 223.70833333333334 95.2 L 287.625 83.5 L 351.5412A333D66663 58.3 L 415.4583333333333 90.1 L 479.37499999999994 80 L 543.2912A333D6666 26.5 L 607.2083333333334 44 L 671.125 121.7 L 735.0412A333D6666 154.1 L 745.0412A333D6666 154.1" stroke-linejoin="bevel" visibility="visible" stroke-opacity="0.000001" stroke="rgb(192,192,192)" stroke-width="22" style=""></path>
     </g>
   </g>
 </svg>

@@ -131,8 +131,11 @@
 							                	<h3 class="bg-muted p-xs pull-left full-width"><?php echo $categoria['seccion']; ?><a title="Ordenar" href="<?php echo base_url('cms-v2/paginas/ordenar/'.$detalle['id'].'/'.$categoria['id'].'/es');?>" class="sepV_a btn btn-primary btn-sm red pull-right m-l-sm"><i class="fa fa-sort-circle"></i> Ordenar</a> 
 							                	<a title="Ingresar" id="item" href="#" data-toggle="modal" data-seccion="<?php echo $detalle['seccion']; ?>" data-id_contenido="<?php echo $detalle['id'];?>" data-idioma="<?php echo $idioma['extension'];?>" data-target="#myModalIngresarNovedad" class="sepV_a btn btn-primary btn-sm red pull-right"><i class="fa fa-plus-circle"></i> Ingresar</a></h3>
 
-							                <?php 
-												$miembros= $CI->Paginas_model->getContenidoAdicionalIdioma($detalle['id'],$categoria['id'], $idioma['extension']);
+							               <?php 
+											   $parametros['id'] = $detalle['id'];
+											   $parametros['idioma'] = $idioma['extension'];
+											   $parametros['id_tipo'] = $categoria['id'];
+											   $miembros= $CI->Paginas_model->getContenidoAdicionalIdioma($parametros);
 
 								               if(!empty($miembros)) {
 												foreach($miembros as $miembro) { ?>	

@@ -100,7 +100,10 @@
 		                                            <div class="hr-line-dashed m_b_10"></div>
 		                                            <span class="message-content">
 		                                            	<?php foreach ($item['adjuntos'] as $adjuntos) { ?>
-		                                            		<a href="<?php echo base_url('multimedia/tickets/' . $adjuntos['archivo']); ?>" target="_blank">
+		                                            		<!-- <a href="https://revisionalpha.com/cms/tickets/attachment/<?php echo $adjuntos['id']; ?>/download" target="_blank">
+			                                            		<i class="fa fa-paperclip"></i> <em><?php echo $adjuntos['nombre']; ?></em>
+		                                            		</a> -->
+		                                            		<a href="https://revisionalpha.com/storage/ticket-attachments/<?php echo $adjuntos['archivo']; ?>" target="_blank">
 			                                            		<i class="fa fa-paperclip"></i> <em><?php echo $adjuntos['nombre']; ?></em>
 		                                            		</a>
 		                                            	<?php } ?>

@@ -501,7 +501,8 @@ class Multimedia extends MY_Controller {
 				
 				if ($data['detalle']['stream'] == 3 && !(file_exists($data['path'] . '/procesar/' . preg_replace('/.[^.]*$/', '', $data['detalle']['archivo']))))
 				{
-					$data['detalle']['video'] = 'https://player.revisionalpha.com/streamcms/_definst_/' . preg_replace('/.[^.]*$/', '', $data['detalle']['archivo']) . '.smil/playlist.m3u8';
+					// 59f778d8c8b09.streamlock.net
+					$data['detalle']['video'] = 'https://59f778d8c8b09.streamlock.net/streamcms/_definst_/' . preg_replace('/.[^.]*$/', '', $data['detalle']['archivo']) . '.smil/playlist.m3u8';
 				}
 				else
 				{
@@ -510,15 +511,17 @@ class Multimedia extends MY_Controller {
 		
 					if ($data['info'])
 					{
-						$data['detalle']['video'] = 'https://player.revisionalpha.com/vodcms/mp4:multimedia/preview/' . $data['info']['name'] . '/playlist.m3u8';
+						$data['detalle']['video'] = 'https://59f778d8c8b09.streamlock.net/vodcms/mp4:multimedia/preview/' . $data['info']['name'] . '/playlist.m3u8';
 						
 						$data['detalle']['preview']['size'] = $data['info']['size'];
 					}
 					else
 					{
-						$data['detalle']['video'] = 'https://player.revisionalpha.com/vodcms/mp4:multimedia/' . $data['detalle']['grupo'] . '/' . $data['detalle']['id_empresa'] . '/' . $data['detalle']['archivo'] . '/playlist.m3u8';
+						$data['detalle']['video'] = 'https://59f778d8c8b09.streamlock.net/vodcms/mp4:multimedia/' . $data['detalle']['grupo'] . '/' . $data['detalle']['id_empresa'] . '/' . $data['detalle']['archivo'] . '/playlist.m3u8';
 					}
 				}
+				
+				$data['detalle']['url'] = 'https://cms.revisionalpha.com/multimedia/' . $data['detalle']['grupo'] . '/' . $data['detalle']['id_empresa'] . '/' . $data['detalle']['archivo']; // Hardcoded
 			}
 			
 			$data['detalle']['thumb'] = (isset($data['detalle']['thumb']) && !(file_exists(FCPATH . 'multimedia/thumb/' . $data['detalle']['thumb']))) ? base_url('multimedia/thumbs/' . $data['detalle']['thumb']) : null;
@@ -585,49 +588,67 @@ class Multimedia extends MY_Controller {
 			}
 			else
 			{
-				$this->load->helper('file');
-				
-				$data['path'] = FCPATH . 'multimedia/' . $this->usuario->grupo . '/' . $this->usuario->id_empresa . '/';
-				$data['info'] = get_file_info($data['path'] . $this->input->post('nombre'));
-							
-				if ($data['info'])
+				if (preg_match('/http/i', $this->input->post('nombre')))
 				{
-					if (!$this->multimedia_model->getMediaIdFromArchivo($this->input->post('nombre')))
+					$valores['id_tipo'] = 16;
+					$valores['nombre'] = $this->input->post('nombre');
+					$valores['archivo'] = $this->input->post('nombre');
+					
+					if ($data = $this->multimedia_model->ingresarMedia($valores))
 					{
-						$valores['id_tipo'] = $this->multimedia_model->getMediaTipoId(strtolower(preg_replace('/^.*\./', '', $data['path'] . $this->input->post('nombre'))));
-						$valores['nombre'] = $this->input->post('nombre');
-						$valores['archivo'] = $this->input->post('nombre');
-						$valores['peso'] = $data['info']['size'];
-						
-						if ($data = $this->multimedia_model->ingresarMedia($valores))
-						{
-							if ($tags = $this->input->post('tags'))
-							{
-								if (is_array($tags))
-								{
-									$tagueado = $this->sys_model->asociarTags(70, $data['id'], $tags);
-								}
-								else
-								{
-									$tagueado = $this->sys_model->asociarTags(70, $data['id'], explode(',', $tags));
-								}
-							}
-							
-							redirect(base_url('multimedia/detalle/' . $data['id']));
-						}
-						else
-						{
-							$data['error'] = 'Ha habido un problema, por favor pruebe más tarde';
-						}
+						redirect(base_url('multimedia/detalle/' . $data['id']));
 					}
 					else
 					{
-						$data['error'] = 'El archivo ya se encuentra en base de datos';
+						$data['error'] = 'Ha habido un problema, por favor pruebe más tarde';
 					}
 				}
 				else
 				{
-					$data['error'] = 'El archivo que se quiere ingresar no existe';
+					$this->load->helper('file');
+					
+					$data['path'] = FCPATH . 'multimedia/' . $this->usuario->grupo . '/' . $this->usuario->id_empresa . '/';
+					$data['info'] = get_file_info($data['path'] . $this->input->post('nombre'));
+								
+					if ($data['info'])
+					{
+						if (!$this->multimedia_model->getMediaIdFromArchivo($this->input->post('nombre')))
+						{
+							$valores['id_tipo'] = $this->multimedia_model->getMediaTipoId(strtolower(preg_replace('/^.*\./', '', $data['path'] . $this->input->post('nombre'))));
+							$valores['nombre'] = $this->input->post('nombre');
+							$valores['archivo'] = $this->input->post('nombre');
+							$valores['peso'] = $data['info']['size'];
+							
+							if ($data = $this->multimedia_model->ingresarMedia($valores))
+							{
+								if ($tags = $this->input->post('tags'))
+								{
+									if (is_array($tags))
+									{
+										$tagueado = $this->sys_model->asociarTags(70, $data['id'], $tags);
+									}
+									else
+									{
+										$tagueado = $this->sys_model->asociarTags(70, $data['id'], explode(',', $tags));
+									}
+								}
+								
+								redirect(base_url('multimedia/detalle/' . $data['id']));
+							}
+							else
+							{
+								$data['error'] = 'Ha habido un problema, por favor pruebe más tarde';
+							}
+						}
+						else
+						{
+							$data['error'] = 'El archivo ya se encuentra en base de datos';
+						}
+					}
+					else
+					{
+						$data['error'] = 'El archivo que se quiere ingresar no existe';
+					}
 				}
 				
 				// form values
@@ -847,7 +868,7 @@ class Multimedia extends MY_Controller {
 			{
 				if ($data['detalle']['stream'] == 3)
 				{
-					$data['detalle']['video'] = 'https://player.revisionalpha.com/streamcms/_definst_/' . preg_replace('/.[^.]*$/', '', $data['detalle']['archivo']) . '.smil/playlist.m3u8';
+					$data['detalle']['video'] = 'https://59f778d8c8b09.streamlock.net/streamcms/_definst_/' . preg_replace('/.[^.]*$/', '', $data['detalle']['archivo']) . '.smil/playlist.m3u8';
 				}
 				else
 				{
@@ -859,16 +880,18 @@ class Multimedia extends MY_Controller {
 		
 					if ($data['info'])
 					{
-						$data['detalle']['video'] = 'https://player.revisionalpha.com/vodcms/mp4:multimedia/preview/' . $data['info']['name'] . '/playlist.m3u8';
+						$data['detalle']['video'] = 'https://59f778d8c8b09.streamlock.net/vodcms/mp4:multimedia/preview/' . $data['info']['name'] . '/playlist.m3u8';
 					}
 					else
 					{
-						$data['detalle']['video'] = 'https://player.revisionalpha.com/vodcms/mp4:multimedia/' . $data['detalle']['grupo'] . '/' . $data['detalle']['id_empresa'] . '/' . $data['detalle']['archivo'] . '/playlist.m3u8';
+						$data['detalle']['video'] = 'https://59f778d8c8b09.streamlock.net/vodcms/mp4:multimedia/' . $data['detalle']['grupo'] . '/' . $data['detalle']['id_empresa'] . '/' . $data['detalle']['archivo'] . '/playlist.m3u8';
 					}
 */
 					
-					$data['detalle']['video'] = 'https://player.revisionalpha.com/vodcms/mp4:multimedia/' . $data['detalle']['grupo'] . '/' . $data['detalle']['id_empresa'] . '/' . $data['detalle']['archivo'] . '/playlist.m3u8';
+					$data['detalle']['video'] = 'https://59f778d8c8b09.streamlock.net/vodcms/mp4:multimedia/' . $data['detalle']['grupo'] . '/' . $data['detalle']['id_empresa'] . '/' . $data['detalle']['archivo'] . '/playlist.m3u8';
 				}
+
+				$data['detalle']['url'] = 'https://cms.revisionalpha.com/multimedia/' . $data['detalle']['grupo'] . '/' . $data['detalle']['id_empresa'] . '/' . $data['detalle']['archivo']; // Hardcoded
 				
 				$data['detalle']['thumb'] = (isset($data['detalle']['thumb'])) ? base_url('multimedia/thumbs/' . $data['detalle']['thumb']) : null;
 

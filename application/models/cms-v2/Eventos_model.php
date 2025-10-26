@@ -4,7 +4,7 @@ class Eventos_model extends CI_Model {
 
 	public function getContenidos($parametros = null)
 	{
-		$sql = "SELECT con_contenidos.id, con_contenidos.id_con_secciones, con_contenidos.fecha_alta, con_contenidos.miniatura, con_contenidos.filtro1, con_contenidos.destacado, con_contenidos.destacado_modal, con_contenidos.estado as id_estado, con_contenido_items.titulo, con_contenido_items.subtitulo, con_contenido_items.texto_adicional, con_contenidos.imagen, con_contenidos.orden, con_secciones.seccion, con_secciones_tipo.tipo,
+		$sql = "SELECT con_contenidos.id, con_contenidos.id_con_secciones, con_contenidos.fecha_alta, con_contenidos.miniatura, con_contenidos.filtro1, con_contenidos.filtro2, con_contenidos.destacado, con_contenidos.destacado_modal, con_contenidos.estado as id_estado, con_contenido_items.titulo, con_contenido_items.subtitulo, con_contenido_items.texto_adicional, con_contenidos.imagen, con_contenidos.orden, con_secciones.seccion, con_secciones_tipo.tipo,
 					CASE
 						WHEN con_contenidos.estado = 3 THEN 'label-primary'
 						WHEN con_contenidos.estado = 1 THEN 'label-danger'
@@ -117,40 +117,42 @@ class Eventos_model extends CI_Model {
 		$sql .= " AND con_contenidos.id_tipo = 11";
 		$sql .= " AND con_contenido_items.idioma = '". $parametros['idioma']."'";
 
-		if (!isset($res['error']))
+		// filtros
+		if (!empty($parametros['estado']))
 		{
-			// filtros
-			if (!empty($parametros['estado']))
-			{
-				$sql .= " AND con_contenidos.estado = ?";
-				$placeholders[] = $parametros['estado'];
-			}
-			else
-			{
-				$sql .= " AND con_contenidos.estado > 0";
-			}
-			
-			if (!empty($parametros['imagen']))
-			{
-				$sql .= " AND con_contenidos.filtro1 != 5";
-			}
-
-			if (!empty($parametros['modal']))
-			{
-				$sql .= " AND con_contenidos.destacado_modal = 1";
-				$sql .= " ORDER BY con_contenidos.id DESC LIMIT 1";
-			}
-			else
-			{
-				// orden
-				$sql .= " ORDER BY";
-				$sql .= (!empty($parametros['order_by'])) ? " " . $parametros['order_by'] : " con_contenidos.orden";
-				$sql .= (!empty($parametros['order'])) ? " " . $parametros['order'] : " ASC";
-			}
-						
-			// consulta
-			$query = $this->db->query($sql, $placeholders);
+			$sql .= " AND con_contenidos.estado = ?";
+			$placeholders[] = $parametros['estado'];
 		}
+		else
+		{
+			$sql .= " AND con_contenidos.estado > 0";
+		}
+		
+		if (!empty($parametros['imagen']))
+		{
+			$sql .= " AND con_contenidos.filtro1 != 5";
+		}
+
+		if (!empty($parametros['destacado']))
+		{
+			$sql .= " AND con_contenidos.destacado = 1";
+		}
+
+		if (!empty($parametros['modal']))
+		{
+			$sql .= " AND con_contenidos.destacado_modal = 1";
+			$sql .= " ORDER BY con_contenidos.id DESC LIMIT 1";
+		}
+		else
+		{
+			// orden
+			$sql .= " ORDER BY";
+			$sql .= (!empty($parametros['order_by'])) ? " " . $parametros['order_by'] : " con_contenidos.orden";
+			$sql .= (!empty($parametros['order'])) ? " " . $parametros['order'] : " ASC";
+		}
+					
+		// consulta
+		$query = $this->db->query($sql, $placeholders);
 
 		
 		if (!isset($res['error']) && $query)
@@ -324,6 +326,20 @@ class Eventos_model extends CI_Model {
 		return (!empty($res)) ? $res : null;
 	}
 
+	public function detalleExtraCurso($id)
+	{
+		$sql = "SELECT con_contenidos.id, contactos.nombre, contactos.apellido, con_elearning_items.titulo FROM con_contenidos";
+		$sql .= " LEFT JOIN contactos ON contactos.id = con_contenidos.filtro1";
+		$sql .= " LEFT JOIN con_elearning ON con_elearning.id = con_contenidos.filtro2";
+		$sql .= " LEFT JOIN con_elearning_items ON con_elearning_items.id_elearning = con_elearning.id";
+		$sql .= " WHERE con_contenidos.id = $id";
+		$sql .= " AND con_contenidos.estado > 0";
+		$query = $this->db->query($sql);
+		$res = $query->row_array();
+		return (!empty($res)) ? $res : null;
+	}
+	
+		
 	public function getMedia($id, $idioma)
 	{
 		$sql = "SELECT media_thumbs.archivo FROM media_thumbs";
@@ -349,11 +365,12 @@ class Eventos_model extends CI_Model {
 		$data['id_empresa'] = $this->usuario->id_empresa;
 		$data['id_tipo'] = $valores['id_tipo'];
 		$data['id_con_secciones'] = $valores['id_con_secciones'];
-		$data['orden'] = $valores['orden'];
-		$data['destacado'] = $valores['destacado'];
-		$data['destacado_slide'] = $valores['destacado_slide'];
-		$data['destacado_modal'] = $valores['destacado_modal'];
+		if(isset($valores['orden'])) { $data['orden'] = $valores['orden']; }
+		if(isset($valores['destacado'])) { $data['destacado'] = $valores['destacado']; }
+		if(isset($valores['destacado_slide'])) { $data['destacado_slide'] = $valores['destacado_slide']; }
+		if(isset($valores['destacado_modal'])) { $data['destacado_modal'] = $valores['destacado_modal']; }
 		$data['filtro1'] = $valores['filtro1'];
+		if(isset($valores['filtro2'])) { $data['filtro2'] = $valores['filtro2']; }
 		$data['estado'] = $valores['estado'];
 		$data['fecha_alta'] = unix_to_human(time(), TRUE, 'eu');
 		$data['user_alta'] = $this->usuario->id;
@@ -377,13 +394,13 @@ class Eventos_model extends CI_Model {
 					$item['subtitulo'] = $valores['subtitulo_'.$extension];
 					$item['texto_adicional'] = $valores['texto_adicional_'.$extension];
 					if(isset($valores['contenido1_'.$extension])) { $item['contenido1'] = $valores['contenido1_'.$extension]; }
-					$item['precio'] = $valores['precio_'.$extension];
-					$item['contenido3'] = $valores['contenido3_'.$extension];
-					$item['contenido4'] = $valores['contenido4_'.$extension];
-					$item['contenido2'] = $valores['contenido2_'.$extension];
-					$item['seo_titulo'] = $valores['seo_titulo_'.$extension];
-					$item['seo_keywords'] = $valores['seo_keywords_'.$extension];
-					$item['seo_descripcion'] = $valores['seo_descripcion_'.$extension];
+					if(isset($valores['contenido2_'.$extension])) { $item['contenido2'] = $valores['contenido2_'.$extension]; }
+					if(isset($valores['precio_'.$extension])) { $item['precio'] = $valores['precio_'.$extension]; }
+					if(isset($valores['contenido3_'.$extension])) { $item['contenido3'] = $valores['contenido3_'.$extension]; }
+					if(isset($valores['contenido4_'.$extension])) { $item['contenido4'] = $valores['contenido4_'.$extension]; }
+					if(isset($valores['seo_titulo_'.$extension])) { $item['seo_titulo'] = $valores['seo_titulo_'.$extension]; }
+					if(isset($valores['seo_keywords_'.$extension])) { $item['seo_keywords'] = $valores['seo_keywords_'.$extension]; }
+					if(isset($valores['seo_descripcion_'.$extension])) { $item['seo_descripcion'] = $valores['seo_descripcion_'.$extension]; }
 					$item['fecha_alta'] = unix_to_human(time(), TRUE, 'eu');
 					$item['user_alta'] = $this->usuario->id;
 					$insert = $this->db->insert('con_contenido_items', $item);
@@ -427,13 +444,14 @@ class Eventos_model extends CI_Model {
 		//MODIFICAR CONTENIDO GENERAL
 		$data['id_tipo'] = $valores['id_tipo'];
 		$data['id_con_secciones'] = $valores['id_con_secciones'];
-		$data['orden'] = $valores['orden'];
-		$data['destacado'] = $valores['destacado'];
-		$data['destacado_slide'] = $valores['destacado_slide'];
-		$data['destacado_modal'] = $valores['destacado_modal'];
+		if(isset($valores['orden'])) { $data['orden'] = $valores['orden']; }
+		if(isset($valores['destacado'])) { $data['destacado'] = $valores['destacado']; }
+		if(isset($valores['destacado_slide'])) { $data['destacado_slide'] = $valores['destacado_slide']; }
+		if(isset($valores['destacado_modal'])) { $data['destacado_modal'] = $valores['destacado_modal']; }
 		$data['filtro1'] = $valores['filtro1'];
+		if(isset($valores['filtro2'])) { $data['filtro2'] = $valores['filtro2']; }
 		$data['estado'] = $valores['estado'];
-		$data['fecha_alta'] = $valores['fecha_alta'];
+		if(isset($valores['fecha_alta'])) { $data['fecha_alta'] = $valores['fecha_alta']; }
 		$data['fecha_modificacion'] = unix_to_human(time(), TRUE, 'eu');
 		$data['user_modificacion'] = $this->usuario->id;
 		$wherecon = "id = $id";
@@ -454,13 +472,13 @@ class Eventos_model extends CI_Model {
 					$item['subtitulo'] = $valores['subtitulo_'.$extension];
 					$item['texto_adicional'] = $valores['texto_adicional_'.$extension];
 					if(isset($valores['contenido1_'.$extension])) { $item['contenido1'] = $valores['contenido1_'.$extension]; }
-					$item['precio'] = $valores['precio_'.$extension];
-					$item['contenido3'] = $valores['contenido3_'.$extension];
-					$item['contenido4'] = $valores['contenido4_'.$extension];
-					$item['contenido2'] = $valores['contenido2_'.$extension];
-					$item['seo_titulo'] = $valores['seo_titulo_'.$extension];
-					$item['seo_keywords'] = $valores['seo_keywords_'.$extension];
-					$item['seo_descripcion'] = $valores['seo_descripcion_'.$extension];
+					if(isset($valores['contenido2_'.$extension])) { $item['contenido2'] = $valores['contenido2_'.$extension]; }
+					if(isset($valores['precio_'.$extension])) { $item['precio'] = $valores['precio_'.$extension]; }
+					if(isset($valores['contenido3_'.$extension])) { $item['contenido3'] = $valores['contenido3_'.$extension]; }
+					if(isset($valores['contenido4_'.$extension])) { $item['contenido4'] = $valores['contenido4_'.$extension]; }
+					if(isset($valores['seo_titulo_'.$extension])) { $item['seo_titulo'] = $valores['seo_titulo_'.$extension]; }
+					if(isset($valores['seo_keywords_'.$extension])) { $item['seo_keywords'] = $valores['seo_keywords_'.$extension]; }
+					if(isset($valores['seo_descripcion_'.$extension])) { $item['seo_descripcion'] = $valores['seo_descripcion_'.$extension]; }
 
 					//CHEQUEO E INGRESO IDIOMA
 					$sql = "SELECT id FROM con_contenido_items WHERE id_contenido = $id AND idioma = '$extension'";
@@ -506,7 +524,7 @@ class Eventos_model extends CI_Model {
 					else
 					{
 						$res['id'] = $ingresado['id'];
-						$item['fecha_alta'] = $valores['fecha_alta'];
+						if(isset($valores['fecha_alta'])) { $item['fecha_alta'] = $valores['fecha_alta']; }
 						$item['fecha_modificacion'] = unix_to_human(time(), TRUE, 'eu');
 						$item['user_modificacion'] = $this->usuario->id;
 						$where = "id = ".$ingresado['id'];
@@ -621,6 +639,7 @@ class Eventos_model extends CI_Model {
 		$data['destacado_slide'] = $valores['destacado_slide'];
 		$data['destacado_modal'] = $valores['destacado_modal'];
 		$data['filtro1'] = $valores['filtro1'];
+		$data['filtro2'] = $valores['filtro2'];
 		$data['estado'] = $valores['estado'];
 		$data['fecha_alta'] = unix_to_human(time(), TRUE, 'eu');
 		$data['user_alta'] = $this->usuario->id;
@@ -662,6 +681,90 @@ class Eventos_model extends CI_Model {
 		return (!empty($res)) ? $res : null;
 	}
 	
+ 	public function comboCursos($parametros = null)
+	{
+		$sql = "SELECT con_elearning_items.id, con_elearning_items.id_elearning, con_elearning_items.titulo";
+		$sql .= " FROM con_elearning_items";
+		$sql .= " LEFT JOIN con_elearning ON con_elearning.id = con_elearning_items.id_elearning";
+		$sql .= " WHERE con_elearning.grupo = ?";
+		$placeholders[] = $this->usuario->grupo;
+
+		if ($this->usuario->perfil == 'reseller')
+		{
+			if (isset($parametros['id_empresa']))
+			{
+				$sql .= " AND con_elearning.id_empresa = ?";
+				$placeholders[] = $parametros['id_empresa'];
+			}
+		}
+		elseif ($this->usuario->perfil == 'admin')
+		{
+			$sql .= " AND con_elearning.id_empresa = ?"; 
+			$placeholders[] = $this->usuario->id_empresa;
+		}
+		else
+		{
+			$res['error'] = 'Este perfil no cuenta con los privilegios necesarios';
+		}
+		
+		if (isset($parametros['idioma']))
+		{
+			$sql .= " AND con_elearning_items.idioma = ?";
+			$placeholders[] = $parametros['idioma'];
+		}
+
+		$sql .= " AND con_elearning_items.estado >= 0";
+		$sql .= " GROUP BY con_elearning.id";
+		$sql .= " ORDER BY con_elearning.orden ASC, con_elearning.id ASC";
+		$query = $this->db->query($sql, $placeholders);
+		$res = $query->result_array();
+
+		foreach ($res as $obj => $valor)
+		{
+			$padre[$valor['id_elearning']] = $valor['titulo'];
+		}
+		return (!empty($padre)) ? $padre : null;
+	}
+
+ 	public function comboEmpresas($parametros = null)
+	{
+		$sql = "SELECT contactos.id, contactos.nombre, contactos.apellido, contactos_extras.tipo_contacto";
+		$sql .= " FROM contactos";
+		$sql .= " LEFT JOIN contactos_extras ON contactos_extras.id_contacto = contactos.id";
+		$sql .= " WHERE contactos.grupo = ?";
+		$placeholders[] = $this->usuario->grupo;
+
+		if ($this->usuario->perfil == 'reseller')
+		{
+			if (isset($parametros['id_empresa']))
+			{
+				$sql .= " AND contactos.id_empresa = ?";
+				$placeholders[] = $parametros['id_empresa'];
+			}
+		}
+		elseif ($this->usuario->perfil == 'admin')
+		{
+			$sql .= " AND contactos.id_empresa = ?"; 
+			$placeholders[] = $this->usuario->id_empresa;
+		}
+		else
+		{
+			$res['error'] = 'Este perfil no cuenta con los privilegios necesarios';
+		}
+
+		$sql .= " AND contactos.estado >= 0";
+		$sql .= " AND contactos_extras.tipo_contacto = 1";
+		$sql .= " ORDER BY contactos.apellido ASC, contactos.nombre ASC";
+		$query = $this->db->query($sql, $placeholders);
+		$res = $query->result_array();
+
+		foreach ($res as $obj => $valor)
+		{
+			$padre[$valor['id']] = $valor['apellido'].' '.$valor['nombre'];
+		}
+		return (!empty($padre)) ? $padre : null;
+	}
+
 	//ORDENAR GENERAL
 	public function ordenarItems($items, $tabla)
 	{

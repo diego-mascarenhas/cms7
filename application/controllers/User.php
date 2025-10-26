@@ -7,6 +7,7 @@ class User extends MY_Controller {
 	{
 		parent::__construct();
 		$this->load->model('user_model');
+		$this->load->library('simple_session');
 	}
 
 
@@ -57,30 +58,85 @@ class User extends MY_Controller {
 				$id = $this->user_model->getUserIdFromUsername($username);
 				$user = $this->user_model->getUserInfo($id);
 				
-				if ($user->estado > 1)
+				if ($user->estado > 0)
 				{
-					// set session user datas
-					$this->session->set_userdata('logged_in', true);
+					// Write to a debug log file to track session data
+					$log_message = date('Y-m-d H:i:s') . " - Login: User ID: " . $user->id . "\n";
+					file_put_contents(FCPATH . 'application/logs/session_debug.log', $log_message, FILE_APPEND);
+					
+					// SIMPLIFIED SESSION IMPLEMENTATION
+					// 1. Store in simple_session
+					$this->simple_session->set('usuario', $user);
+					$this->simple_session->set('logged_in', true);
+					$this->simple_session->set('reseller', $user->id);
+					
+					// 2. Store in PHP native session as backup
+					$_SESSION['usuario'] = $user;
+					$_SESSION['logged_in'] = true;
+					$_SESSION['reseller'] = $user->id;
+					
+					// 3. Store in CodeIgniter session
 					$this->session->set_userdata('usuario', $user);
-					$this->session->set_userdata('servicios', $this->user_model->getUserServicios($id));
-					$this->session->set_userdata('menu', $this->sys_model->menu($user->grupo, $user->id_perfil, $user->id));
-					$this->session->set_userdata('config', $this->user_model->getUserConfig($user->id_empresa));
+					$this->session->set_userdata('logged_in', true);
+					$this->session->set_userdata('reseller', $user->id);
 					
-					if (!$this->session->has_userdata('reseller') && $user->id_perfil == 2) $this->session->set_userdata('reseller', $user->id);
+					// 4. Load menu and other critical data
+					$servicios = $this->user_model->getUserServicios($id);
+					$menu = $this->sys_model->menu($user->grupo, $user->id_perfil, $user->id);
+					$config = $this->user_model->getUserConfig($user->id_empresa);
 					
-					if ($this->session->has_userdata('reseller'))
-					{
-						if ($this->session->userdata('reseller') == $user->id) $this->user_model->updateUltimaVisita($user->id);
+					// 5. Store additional data in all session types
+					// In Simple Session
+					$this->simple_session->set('servicios', $servicios);
+					$this->simple_session->set('menu', $menu);
+					$this->simple_session->set('config', $config);
+					
+					// In PHP native session
+					$_SESSION['servicios'] = $servicios;
+					$_SESSION['menu'] = $menu;
+					$_SESSION['config'] = $config;
+					
+					// In CI session
+					$this->session->set_userdata('servicios', $servicios);
+					$this->session->set_userdata('menu', $menu);
+					$this->session->set_userdata('config', $config);
+					
+					// Use our special method too as backup
+					$this->store_user_in_session($user);
+					
+					// Verify the session data was stored
+					$verification = "Session before redirect:\n";
+					$verification .= "Session ID: " . session_id() . "\n";
+					$verification .= "Has usuario: " . (isset($_SESSION['usuario']) ? 'YES' : 'NO') . "\n";
+					$verification .= "Has logged_in: " . (isset($_SESSION['logged_in']) ? 'YES' : 'NO') . "\n";
+					$verification .= "Simple session has usuario: " . ($this->simple_session->has('usuario') ? 'YES' : 'NO') . "\n";
+					file_put_contents(FCPATH . 'application/logs/session_verification.log', $verification, FILE_APPEND);
+					
+					// Debug output only when explicitly requested
+					if (isset($_GET['debug']) && $_GET['debug'] == 1) {
+						echo "<pre style='background: #f5f5f5; padding: 15px; border: 1px solid #ddd; margin: 20px;'>";
+						echo "<h2>Login Debug - Before Redirect</h2>";
+						echo "<h3>SESSION DATA:</h3>";
+						var_dump($_SESSION);
+						echo "<h3>SESSION ID:</h3>";
+						echo session_id();
+						echo "<h3>User Object:</h3>";
+						var_dump($user);
+						echo "<h3>SIMPLE SESSION:</h3>";
+						var_dump($this->simple_session->get());
+						echo "</pre>";
+						echo "<a href='" . base_url('home') . "'>Continue to Dashboard</a>";
+						exit;
 					}
-					else
-					{
-						$this->user_model->updateUltimaVisita($user->id);
-						
-						$this->load->library('user_agent');
-						if ($this->agent->is_referral()) $this->session->set_userdata('logout', $this->agent->referrer());
-					}
+
+					// Make sure we have a clean output buffer before redirect
+					if (ob_get_level()) ob_end_clean();
 					
-					redirect((isset($data->detalle['redirect']) && !empty($data->detalle['redirect'])) ? $data->detalle['redirect'] : $user->dashboard);
+					// Force session write
+					session_write_close();
+					
+					// Redirect directly to home instead of debug page
+					redirect(base_url('home'));
 				}
 				else
 				{
@@ -115,6 +171,7 @@ class User extends MY_Controller {
 			
 			// remove session datas
 			$this->session->sess_destroy();
+			$this->simple_session->destroy();
 			
 			// user logout ok
 			redirect(base_url('user/login?username=' . $data->username . '&password=' . $data->password));
@@ -127,6 +184,7 @@ class User extends MY_Controller {
 			
 			// remove session datas
 			$this->session->sess_destroy();
+			$this->simple_session->destroy();
 
 			// user logout ok
 			redirect($redirect);

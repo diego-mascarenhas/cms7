@@ -11,7 +11,8 @@ class Hosting_model extends CI_Model {
 				
 				FROM hosting_servidores
 				
-				WHERE hosting_servidores.id = ?	
+				WHERE hosting_servidores.id = ?
+				AND hosting_servidores.pass IS NOT NULL
 			";
 		
 		
@@ -27,6 +28,29 @@ class Hosting_model extends CI_Model {
 		}
 
 		return (!empty($res)) ? $res : null;
+	}
+	
+	
+	/**
+	 * Determina el tipo de panel que usa un servidor
+	 *
+	 * @param int $id_servidor ID del servidor
+	 * @return string Tipo de panel ('cpanel' o 'plesk')
+	 */
+	public function getPanelType($id_servidor)
+	{
+		$this->db->select('panel_type');
+		$this->db->from('hosting_servidores');
+		$this->db->where('id', $id_servidor);
+		
+		$query = $this->db->get();
+		
+		if ($query->num_rows() > 0) {
+			return $query->row()->panel_type;
+		}
+		
+		// Por defecto, asumimos cPanel
+		return 'cpanel';
 	}
 	
 	
@@ -188,10 +212,10 @@ class Hosting_model extends CI_Model {
 					   WHEN servicios.estado = 1 AND servicios_hosting.suspended IS NULL THEN 'label-danger'
 					   WHEN servicios.estado = 1 AND servicios_hosting.suspended = 2 THEN 'label-plain'
 					   WHEN servicios.estado = 2 THEN 'label-danger'
-					   WHEN servicios.estado = 3 THEN 'label-warning'
+					   WHEN servicios.estado = 3 THEN 'label-success'
 					   WHEN servicios.estado = 4 AND servicios_hosting.suspended IS NULL THEN 'label-primary'
 					   WHEN servicios.estado = 4 AND servicios_hosting.suspended = 1 THEN 'label-danger'
-					   WHEN servicios.estado = 4 AND servicios_hosting.suspended = 2 THEN 'label-danger'
+					   WHEN servicios.estado = 4 AND servicios_hosting.suspended = 2 THEN 'label-warning'
 					END AS estado_ui_class,
 				
 					CASE
@@ -202,7 +226,7 @@ class Hosting_model extends CI_Model {
 					   WHEN servicios.estado = 3 THEN 'Activar'
 					   WHEN servicios.estado = 4 AND servicios_hosting.suspended IS NULL THEN 'Activo'
 					   WHEN servicios.estado = 4 AND servicios_hosting.suspended = 1 THEN 'Se factura y no está activo'
-					   WHEN servicios.estado = 4 AND servicios_hosting.suspended = 2 THEN 'Se factura y está eliminado'
+					   WHEN servicios.estado = 4 AND servicios_hosting.suspended = 2 THEN 'No está vinculado'
 					END AS estado,
 					
 					CASE
@@ -256,6 +280,31 @@ class Hosting_model extends CI_Model {
 			else
 			{
 				$sql .= " AND servicios.estado > 0";
+			}
+			
+			// Excluir un estado específico (para mostrar todos menos ese estado)
+			if (isset($parametros['excluir_estado'])) 
+			{
+				$sql .= " AND servicios.estado != ?";
+				$placeholders[] = $parametros['excluir_estado'];
+			}
+			
+			// Filtro por suspendidos
+			if (isset($parametros['suspended']) && $parametros['suspended'] == 1) 
+			{
+				$sql .= " AND servicios_hosting.suspended = 1";
+			}
+			
+			// Filtro por eliminados
+			if (isset($parametros['eliminados']) && $parametros['eliminados'] == 1) 
+			{
+				$sql .= " AND servicios_hosting.suspended = 2";
+			}
+			
+			// Por defecto, no mostrar eliminados
+			if (isset($parametros['no_eliminados']) && $parametros['no_eliminados'] == true) 
+			{
+				$sql .= " AND (servicios_hosting.suspended IS NULL OR servicios_hosting.suspended != 2)";
 			}
 			
 			if (!empty($parametros['dashboard']))
@@ -334,10 +383,10 @@ class Hosting_model extends CI_Model {
 						   WHEN servicios.estado = 1 AND servicios_hosting.suspended IS NULL THEN 'label-danger'
 						   WHEN servicios.estado = 1 AND servicios_hosting.suspended = 2 THEN 'label-plain'
 						   WHEN servicios.estado = 2 THEN 'label-danger'
-						   WHEN servicios.estado = 3 THEN 'label-warning'
+						   WHEN servicios.estado = 3 THEN 'label-success'
 						   WHEN servicios.estado = 4 AND servicios_hosting.suspended IS NULL THEN 'label-primary'
 						   WHEN servicios.estado = 4 AND servicios_hosting.suspended = 1 THEN 'label-danger'
-						   WHEN servicios.estado = 4 AND servicios_hosting.suspended = 2 THEN 'label-danger'
+						   WHEN servicios.estado = 4 AND servicios_hosting.suspended = 2 THEN 'label-warning'
 						END AS estado_ui_class,
 					
 						CASE
@@ -681,8 +730,8 @@ class Hosting_model extends CI_Model {
 					AND fecha_modificacion != ?
 				";
 				
-			// update legacy
-			$res = $this->db->query($sql, array($obj['last_check'], $obj['last_problem_id'], $obj['last_check']));
+				// update legacy
+				$res = $this->db->query($sql, array($obj['last_check'], $obj['last_problem_id'], $obj['last_check']));
 		}
 		
 		return (!empty($res)) ? $res : null;

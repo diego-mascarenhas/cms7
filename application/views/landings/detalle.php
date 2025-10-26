@@ -62,6 +62,7 @@
 	                </div>
 	            </div>
 	            
+	            <?php if($detalle['codigo']) { ?>
 	            <div class="ibox-content m-b-sm border-bottom">
 	                <div class="row">
 	                    <div class="col-sm-6">
@@ -78,6 +79,7 @@
 	                    </div>
 	                </div>
 	            </div>
+	            <?php } ?>
 	            
 	            <div class="row">
 	                <div class="col-lg-12">
@@ -85,10 +87,22 @@
 	                    	<div class="ibox-title"><h5>Contactos</h5></div>
 		                    <div class="ibox-content">
 		                        <div class="table-responsive">
+		                            <?php if (isset($contactos)) { ?>
 				                    <table class="table table-striped table-bordered table-hover dataTablesLeeds" >
 					                    <thead>
 					                    <tr>
-					                        <th width="170">Fecha</th>
+											<th width="170">Fecha</th>
+					                        <?php 
+						                       // echo '<pre>' . print_r($contactos, true) . '</pre>';
+						                        $headers = json_decode($contactos[0]['data'],true);
+						                        foreach(array_keys($headers) as $key)
+						                        {
+												    echo '<th>'.$key.'</th>';
+												}
+											?>
+											
+<!--
+											<th width="170">Fecha</th>
 					                        <th>Nombre y Apellido</th>
 					                        <th>Email</th>
 					                        <th>Tel&eacute;fono</th>
@@ -100,18 +114,39 @@
 					                        <th>Consulta</th>
 					                        <th>Tipo</th>
 											<?php } ?>
+-->
 					                    </tr>
 					                    </thead>
 					                    <tbody>
 						                    
-		                                    <?php if (isset($contactos)) { ?>
 			                                <?php foreach ($contactos as $contacto) { 
-				                                  /* echo '<pre>' . print_r($contacto, true) . '</pre>'; */		?>                                		  
+				                                  //echo '<pre>' . print_r($contacto, true) . '</pre>';		?>                                		  
 			                                		  
 						                   		<tr class="gradeX">
-													<td><?php echo $contacto['fecha'];
-													//formatear_fecha($contacto['fecha_alta'], 'd-m-Y H:i', ' hs', $this->usuario->timezone); ?></td>
-													<?php $datos = json_decode($contacto['data'],true);  ?>
+													<?php 
+														$datos = json_decode($contacto['data'],true); 
+														
+														if(count($datos) == count($headers))
+														{
+															echo '<td>'.$contacto['fecha'].'</td>';
+															foreach(array_keys($headers) as $tester)
+															{
+																if(array_key_exists($tester, $datos))
+																{
+																	echo '<td>';
+																	if($tester == 'provincia') 
+																	{ 
+																		foreach($provincias as $provincia) { if($provincia['id'] == $datos['provincia']) { echo $provincia['descripcion']; } } 
+																	}
+																	else { echo $datos[$tester]; }
+																	echo '</td>';
+																}
+															}
+														}
+														
+													?>
+													
+<!--
 													<?php if ($detalle['id'] == 11) { ?>
 													<td><?php echo $datos['nombre']; ?></td>
 													<td><?php echo $datos['email']; ?></td>
@@ -126,18 +161,16 @@
 													<td><?php echo (!empty($datos['consulta'])) ? $datos['consulta'] : 's/d'; ?></td>
 													<td><?php echo (!empty($datos['tipo'])) ? $datos['tipo'] : 's/d'; ?></td>
 													<?php } ?>
+-->
 						                    	</tr>
 											<?php } ?>	
-											<? } else { ?>
-												<tr>
-			                                        <td>No se encontraron conversiones</td>
-			                                    </tr>
-			                                <?php } ?>
 					                    </tbody>
 				                    </table>
+									<? } else { ?>
+										<p>No se encontraron conversiones</p>
+	                            <?php } ?>
 		                        </div>
 							</div>
-	
 	                	</div>
 	                </div>
 	            </div>
@@ -151,17 +184,6 @@
 			<script src="<?php echo base_url('assets/js/plugins/dataTables/datatables.min.js'); ?>"></script>
 		    <script>
 		         $(document).ready(function(){
-		             var editor_one = CodeMirror.fromTextArea(document.getElementById("code1"), {
-		                 lineNumbers: true,
-		                 matchBrackets: true,
-		                 styleActiveLine: true
-		             });
-		             var editor_one = CodeMirror.fromTextArea(document.getElementById("code2"), {
-		                 lineNumbers: true,
-		                 matchBrackets: true,
-		                 styleActiveLine: true
-		             });
-
 				    $('.dataTablesLeeds').DataTable({
 					    "language": {
 				            "lengthMenu": "Mostrar _MENU_ resultados por p&aacute;gina",
@@ -197,4 +219,15 @@
 	                ]
 	            });
 			});
+					             var editor_one = CodeMirror.fromTextArea(document.getElementById("code1"), {
+		                 lineNumbers: true,
+		                 matchBrackets: true,
+		                 styleActiveLine: true
+		             });
+		             var editor_one = CodeMirror.fromTextArea(document.getElementById("code2"), {
+		                 lineNumbers: true,
+		                 matchBrackets: true,
+		                 styleActiveLine: true
+		             });
+
 		    </script>	       

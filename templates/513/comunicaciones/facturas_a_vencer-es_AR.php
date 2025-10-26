@@ -24,7 +24,7 @@
 		<?php elseif (($_POST['id_forma_pago'] == 2 || $_POST['id_forma_pago'] == 3) && ($_POST['id_factura_tipo'] == 30 || $_POST['id_factura_tipo'] == 31)) : ?>
 			Datos de la cuenta a transferir:<br><br>
 			<strong>Banco:</strong> Galicia<br>
-			<strong>Titular:</strong> revision alpha S.A.S.<br>
+			<strong>Titular:</strong> REVISION ALPHA S.A.S.<br>
 			<strong>C.U.I.T.:</strong> 30-71671007-2<br>
 			<strong>Cuenta Corriente:</strong> 12416-2 019-8<br>
 			<strong>CBU:</strong> 00700191 20000012416286<br>
@@ -39,9 +39,8 @@
 			
 		<?php endif; ?>
 			
-			Para ver el estado de sus servicios y el balance de su cuenta puede hacerlo desde el <a href="<?php echo 'https://cms.revisionalpha.com/user/login/?username=' . $_POST['username'] . '&password=' . $_POST['hash'] . '&redirect=https://cms.revisionalpha.com/micuenta/'; ?>" style="color:blueviolet;">&aacute;rea de clientes</a> de nuestro sitio.
-			<br>
-			
+		<!-- Para ver el estado de sus servicios y el balance de su cuenta puede hacerlo desde el <a href="<?php echo 'https://cms.revisionalpha.com/user/login/?username=' . $_POST['username'] . '&password=' . $_POST['hash'] . '&redirect=https://cms.revisionalpha.com/micuenta/'; ?>" style="color:#FF1A1D;">&aacute;rea de clientes</a> de nuestro sitio.-->
+		Para consultar por el estado de sus servicios y balance de su cuenta puede hacerlo a través de nuestro canal exclusivo de <a href="https://api.whatsapp.com/send/?phone=12202137800&text=<?php echo urlencode('Mi usuario es ' . $_POST['username'] . ' y tengo una consulta sobre mi factura ' . $_POST['comprobante']); ?>" style="color:#FF1A1D;">WhatsApp.</a>
 	</td>
 </tr>
 <?php include('footer.php'); ?>

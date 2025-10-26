@@ -19,31 +19,30 @@ class Configuracion extends MY_Controller {
 			$this->load->library('form_validation');
 	
 			$this->form_validation->set_rules('titulo', 'Titulo', 'required', array('required' => 'Debe ingresar un titulo.'));
-/* 			$this->form_validation->set_rules('subtitulo', 'Tagline', 'required', array('required' => 'Debe ingresar un tagline.')); */
 	
 			if ($this->form_validation->run() === false)
 			{
-				if(isset($this->usuario->id_empresa))
-				{
-					$datos['item'] = $this->Configuracion_model->detalleConfiguracion($this->usuario->id_empresa);
-				}
-				else
-				{
-					$datos['item'] = ($this->input->post()) ? $this->input->post() : $this->input->get();
-				}
+				$datos['item'] = $this->Configuracion_model->detalleConfiguracion($this->usuario->id_empresa);
+				$datos['adicionales'] = $this->Configuracion_model->getIdiomasAdicionales($datos['item']['id']);
+
 				$this->load->view('header');
-				$this->load->view('cms-v2/configuracion', $datos);
+				$this->load->view('cms-v2/'.$datos['item']['template'].'/configuracion', $datos);
 				$this->load->view('footer');
 			}
 			else
 			{
-				if ($datos = $this->Configuracion_model->ingresarContenido($this->input->post()))
+				if ($ingresar = $this->Configuracion_model->ingresarContenido($this->input->post()))
 		        {
-					redirect(base_url('cms-v2/configuracion'));
+					$datos['item'] = $this->Configuracion_model->detalleConfiguracion($this->usuario->id_empresa);
+					$datos['adicionales'] = $this->Configuracion_model->getIdiomasAdicionales($datos['item']['id']);
+	
+					$this->load->view('header');
+					$this->load->view('cms-v2/'.$datos['item']['template'].'/configuracion', $datos);
+					$this->load->view('footer');
 		        }
 		        else
 		        {
-					$this->load->view('cms-v2/configuracion', $id);
+					$this->load->view('cms-v2/'.$this->input->post('template').'/configuracion', $id);
 			        echo 'Error';
 		        }
 			}

@@ -13,8 +13,8 @@
 	li { padding-bottom: 1em; }
 	</style>
 </head>
-<body bgcolor="#f7f7f7" marginheight="0" marginwidth="0">
-	<table width="100%" bgcolor="#f7f7f7" border="0" cellpadding="0" cellspacing="0">
+<body bgcolor="#F5EFEF" marginheight="0" marginwidth="0">
+	<table width="100%" bgcolor="#F5EFEF" border="0" cellpadding="0" cellspacing="0">
 		<tr>
 			<td height="20"></td>
 		</tr>

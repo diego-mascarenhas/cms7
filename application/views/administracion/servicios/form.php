@@ -70,13 +70,13 @@
 		                                <?php echo form_dropdown('frecuencia', $frecuencias, (isset($detalle['frecuencia'])) ? $detalle['frecuencia'] : null, 'class="form-control m-b"'); ?>
 		                            </div>
 		                            <label class="col-sm-2 control-label">Próxima</label>
-                                    <div class="col-sm-2">
+                                    <div class="col-sm-4">
 		                                <div class="input-group date dia">
 	                                    	<span class="input-group-addon"><i class="fa fa-calendar"></i></span><input type="text" class="form-control" name="proxima" value="<?php echo formatear_fecha($detalle['proxima'], 'd-m-Y', null, $this->usuario->timezone); ?>">
 	                                	</div>
 		                            </div>
 		                            <label class="col-sm-2 control-label">Caduca</label>
-                                    <div class="col-sm-2">
+                                    <div class="col-sm-4">
 		                                <div class="input-group date dia">
 	                                    	<span class="input-group-addon"><i class="fa fa-calendar"></i></span><input type="text" class="form-control" name="caduca" value="<?php echo formatear_fecha($detalle['caduca'], 'd-m-Y', null, $this->usuario->timezone); ?>">
 	                                	</div>
@@ -92,10 +92,11 @@
 	                            </div>
 	                            <div class="hr-line-dashed"></div>
 	                            
+	                            <?php if ($this->usuario->id == 475) { ?>
 	                            <div class="form-group">
 		                            <label class="col-sm-2 control-label">Moneda</label>
 	                                <div class="col-sm-2">
-		                                <?php echo form_dropdown('id_moneda', $monedas, (isset($detalle['id_moneda'])) ? $detalle['id_moneda'] : null, 'class="form-control m-b"'); ?>
+		                                <?php echo form_dropdown('id_moneda', $monedas, (isset($detalle['id_moneda'])) ? $detalle['id_moneda'] : null, 'class="form-control"'); ?>
 		                            </div>
 		                            <label class="col-sm-2 control-label">Valor</label>
 	                                <div class="col-sm-2">
@@ -111,7 +112,7 @@
 	                            <div class="form-group">
 		                            <label class="col-sm-2 control-label">Forma de pago</label>
 	                                <div class="col-sm-4">
-		                                <?php echo form_dropdown('id_forma_pago', $formas_pago, (isset($detalle['id_forma_pago'])) ? $detalle['id_forma_pago'] : null, 'class="form-control m-b"'); ?>
+		                                <?php echo form_dropdown('id_forma_pago', $formas_pago, (isset($detalle['id_forma_pago'])) ? $detalle['id_forma_pago'] : null, 'class="form-control"'); ?>
                                     </div>
                                     <label class="col-sm-2 control-label">Convertir a pesos</label>
 	                                <div class="col-sm-1">
@@ -123,6 +124,7 @@
                                     </div>
 	                            </div>
 	                            <div class="hr-line-dashed"></div>
+	                            <?php } ?>
 	                            
 	                            <?php if ($this->usuario->perfil == 'reseller' && !isset($detalle['api'])) { ?>
 	                            <div class="form-group">

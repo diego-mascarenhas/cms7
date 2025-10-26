@@ -97,10 +97,10 @@
 			                                	<?php foreach ($movimientos as $movimiento) { ?>
 			                                    <tr>
 				                                    <td><?php echo formatear_fecha($movimiento['fecha'], 'd-m-Y', null, $this->usuario->timezone); ?></td>
-				                                    <td><a href="<?php echo base_url('administracion/facturas/detalle/'); ?><?php echo $movimiento['id_factura']; ?>"><?php echo $movimiento['comprobante']; ?></a></td>
+				                                    <td><a href="<?php echo base_url('administracion/facturas/detalle/'); ?><?php echo $movimiento['id_factura']; ?>"><?php echo $movimiento['comprobante_factura']; ?></a></td>
 			                                        <td><span class="badge <?php echo $movimiento['operacion_ui_class']; ?>"><?php echo $movimiento['operacion']; ?></span> <?php echo $movimiento['forma_pago']; ?></td>
-			                                        <td class="text-right"><?php echo $movimiento['simbolo']; ?><?php echo $movimiento['valor']; ?></td>
-			                                        <td class="text-center">
+			                                                                                <td class="text-right"><?php echo $movimiento['simbolo']; ?><?php echo $movimiento['valor']; ?></td>
+                                        <td class="text-center">
 				                                        <?php if ($movimiento['id_estado'] == 1 && ($movimiento['id_forma_pago'] != 12 && $movimiento['id_forma_pago'] != 13)) { ?>
 				                                        	<a href="#" onclick="conciliarPago(<?php echo $movimiento['id']; ?>)" class="check-link"><i class="fa fa-square-o"></i> </a>
 				                                        <?php } ?>
@@ -121,3 +121,54 @@
 	                </div>
 	            </div>
 	        </div>
+	        
+	        <script>
+	    function conciliarPago(id) { 
+			// Cambiar el ícono a loading
+			var link = $('a[onclick="conciliarPago(' + id + ')"]');
+			var originalIcon = link.find('i');
+			originalIcon.removeClass('fa-square-o').addClass('fa-spinner fa-spin');
+			link.css('pointer-events', 'none'); // Disable click durante la operación
+			
+			$.ajax( {
+			    type: 'POST',
+			    url: '<?php echo base_url('administracion/movimientos/conciliar-pago/'); ?>',
+			    data: "id="+id,
+			    dataType: 'json',
+			    success: function(data) {
+			        if (data.success) {
+			        	// Cambiar el ícono a check
+			        	originalIcon.removeClass('fa-spinner fa-spin').addClass('fa-check-circle text-success');
+			        	
+			        	// Actualizar el estado visual
+			        	var estadoSpan = link.next('span');
+			        	estadoSpan.removeClass('label-warning').addClass('label-primary').text('Aprobado');
+			        	
+			        	// Mostrar mensaje de éxito
+			        	toastr.success(data.message, 'Éxito');
+			        	
+			        	// Opcional: Recargar la página después de 2 segundos
+			        	setTimeout(function() {
+			        		window.location.reload();
+			        	}, 2000);
+			        	
+			        } else {
+			        	// Restaurar el ícono original
+			        	originalIcon.removeClass('fa-spinner fa-spin').addClass('fa-square-o');
+			        	link.css('pointer-events', 'auto');
+			        	
+			        	// Mostrar mensaje de error
+			        	toastr.error(data.message, 'Error');
+			        }
+			    },
+			    error: function(xhr, status, error) {
+			        // Restaurar el ícono original
+			        originalIcon.removeClass('fa-spinner fa-spin').addClass('fa-square-o');
+			        link.css('pointer-events', 'auto');
+			        
+			        // Mostrar mensaje de error
+			        toastr.error('Error al procesar la solicitud', 'Error');
+			    }
+			});
+		}
+    </script>

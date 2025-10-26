@@ -76,17 +76,17 @@
 	                        <tbody>
 	                        <tr>
 	                            <td>
-	                                <strong><?php echo count($servicios); ?></strong> Servicios
+	                                <strong><?php echo (isset($servicios) && is_array($servicios)) ? count($servicios) : 0; ?></strong> Servicios
 	                            </td>
 	                        </tr>
 	                        <tr>
 	                            <td>
-	                                <strong><?php echo count($facturas); ?></strong> Facturas
+	                                <strong><?php echo (isset($facturas) && is_array($facturas)) ? count($facturas) : 0; ?></strong> Facturas
 	                            </td>
 	                        </tr>
 	                        <tr>
 	                            <td>
-	                                <strong><?php echo count($contactos); ?></strong> Contactos
+	                                <strong><?php echo (isset($contactos) && is_array($contactos)) ? count($contactos) : 0; ?></strong> Contactos
 	                            </td>
 	                        </tr>
 	                        </tbody>
@@ -208,13 +208,12 @@
 		                <div class="ibox <?php echo (isset($detalle['titular'])) ? 'float-e-margins' : 'collapsed'; ?>">
 		                    <div class="ibox-title">
 		                        <h5>Datos para el débito</h5>
-<!--
+
 		                        <div class="ibox-tools">
-		                            <a href="#" class="btn btn-outline btn-xs">
-		                                <i class="fa fa-plus-circle"> Cambiar datos de la cuenta</i>
+		                            <a href="<?php echo base_url('administracion/cuentas/' . (isset($detalle['id_cuenta']) ? 'modificar/' . $detalle['id_cuenta'] : 'ingresar?id_empresa=' . $detalle['id'])); ?>" class="btn btn-outline btn-xs">
+		                                <i class="fa fa-plus-circle"> <?php echo (isset($detalle['id_cuenta'])) ? 'Actualizar' : 'Ingresar'; ?> datos de la cuenta</i>
 		                            </a>
 		                        </div>
--->
 		                    </div>
 		                    <div class="ibox-content">
 		                        <div class="row">

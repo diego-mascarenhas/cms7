@@ -66,7 +66,7 @@
 				                        </div>
 			                        </div>
 		                            
-		                            <?php if (($this->usuario->perfil == 'reseller' || $this->usuario->perfil == 'admin') && $detalle['tipo'] == 'video') { ?>
+		                            <?php if (($this->usuario->perfil == 'reseller' || $this->usuario->perfil == 'admin') && isset($detalle['tipo']) && $detalle['tipo'] == 'video' && $detalle['mime'] != 'application/octet-stream') { ?>
 		                            <div class="form-group">
 			                            <label class="col-sm-2 control-label">Tipo</label>
 			                            <div class="col-sm-10">

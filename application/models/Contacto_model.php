@@ -6,7 +6,7 @@ class Contacto_model extends CI_Model {
 	public function getContactos($parametros = null)
 	{
 		$sql = "	
-				SELECT SQL_CALC_FOUND_ROWS contactos.id, IFNULL(trim(CONCAT(contactos.nombre, ' ', IFNULL(contactos.apellido, ''))), contactos.username) AS contacto, contactos.email, contactos.username, COALESCE(contactos.celular, contactos.telefono, empresas.telefono) AS telefono, empresas.id AS id_empresa, empresas.empresa, UNIX_TIMESTAMP(CONVERT_TZ(contactos.ultima_visita, '+00:00', @@global.time_zone)) AS ultima_visita,
+				SELECT SQL_CALC_FOUND_ROWS contactos.id, IFNULL(trim(CONCAT(contactos.nombre, ' ', IFNULL(contactos.apellido, ''))), contactos.username) AS contacto, contactos.email, contactos.username, COALESCE(contactos.celular, contactos.telefono, empresas.telefono) AS telefono, empresas.id AS id_empresa, empresas.empresa, UNIX_TIMESTAMP(contactos.ultima_visita) AS ultima_visita,
 				
 					CASE
 						WHEN contactos.area_privada = 2 THEN 'Reseller'
@@ -153,7 +153,7 @@ class Contacto_model extends CI_Model {
 		else
 		{
 			$sql = "	
-					SELECT contactos.id, contactos.nombre, contactos.apellido, IFNULL(trim(CONCAT(contactos.nombre, ' ', IFNULL(contactos.apellido, ''))), contactos.username) AS contacto, contactos.email, COALESCE(contactos.celular, contactos.telefono, empresas.telefono) AS telefono, contactos.username, contactos.hash, empresas.id AS id_empresa, empresas.empresa, UNIX_TIMESTAMP(CONVERT_TZ(contactos.ultima_visita, '+00:00', @@global.time_zone)) AS ultima_visita, contactos.ip, contactos.idioma, contactos.timezone,
+					SELECT contactos.id, contactos.nombre, contactos.apellido, IFNULL(trim(CONCAT(contactos.nombre, ' ', IFNULL(contactos.apellido, ''))), contactos.username) AS contacto, contactos.email, COALESCE(contactos.celular, contactos.telefono, empresas.telefono) AS telefono, contactos.username, contactos.hash, empresas.id AS id_empresa, empresas.empresa, UNIX_TIMESTAMP(contactos.ultima_visita) AS ultima_visita, contactos.ip, contactos.idioma, contactos.timezone,
 					
 					CASE
 					   WHEN contactos.area_privada = 2 THEN 'Reseller'
@@ -336,7 +336,7 @@ class Contacto_model extends CI_Model {
 	public function getContactosConServiciosActivos($parametros = null)
 	{
 		$sql = "	
-				SELECT SQL_CALC_FOUND_ROWS contactos.id, trim(CONCAT(contactos.nombre, ' ', IFNULL(contactos.apellido, ''))) AS contacto, contactos.email, empresas.telefono, empresas.id AS id_empresa, empresas.empresa, UNIX_TIMESTAMP(CONVERT_TZ(contactos.ultima_visita, '+00:00', @@global.time_zone)) AS ultima_visita,
+				SELECT SQL_CALC_FOUND_ROWS contactos.id, trim(CONCAT(contactos.nombre, ' ', IFNULL(contactos.apellido, ''))) AS contacto, contactos.email, empresas.telefono, empresas.id AS id_empresa, empresas.empresa, UNIX_TIMESTAMP(contactos.ultima_visita) AS ultima_visita,
 				
 					CASE
 						WHEN contactos.area_privada = 2 THEN 'Reseller'

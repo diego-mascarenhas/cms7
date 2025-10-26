@@ -17,6 +17,16 @@ class Hosting extends MY_Controller {
 			$parametros['page'] = $this->input->get('page');
 			$parametros['search'] = $this->input->get('search');
 			
+			// Add filter parameters
+			$parametros['estado'] = $this->input->get('estado');
+			$parametros['suspended'] = $this->input->get('suspended');
+			$parametros['eliminados'] = $this->input->get('eliminados');
+			
+			// Por defecto, mostrar todos excepto los de estado 1 (suspendidos)
+			if (!isset($parametros['estado']) && !isset($parametros['suspended']) && !isset($parametros['eliminados'])) {
+				$parametros['excluir_estado'] = 1;
+			}
+			
 			$data['hosting'] = $this->hosting_model->getPlanes($parametros);
 			
 			$config['total_rows'] = $this->hosting_model->total();
@@ -48,12 +58,22 @@ class Hosting extends MY_Controller {
 			$data['detalle'] = $this->hosting_model->getPlanDetalle($id);
 			
 			
-			if ($data['detalle']['id_servidor'])
-			{
+			if (isset($data['detalle']['id_servidor']) && $data['detalle']['id_servidor']) {
 				$config = $this->hosting_model->getCredenciales($data['detalle']['id_servidor']);
-				$this->load->library('Cpanel', $config);
-			
-				$data['emails'] = $this->cpanel->listpopswithdisk($data['detalle']['user']);
+				
+				if ($config) {
+					// Determinar qué tipo de panel tiene el servidor
+					$panel_type = $this->hosting_model->getPanelType($data['detalle']['id_servidor']);
+					
+					if ($panel_type == 'plesk') {
+						$this->load->library('Plesk', $config);
+						$data['emails'] = $this->plesk->listpopswithdisk($data['detalle']['user']);
+					} else {
+						// Por defecto, usar cPanel
+						$this->load->library('Cpanel', $config);
+						$data['emails'] = $this->cpanel->listpopswithdisk($data['detalle']['user']);
+					}
+				}
 			}
 			
 			$this->load->view('/header');
@@ -366,25 +386,50 @@ class Hosting extends MY_Controller {
 		if ($obj = $this->hosting_model->getPlanParaActualizar($id))
 		{
 			$config = $this->hosting_model->getCredenciales($obj['id_servidor']);
-			$this->load->library('Cpanel', $config);
-
-			$res['diskusage'] = $this->hosting_model->actualizarDiskusage($obj['user']);
 			
-			$res['bndwidthusage'] = $this->hosting_model->actualizarBandwidthusage($obj['user']);
+			// Determinar qué tipo de panel tiene el servidor
+			$panel_type = $this->hosting_model->getPanelType($obj['id_servidor']);
 			
-			$res['accountsummary'] = $this->cpanel->accountsummary($obj['user']);
-
-			//if (!isset($res['diskusage']['error']) && !isset($res['bndwidthusage']['error']))
-			if (isset($res['accountsummary']))
-			{
-				$this->hosting_model->modificarAccount($obj['user'], $res['accountsummary']);
-			}
-			else
-			{
-				$res['accountsummary']['suspended'] = 2;
-				$res['accountsummary']['suspendreason'] = 'Eliminada';
+			if ($panel_type == 'plesk') {
+				$this->load->library('Plesk', $config);
 				
-				$this->hosting_model->modificarAccount($obj['user'], $res['accountsummary']);
+				// Para Plesk, necesitamos el dominio, no el usuario
+				$res['accountsummary'] = $this->plesk->accountsummary($obj['domain']);
+				
+				// En Plesk, diskusage y bandwidthusage están incluidos en accountsummary
+				if (isset($res['accountsummary']) && !empty($res['accountsummary']))
+				{
+					$this->hosting_model->modificarAccount($obj['user'], $res['accountsummary']);
+				}
+				else
+				{
+					$res['accountsummary']['suspended'] = 2;
+					$res['accountsummary']['suspendreason'] = 'Eliminada';
+					
+					$this->hosting_model->modificarAccount($obj['user'], $res['accountsummary']);
+				}
+			} else {
+				// cPanel
+				$this->load->library('Cpanel', $config);
+				
+				$res['diskusage'] = $this->hosting_model->actualizarDiskusage($obj['user']);
+				
+				$res['bndwidthusage'] = $this->hosting_model->actualizarBandwidthusage($obj['user']);
+				
+				$res['accountsummary'] = $this->cpanel->accountsummary($obj['user']);
+				
+				//if (!isset($res['diskusage']['error']) && !isset($res['bndwidthusage']['error']))
+				if (isset($res['accountsummary']))
+				{
+					$this->hosting_model->modificarAccount($obj['user'], $res['accountsummary']);
+				}
+				else
+				{
+					$res['accountsummary']['suspended'] = 2;
+					$res['accountsummary']['suspendreason'] = 'Eliminada';
+					
+					$this->hosting_model->modificarAccount($obj['user'], $res['accountsummary']);
+				}
 			}
 			
 			if (isset($_GET['debug'])) echo '<pre>' . print_r($res, true) . '</pre>';
@@ -503,29 +548,25 @@ class Hosting extends MY_Controller {
 	}
 	
 	
+/*
 	public function cpanel_password_reset($id)
 	{
 		if ($this->is_logged_in('reseller') || $this->is_logged_in('admin'))
 		{
-			// models
 			$this->load->model('hosting_model');
 			
-			// helpers and libraries
 			$this->load->helper('form');
 			$this->load->library('form_validation');
 			$this->config->set_item('language', $this->usuario->idioma);
 			
-			// set validation rules
 			$this->form_validation->set_rules('id', 'ID', 'required');
 			
 			if ($this->form_validation->run() === false)
 			{
-				// form values
 				$data['detalle'] = $this->hosting_model->getPlanDetalle($id);
 			}
 			else
 			{
-				// models
 				$this->load->model('sys_model');
 
 				if ($this->sys_model->verificarPropiedad($this->input->post('id_servicio'), 'servicios'))
@@ -533,7 +574,6 @@ class Hosting extends MY_Controller {
 					$data['detalle'] = $this->hosting_model->getPlanDetalle($id);
 					$data['detalle']['password'] = substr(md5(uniqid()), 0, 6) . '*2002!';
 					
-					// helpers and libraries
 					$config = $this->hosting_model->getCredenciales($this->hosting_model->getServerIdFromUser($data['detalle']['user']));
 					$this->load->library('Cpanel', $config);
 					
@@ -558,32 +598,29 @@ class Hosting extends MY_Controller {
 			redirect(base_url('user/login'));
 		}
 	}
+*/
 	
 	
+/*
 	public function email_password_reset($id, $user_email, $domain)
 	{
 		if ($this->is_logged_in('reseller') || $this->is_logged_in('admin'))
 		{
-			// models
 			$this->load->model('hosting_model');
 			
-			// helpers and libraries
 			$this->load->helper('form');
 			$this->load->library('form_validation');
 			$this->config->set_item('language', $this->usuario->idioma);
 			
-			// set validation rules
 			$this->form_validation->set_rules('id', 'ID', 'required');
 			
 			if ($this->form_validation->run() === false)
 			{
-				// form values
 				$data['detalle'] = $this->hosting_model->getPlanDetalle($id);
 				$data['detalle']['email'] = $user_email . '@' . $domain;
 			}
 			else
 			{
-				// models
 				$this->load->model('sys_model');
 
 				if ($this->sys_model->verificarPropiedad($this->input->post('id_servicio'), 'servicios'))
@@ -593,7 +630,6 @@ class Hosting extends MY_Controller {
 					$data['detalle']['email'] = $user_email . '@' . $domain;
 					$data['detalle']['password'] = substr(md5(uniqid()), 0, 6) . '*2002!';
 					
-					// helpers and libraries
 					$config = $this->hosting_model->getCredenciales($this->hosting_model->getServerIdFromUser($data['detalle']['user']));
 					$this->load->library('Cpanel', $config);
 					
@@ -618,6 +654,7 @@ class Hosting extends MY_Controller {
 			redirect(base_url('user/login'));
 		}
 	}
+*/
 	
 	
 	public function probar_alerta($agente)
@@ -631,6 +668,101 @@ class Hosting extends MY_Controller {
 		$data['agente']['alerta'] = json_decode($this->curl->simple_post('http://voip.revisionalpha.com/alerta-revision.php', array('agente'=>$this->hosting_model->getContactoDeGuardiaCelular($agente))), true);
 		
 		echo '<pre>' . print_r($data, true) . '</pre>';
+	}
+	
+	
+	public function debug_plesk($id = 46)
+	{
+		if ($this->is_logged_in('admin'))
+		{
+			// models
+			$this->load->model('hosting_model');
+			
+			// Obtener detalles del plan
+			$plan = $this->hosting_model->getPlanDetalle($id);
+			
+			if (!empty($plan) && isset($plan['id_servidor'])) {
+				// Obtener credenciales del servidor
+				$config = $this->hosting_model->getCredenciales($plan['id_servidor']);
+				
+				// Verificar si es un servidor Plesk
+				$panel_type = $this->hosting_model->getPanelType($plan['id_servidor']);
+				
+				if ($panel_type == 'plesk') {
+					$this->load->library('Plesk', $config);
+					$this->plesk->debug = true; // Activar modo debug
+					
+					echo "<h2>Detalles del Plan</h2>";
+					echo "<pre>" . print_r($plan, true) . "</pre>";
+					
+					echo "<h2>Conexión a Plesk</h2>";
+					echo "<p>Servidor: " . $config['ip'] . "</p>";
+					echo "<p>Panel Type: " . $panel_type . "</p>";
+					
+					echo "<h2>Respuesta accountsummary</h2>";
+					$accountsummary = $this->plesk->accountsummary($plan['domain']);
+					echo "<pre>" . print_r($accountsummary, true) . "</pre>";
+					
+					// Obtener datos raw
+					$raw_data = $this->plesk->getLastRawData();
+					echo "<h3>XML Request</h3>";
+					echo "<pre>" . htmlspecialchars($raw_data['request']) . "</pre>";
+					echo "<h3>XML Response</h3>";
+					echo "<pre>" . htmlspecialchars($raw_data['response']) . "</pre>";
+					
+					echo "<h2>Respuesta stats</h2>";
+					$stats = $this->plesk->stats($plan['domain']);
+					echo "<pre>" . print_r($stats, true) . "</pre>";
+					
+					echo "<h2>Respuesta listpops</h2>";
+					$emails = $this->plesk->listpops($plan['domain']);
+					echo "<pre>" . print_r($emails, true) . "</pre>";
+				} else {
+					echo "<p>Este servidor no es Plesk. Panel type: " . $panel_type . "</p>";
+				}
+			} else {
+				echo "<p>No se encontró el plan con ID: " . $id . "</p>";
+			}
+		}
+		else
+		{
+			redirect(base_url('user/login'));
+		}
+	}
+	
+	/**
+	 * Obtiene el contenido de un template desde una URL externa
+	 * 
+	 * @param string $url URL opcional, por defecto obtiene el template de tickets
+	 * @return void
+	 */
+	public function get_template_content($url = '')
+	{
+		if ($this->is_logged_in('admin'))
+		{
+			// Si no se proporciona URL, usar la de tickets por defecto
+			if (empty($url)) {
+				$url = 'https://cms.revisionalpha.com/templates/502/comunicaciones/tickets.php';
+			}
+			
+			// Cargar la biblioteca cURL
+			$this->load->library('curl');
+			
+			// Obtener el contenido del template
+			$content = $this->curl->simple_get($url);
+			
+			// Mostrar el contenido del template
+			echo '<h2>Contenido del Template</h2>';
+			echo '<pre>' . htmlspecialchars($content) . '</pre>';
+			
+			// Mostrar el contenido sin formato para copiar/pegar
+			echo '<h2>Contenido Raw (para copiar)</h2>';
+			echo '<textarea style="width:100%; height:300px;">' . $content . '</textarea>';
+		}
+		else
+		{
+			redirect(base_url('user/login'));
+		}
 	}
 	
 

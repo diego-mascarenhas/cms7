@@ -12,16 +12,78 @@
 	                    </li>
 	                </ol>
 	            </div>
+	            <div class="col-xs-4 col-sm-4 col-md-6 col-lg-6">
+                    <div class="title-action">
+                        <a href="<?php echo base_url('administracion/facturas/?estado=2&pendiente=true&operacion=c'); ?>" class="btn btn-danger btn-sm">Pendientes de Compra</a>
+                        <a href="<?php echo base_url('administracion/facturas/?estado=2&pendiente=true&operacion=v'); ?>" class="btn btn-success btn-sm">Pendientes de Venta</a>
+                        <a href="<?php echo base_url('administracion/facturas/?estado=1'); ?>" class="btn btn-warning btn-sm">Sin imprimir</a>
+                        <a href="<?php echo base_url('administracion/facturas/?estado=8'); ?>" class="btn btn-info btn-sm">Nuevas facturas</a>
+                        <a href="<?php echo base_url('administracion/facturas/?estado=3'); ?>" class="btn btn-default btn-sm">Facturas anuladas</a>
+                    </div>
+                </div>
 	        </div>
 			
 			<div class="wrapper wrapper-content animated fadeInRight">
-				<div class="alert alert-info">
-					<a href="<?php echo base_url('administracion/facturas/?estado=2&pendiente=true&operacion=c'); ?>">Pendientes de Compra</a> | 
-					<a href="<?php echo base_url('administracion/facturas/?estado=2&pendiente=true&operacion=v'); ?>">Pendientes de Venta</a> |
-					<a href="<?php echo base_url('administracion/facturas/?estado=1'); ?>">Sin imprimir</a> | 
-					<a href="<?php echo base_url('administracion/facturas/?estado=7'); ?>">Con error</a> | 
-					<a href="<?php echo base_url('administracion/facturas/?estado=4'); ?>">Notas de crédito</a>
+				<!-- Totales de facturación -->
+				<div class="row">
+					<div class="col-lg-3">
+						<div class="widget style1 blue-bg">
+							<div class="row">
+								<div class="col-xs-4">
+									<i class="fa fa-money fa-4x"></i>
+								</div>
+								<div class="col-xs-8 text-right">
+									<span>Total facturado (Ventas)</span>
+									<h2 class="font-bold">ARS $<?php echo number_format(isset($totales['total_ventas']) ? $totales['total_ventas'] : 0, 0, ',', '.'); ?></h2>
+									<small>Mes anterior: ARS $<?php echo number_format(isset($totales['total_ventas_anterior']) ? $totales['total_ventas_anterior'] : 0, 0, ',', '.'); ?></small>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-3">
+						<div class="widget style1 red-bg">
+							<div class="row">
+								<div class="col-xs-4">
+									<i class="fa fa-shopping-cart fa-4x"></i>
+								</div>
+								<div class="col-xs-8 text-right">
+									<span>Total facturado (Compras)</span>
+									<h2 class="font-bold">ARS $<?php echo number_format(isset($totales['total_compras']) ? $totales['total_compras'] : 0, 0, ',', '.'); ?></h2>
+									<small>Mes anterior: ARS $<?php echo number_format(isset($totales['total_compras_anterior']) ? $totales['total_compras_anterior'] : 0, 0, ',', '.'); ?></small>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-3">
+						<div class="widget style1 lazur-bg">
+							<div class="row">
+								<div class="col-xs-4">
+									<i class="fa fa-credit-card fa-4x"></i>
+								</div>
+								<div class="col-xs-8 text-right">
+									<span>Pagos recibidos</span>
+									<h2 class="font-bold">ARS $<?php echo number_format(isset($totales['pagos_recibidos']) ? $totales['pagos_recibidos'] : 0, 0, ',', '.'); ?></h2>
+									<small>Mes anterior: ARS $<?php echo number_format(isset($totales['pagos_recibidos_anterior']) ? $totales['pagos_recibidos_anterior'] : 0, 0, ',', '.'); ?></small>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-3">
+						<div class="widget style1 yellow-bg">
+							<div class="row">
+								<div class="col-xs-4">
+									<i class="fa fa-money fa-4x"></i>
+								</div>
+								<div class="col-xs-8 text-right">
+									<span>Pagos realizados</span>
+									<h2 class="font-bold">ARS $<?php echo number_format(isset($totales['pagos_realizados']) ? $totales['pagos_realizados'] : 0, 0, ',', '.'); ?></h2>
+									<small>Mes anterior: ARS $<?php echo number_format(isset($totales['pagos_realizados_anterior']) ? $totales['pagos_realizados_anterior'] : 0, 0, ',', '.'); ?></small>
+								</div>
+							</div>
+						</div>
+					</div>
 				</div>
+				
 	            <div class="row">
 	                <div class="col-lg-12">
 	                    <div class="ibox float-e-margins">
@@ -43,7 +105,7 @@
 		                                    <tr>
 			                                    <td>
 				                                    <a href="<?php echo base_url('administracion/facturas/detalle/'); ?><?php echo $factura['id']; ?>"><?php echo $factura['comprobante']; ?></a>
-			                                    	<?php echo formatear_fecha($factura['fecha'], 'd-m-Y', '<br><small>%s</small>', $this->usuario->timezone); ?>
+			                                    	<br><small><?php echo date('d-m-Y', strtotime($factura['fecha_real'])); ?></small>
 			                                    	</td>
 		                                        <td>
 			                                        <a href="<?php echo base_url('administracion/empresas/detalle/'); ?><?php echo $factura['id_empresa']; ?>"><?php echo $factura['empresa']; ?></a>
@@ -56,19 +118,30 @@
 			                                        <small><?php echo $factura['simbolo']; ?><?php echo $factura['saldo']; ?></small>
 		                                        </td>
 		                                        <td class="text-center">
-			                                        <?php echo formatear_fecha($factura['vencimiento'], 'd-m-Y', null, $this->usuario->timezone); ?>
+			                                        <?php 
+			                                        if (!empty($factura['vencimiento_real'])) {
+			                                            echo date('d-m-Y', strtotime($factura['vencimiento_real']));
+			                                        }
+			                                        ?>
 			                                        <?php
 			                                        	if (isset($factura['recibido']))
 			                                        	{
-				                                        	echo formatear_fecha($factura['recibido'], 'd-m-Y', '<br><small><em>(Recibida: %s)</em></small>', $this->usuario->timezone, null);
+				                                        	echo date('d-m-Y', $factura['recibido']);
+				                                        	echo '<br><small><em>(Recibida)</em></small>';
 				                                        }
 				                                        elseif (isset($factura['enviado']))
 				                                        {
-					                                        echo formatear_fecha($factura['enviado'], 'd-m-Y', '<br><small><em>(Enviada: %s)</em></small>', $this->usuario->timezone, null);
+					                                        echo date('d-m-Y', $factura['enviado']);
+					                                        echo '<br><small><em>(Enviada)</em></small>';
 				                                        }
 					                                ?>
 			                                    </td>
-		                                        <td class="text-center"><span class="label <?php echo $factura['estado_ui_class']; ?>"><?php echo $factura['estado']; ?></span></td>
+		                                        <td class="text-center">
+		                                            <span class="label <?php echo $factura['estado_ui_class']; ?>"><?php echo $factura['estado']; ?></span>
+		                                            <?php if ($factura['estado'] == 'Imprimir'): ?>
+		                                            <a href="<?php echo base_url('administracion/facturas/marcar_como_anulada/'); ?><?php echo $factura['id']; ?>" class="btn btn-xs btn-danger m-l-xs"><i class="fa fa-ban"></i> Anular</a>
+		                                            <?php endif; ?>
+		                                        </td>
 		                                    </tr>
 											<? } ?>
 	                                    </tbody>

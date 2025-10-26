@@ -19,7 +19,9 @@
                     <h3 class="font-bold"><?php echo $this->lang->line('cms_users-sin-tickets'); ?></h3>
                     <div class="error-desc">
                         <?php echo $this->lang->line('cms_users-sin-tickets-info'); ?>
-                        <br/><a href="<?php echo base_url('tickets/ingresar'); ?>" class="btn btn-primary m-t"><?php echo $this->lang->line('cms_users-create-ticket'); ?></a>
+                        <br/>
+						<!-- <a href="https://wa.me/12202137800" class="btn btn-primary m-t"><?php echo $this->lang->line('cms_users-create-ticket'); ?></a> -->
+						<a href="<?php echo base_url('tickets/ingresar/'); ?>" class="btn btn-primary m-t"><?php echo $this->lang->line('cms_users-crear-ticket'); ?></a>
                     </div>
                 </div>
             </div>

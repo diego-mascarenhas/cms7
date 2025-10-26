@@ -20,7 +20,7 @@ class Configuracion_model extends CI_Model {
 		return ($res);
 	}
 
-	public function detalleConfiguracionDos()
+	public function detalleConfiguracionDos($id = null)
 	{
 		$sql = "SELECT con_configuracion.*";
 		$sql .= " FROM con_configuracion";
@@ -42,6 +42,12 @@ class Configuracion_model extends CI_Model {
 			$res['error'] = 'Este perfil no cuenta con los privilegios necesarios';
 		}
 							
+		if (!empty($id))
+		{
+			$sql .= " AND con_configuracion.id = ?"; 
+			$placeholders[] = $id;
+		}
+		
 		// consulta
 		$query = $this->db->query($sql, $placeholders);
 		
@@ -51,6 +57,42 @@ class Configuracion_model extends CI_Model {
 		}
 		return (!empty($res)) ? $res : null;
 	}
+
+	public function getIdiomasAdicionales($id)
+	{
+		$sql = "SELECT con_configuracion.*";
+		$sql .= " FROM con_configuracion";
+		$sql .= " WHERE con_configuracion.grupo = ?";
+		$placeholders[] = $this->usuario->grupo;
+		
+		// permisos
+		if ($this->usuario->perfil == 'reseller')
+		{
+			$res['error'] = 'El perfil reseller no puede acceder al módulo de contenidos. Ingresá con un perfil de administrador.';
+		}
+		elseif ($this->usuario->perfil == 'admin')
+		{
+			$sql .= " AND con_configuracion.id_empresa = ?"; 
+			$placeholders[] = $this->usuario->id_empresa;
+		}
+		else
+		{
+			$res['error'] = 'Este perfil no cuenta con los privilegios necesarios';
+		}
+		$sql .= " AND con_configuracion.padre = ?"; 
+		$placeholders[] = $id;
+							
+		// consulta
+		$query = $this->db->query($sql, $placeholders);
+		
+		if (!isset($res['error']) && $query)
+		{
+			$res = $query->result_array();
+		}
+		return (!empty($res)) ? $res : null;
+	}
+
+
 
 	public function ingresarContenido($id)
 	{
@@ -62,6 +104,7 @@ class Configuracion_model extends CI_Model {
 		$datos['direccion'] = $this->input->post('direccion');
 		$datos['localidad'] = $this->input->post('localidad');
 		$datos['telefonos'] = $this->input->post('telefonos');
+		$datos['telefono2'] = $this->input->post('telefono2');
 		$datos['email'] = trim($this->input->post('email'));
 		$datos['web'] = trim($this->input->post('web'));
 		$datos['facebook'] = trim($this->input->post('facebook'));
@@ -69,6 +112,7 @@ class Configuracion_model extends CI_Model {
 		$datos['instagram'] = trim($this->input->post('instagram'));
 		$datos['youtube'] = trim($this->input->post('youtube'));
 		$datos['linkedin'] = trim($this->input->post('linkedin'));
+		$datos['spotify'] = trim($this->input->post('spotify'));
 		$datos['analytics'] = trim($this->input->post('analytics'));
 		$datos['keywords'] = $this->input->post('keywords');
 		$datos['descripcion'] = $this->input->post('descripcion');
@@ -115,7 +159,7 @@ class Configuracion_model extends CI_Model {
 		$image_path = './multimedia/'.$this->usuario->grupo.'/'.$this->usuario->id_empresa.'/';
 	    $config['upload_path'] = $image_path;
 	    $config['file_name'] = $archivo;
-	    $config['allowed_types'] = 'gif|jpg|png|jpeg';
+	    $config['allowed_types'] = 'gif|jpg|png|jpeg|svg';
 	    $config['max_size']= 1000;
 	    $config['max_width']= 2024;
 	    $config['max_height']= 1768;
@@ -145,7 +189,7 @@ class Configuracion_model extends CI_Model {
 		$image_path = './multimedia/'.$this->usuario->grupo.'/'.$this->usuario->id_empresa.'/';
 	    $config['upload_path'] = $image_path;
 	    $config['file_name'] = $archivo;
-	    $config['allowed_types'] = 'gif|jpg|png|jpeg';
+	    $config['allowed_types'] = 'gif|jpg|png|jpeg|svg';
 	    $config['max_size']= 1000;
 	    $config['max_width']= 2024;
 	    $config['max_height']= 1768;
@@ -175,7 +219,7 @@ class Configuracion_model extends CI_Model {
 		$image_path = './multimedia/'.$this->usuario->grupo.'/'.$this->usuario->id_empresa.'/';
 	    $config['upload_path'] = $image_path;
 	    $config['file_name'] = $archivo;
-	    $config['allowed_types'] = 'gif|jpg|png|jpeg';
+	    $config['allowed_types'] = 'gif|jpg|png|jpeg|svg';
 	    $config['max_size']= 1000;
 	    $config['max_width']= 2024;
 	    $config['max_height']= 1768;
@@ -205,7 +249,7 @@ class Configuracion_model extends CI_Model {
 		$image_path = './multimedia/'.$this->usuario->grupo.'/'.$this->usuario->id_empresa.'/';
 	    $config['upload_path'] = $image_path;
 	    $config['file_name'] = $archivo;
-	    $config['allowed_types'] = 'gif|jpg|png|jpeg';
+	    $config['allowed_types'] = 'gif|jpg|png|jpeg|svg';
 	    $config['max_size']= 1000;
 	    $config['max_width']= 2024;
 	    $config['max_height']= 1768;

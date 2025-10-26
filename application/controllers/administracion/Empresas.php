@@ -19,7 +19,7 @@ class Empresas extends MY_Controller {
 			$parametros['page'] = $this->input->get('page');
 			$parametros['search'] = $this->input->get('search');
 			
-			if ($this->input->get('estado')) $parametros['estado'] = $this->input->get('estado');
+			if (!$this->input->get('search')) $parametros['estado'] = ($this->input->get('estado')) ? $this->input->get('estado') : 2;
 
 			
 			$data['empresas'] = $this->empresa_model->getEmpresas($parametros);

@@ -74,11 +74,24 @@
                     
 						 	<div class="form-group">
 			                    <label class="text-right col-sm-2 control-label">Vencimiento</label>
-								<div class="col-sm-4 col-md-3">
+								<div class="col-sm-4 col-md-4">
 	                                <div class="input-group date dia">
 	                                	<span class="input-group-addon"><i class="fa fa-calendar"></i></span><input type="text" class="form-control" name="fecha_vencimiento" value="<?php if(isset($item['fecha_vencimiento'])) { $date = date_create($item['fecha_vencimiento']); echo date_format($date, 'd-m-Y'); } ?>">
 	                            	</div>
 	                            </div>	                 	
+	                            <label class="col-sm-2 control-label">Aplica en oferta</label>
+	                            <div class="col-sm-4">
+		                            <div>
+		                            <div class="radio radio-inline">
+	                                	<input type="radio" name="aplica_oferta" value="1" <?php if ((!isset($item['aplica_oferta'])) || (isset($item['aplica_oferta']) && $item['aplica_oferta'] == '1')) echo 'checked="checked"'; ?>> <label> Sí </label>
+		                            </div>
+		                            <div class="radio radio-inline">
+                                    	<input type="radio" name="aplica_oferta" value="0" <?php if (isset($item['aplica_oferta']) && $item['aplica_oferta'] == '0') echo 'checked="checked"'; ?>><label> No </label>
+		                            </div>
+		                            </div>
+		                            <p class="m-t-md"><em>Si seleccionás <b>Sí</b>, el cupón se aplicará en todos los productos, incluso en aquellos que estén en oferta. Si seleccionás <b>No</b>, el cupón se aplicará sólo en aquellos productos que no estén en oferta.</em></p>
+
+	                            </div>
                             </div>
                             		                            
                             <div class="form-group m-t-lg">

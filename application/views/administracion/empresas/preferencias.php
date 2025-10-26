@@ -47,10 +47,6 @@
 		                                <div class="col-sm-4">
 			                                <?php echo form_dropdown('id_contacto', $contactos, (isset($detalle['id_contacto'])) ? $detalle['id_contacto'] : null, 'class="form-control m-b"'); ?>
 			                            </div>
-		                            </div>
-		                            <div class="hr-line-dashed"></div>
-		                            
-		                            <div class="form-group">
 			                            <label class="col-sm-2 control-label">Tipo de factura</label>
 			                            <div class="col-sm-4">
 			                                <?php echo form_dropdown('id_factura_tipo', $facturas_tipo, (isset($detalle['id_factura_tipo'])) ? $detalle['id_factura_tipo'] : null, 'class="form-control m-b"'); ?>
@@ -65,7 +61,7 @@
 			                            </div>
 			                            <label class="col-sm-2 control-label">Código</label>
 		                                <div class="col-sm-4">
-			                                <input type="text" name="codigo" class="form-control" value="<?php echo (isset($detalle['codigo'])) ? $detalle['codigo'] : null; ?>">
+			                                <input type="text" name="codigo" class="form-control" value="<?php echo (isset($detalle['codigo']) && $detalle['codigo']) ? $detalle['codigo'] : str_pad($detalle['id'], 14, '0', STR_PAD_LEFT); ?>">
 			                            </div>
 		                            </div>
 		                            <div class="hr-line-dashed"></div>

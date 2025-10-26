@@ -42,11 +42,15 @@
 								
 	                            <?php echo form_open(null, array('class'=>'form-horizontal')); ?>
 	                            	<input type="hidden" name="id" value="<?php echo (!empty($detalle['id'])) ? $detalle['id'] : null; ?>">
-	                            	<input type="hidden" name="id_empresa" value="<?php echo (isset($detalle['id_empresa'])) ? $detalle['id_empresa'] : null; ?>">
+	                            	<input type="hidden" name="id_empresa" value="<?php echo (isset($detalle['id_empresa'])) ? $detalle['id_empresa'] : (isset($_GET['id_empresa']) ? $_GET['id_empresa'] : null); ?>">
 		                            <div class="form-group">
 			                            <label class="col-sm-2 control-label">Titular</label>
-		                                <div class="col-sm-10">
+			                            <div class="col-sm-4">
 			                                <input type="text" class="form-control" name="titular" value="<?php echo (isset($detalle['titular'])) ? $detalle['titular'] : null; ?>">
+			                            </div>
+			                            <label class="col-sm-2 control-label">Número de cuenta</label>
+			                            <div class="col-sm-4">
+				                            <input type="text" class="form-control" name="numero_cuenta" value="<?php echo (isset($detalle['numero_cuenta'])) ? $detalle['numero_cuenta'] : null; ?>">
 			                            </div>
 		                            </div>
 		                            <div class="hr-line-dashed"></div>
@@ -57,7 +61,7 @@
 			                                <?php echo form_dropdown('id_documento_tipo', $documentos_tipo, (isset($detalle['id_documento_tipo'])) ? $detalle['id_documento_tipo'] : null, 'class="form-control m-b"'); ?>
 			                            </div>
 			                            <div class="col-sm-8">
-				                            <input type="text" class="form-control" name="numero_documento" value="<?php echo (isset($detalle['numero_documento'])) ? $detalle['numero_documento'] : null; ?>">
+				                            <input type="text" class="form-control" name="numero_documento" value="<?php echo (isset($detalle['documento'])) ? $detalle['documento'] : null; ?>">
 			                            </div>
 		                            </div>
 		                            <div class="hr-line-dashed"></div>

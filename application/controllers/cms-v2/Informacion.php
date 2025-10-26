@@ -18,18 +18,13 @@ class Informacion extends MY_Controller {
 			$data['configuracion'] = $this->Configuracion_model->detalleConfiguracion($this->usuario->id_empresa);
 			if($data['configuracion']['id'])
 			{
-				//$this->trackUri();
 				$this->config->set_item('language', $this->usuario->idioma);
-				
-				//$parametros['estado'] = 3;
 				if($this->input->get('tipo')) { $parametros['tipo'] = $this->input->get('tipo'); }
-	
 				$parametros['order_by'] = 'con_contenidos.fecha_alta';
 				$parametros['order'] = 'DESC';
-				
-				if($this->input->get('tipo')) { $data['tipo'] = $parametros['tipo']; } else { $data['tipo'] = 'todos';}
+				if($this->input->get('tipo')) { $data['tipo'] = $parametros['tipo']; } else { $data['tipo'] = 'todos'; }
 				$data['listado'] = $this->Informacion_model->getContenidos($parametros);
-			
+				
 				$this->load->view('/header', array('buscador'=>true));
 				$this->load->view('cms-v2/'.$data['configuracion']['template'].'/informacion/index', $data);
 				$this->load->view('/footer');
@@ -47,6 +42,7 @@ class Informacion extends MY_Controller {
 			redirect(base_url('/user/login/'));
 		}
 	}
+
 	//Ingresar 
 	public function ingresar($tipo = null)
 	{
@@ -56,38 +52,38 @@ class Informacion extends MY_Controller {
 			if($data['configuracion']['id'])
 			{
 				$this->config->set_item('language', $this->usuario->idioma);
-	
 				$this->load->helper('form');
 				$this->load->library('form_validation');
 				$this->load->helper('text');
-				
-				$this->form_validation->set_rules('estado', 'Etado', 'required');
+				$this->form_validation->set_rules('estado', 'Estado', 'required');
 				$this->form_validation->set_rules('destacado', 'Destacado', 'required');
 				$this->form_validation->set_rules('destacado_slide', 'Destacado en Slide', 'required');
+/*
 				$this->form_validation->set_rules('titulo_es', 'Título', 'required');
 				$this->form_validation->set_rules('url_es', 'URL', 'required');
-				
+*/
 				if ($this->form_validation->run() === false)
 				{
-					$default['estado'] = 1;
-					$default['destacado'] = 0;
-					$default['destacado_slide'] = 0;
-					$data['detalle'] = ($this->input->post()) ? $this->input->post() : $default;
-					$parametros['tipo'] = $tipo;
-					$parametros['combo'] = 1;
-	
-					$data['idiomas'] = $this->Informacion_model->getIdiomas();
-					$data['instituciones'] = $this->Informacion_model->getInstituciones(83, 'es');
-					$data['secciones'] = $this->Informacion_model->getCategorias($parametros);
-	
-					$header['css'] = array(
-										base_url('assets/css/plugins/summernote/summernote.css'),
-										base_url('assets/css/plugins/summernote/summernote-bs3.css')
-									);
-				
-					$this->load->view('header', $header);
-					$this->load->view('cms-v2/'.$data['configuracion']['template'].'/informacion/form', $data);
-					$this->load->view('footer');
+					if(($this->input->post('template')) && ($this->input->post('template') == 1 || $this->input->post('template') == 2))
+					{
+						echo validation_errors();
+					}
+					else
+					{
+						$default['estado'] = 1;
+						$default['destacado'] = 0;
+						$default['destacado_slide'] = 0;
+						$data['detalle'] = ($this->input->post()) ? $this->input->post() : $default;
+						$parametros['tipo'] = $tipo;
+						$parametros['combo'] = 1;
+						$data['idiomas'] = $this->Informacion_model->getIdiomas();
+						$data['instituciones'] = $this->Informacion_model->getInstituciones(83, 'es');
+						$data['secciones'] = $this->Informacion_model->getCategorias($parametros);
+		
+						$this->load->view('header');
+						$this->load->view('cms-v2/'.$data['configuracion']['template'].'/informacion/form', $data);
+						$this->load->view('footer');
+					}
 				}
 				else
 				{
@@ -100,30 +96,58 @@ class Informacion extends MY_Controller {
 							$extension = $idioma['extension'];
 					        if(!empty($_FILES['imagen_'.$extension]['name']))
 					        {
-								$original = $this->upload($data['id'], $_FILES['imagen_'.$extension]['name'], 'imagen_'.$extension, $extension); 
+								$original = $this->upload($data['id'], $_FILES['imagen_'.$extension]['name'], 'imagen_'.$extension, $extension, 18, $this->input->post('medidas_slides')); 
 
 								//INGRESO IMAGEN SLIDE
 								if ($this->input->post('destacado_slide') == 1)
 								{
 									$modificar = $this->Informacion_model->ingresarMedia($data['id'], $original['id'], $extension, 18);
-/* 									$this->Informacion_model->asociarMedia($original['id'], $data['slide'.$extension]); */
 								} 
 	
 							}
 	
+					        if(!empty($_FILES['imagen2_'.$extension]['name']))
+					        {
+								$original = $this->upload($data['id'], $_FILES['imagen2_'.$extension]['name'], 'imagen2_'.$extension, $extension, $this->input->post('id_tipo_imagen2'), $this->input->post('medidas_imagen2'), $this->input->post('medidas_miniatura_imagen2')); 
+							}
+
+					        if((empty($_FILES['imagen2_'.$extension]['name'])) && (!empty($this->input->post('medidas_miniatura_imagen2'))) && ($this->input->post('template') == 2))
+					        {
+								$original = $this->upload($data['id'], $_FILES['imagen_'.$extension]['name'], 'imagen_'.$extension, $extension, $this->input->post('id_tipo_imagen2'), $this->input->post('medidas_miniatura_imagen2'), $this->input->post('medidas_miniatura_imagen2')); 
+							}
+
+					        if(!empty($_FILES['imagen3_'.$extension]['name']))
+					        {
+								$original = $this->upload($data['id'], $_FILES['imagen3_'.$extension]['name'], 'imagen3_'.$extension, $extension, 20, $this->input->post('medidas_imagen3'), $this->input->post('medidas_miniatura_imagen3')); 
+							}
+
 					        if(!empty($_FILES['archivo1_'.$extension]['name']))
 					        {
-								$original = $this->upload($data['id'], $_FILES['archivo1_'.$extension]['name'], 'archivo1_'.$extension, $extension); 
+								$original = $this->upload($data['id'], $_FILES['archivo1_'.$extension]['name'], 'archivo1_'.$extension, $extension, null); 
 							}
 				        }
 	
-			            redirect(base_url('cms-v2/informacion/modificar/'.$data['id']));
+						if(($this->input->post('template')) && ($this->input->post('template') == 1 || $this->input->post('template') == 2))
+						{
+					        $this->session->set_flashdata(array('categoria' => 1, 'resultado' => 'ok', 'data' => 'La noticia fue ingresada correctamente.'));
+			            	echo 'SI';
+						}
+						else
+						{
+				            redirect(base_url('cms-v2/informacion/modificar/'.$data['id']));
+				        }
 					}
 					else
 					{
-						$data['error'] = 'Ha habido un problema, por favor intenta más tarde';
-		
-						$this->load->view('cms-v2/error/');
+						if(($this->input->post('template')) && ($this->input->post('template') == 1 || $this->input->post('template') == 2))
+						{
+							echo 'NO';
+						}
+						else
+						{
+							$data['error'] = 'Ha habido un problema, por favor intenta más tarde';
+							$this->load->view('cms-v2/error/');
+						}
 					}
 				}
 			}
@@ -142,7 +166,7 @@ class Informacion extends MY_Controller {
 	}
 
 	//Modificar 
-	public function modificar($id, $tipo = null)
+	public function modificar($id =null, $tipo = null)
 	{
 		if ($this->is_logged_in())
 		{
@@ -154,61 +178,97 @@ class Informacion extends MY_Controller {
 				$this->load->library('form_validation');
 				$this->load->helper('text');
 				
-				$this->form_validation->set_rules('estado', 'Etado', 'required');
+				$this->form_validation->set_rules('estado', 'Estado', 'required');
 				$this->form_validation->set_rules('destacado', 'Destacado', 'required');
 				$this->form_validation->set_rules('destacado_slide', 'Destacado en Slide', 'required');
 				
 				if ($this->form_validation->run() === false)
 				{
-					$data['detalle'] = ($this->input->post()) ? $this->input->post() : $this->Informacion_model->getContenidoDetalleRaw($id);
-					$data['idiomas'] = $this->Informacion_model->getIdiomas();
-					$parametros['tipo'] = $tipo;
-					$parametros['combo'] = 1;
-					$data['instituciones'] = $this->Informacion_model->getInstituciones(83, 'es');
-					$data['secciones'] = $this->Informacion_model->getCategorias($parametros);
-	
-					$header['css'] = array(
-										base_url('assets/css/plugins/summernote/summernote.css'),
-										base_url('assets/css/plugins/summernote/summernote-bs3.css')
-										);
-					
-					$this->load->view('header', $header);
-					$this->load->view('cms-v2/'.$data['configuracion']['template'].'/informacion/form', $data);
-					$this->load->view('footer');
+					if(($this->input->post('template')) && ($this->input->post('template') == 1 || $this->input->post('template') == 2))
+					{
+						echo validation_errors();
+					}
+					else
+					{
+						$data['detalle'] = ($this->input->post()) ? $this->input->post() : $this->Informacion_model->getContenidoDetalleRaw($id);
+						$data['idiomas'] = $this->Informacion_model->getIdiomas();
+						$parametros['tipo'] = $tipo;
+						$parametros['combo'] = 1;
+						$data['instituciones'] = $this->Informacion_model->getInstituciones(83, 'es');
+						$data['secciones'] = $this->Informacion_model->getCategorias($parametros);
+		
+						$this->load->view('header');
+						$this->load->view('cms-v2/'.$data['configuracion']['template'].'/informacion/form', $data);
+						$this->load->view('footer');
+					}
 				}
 				else
 				{
 					$idiomas = $this->Informacion_model->getIdiomas();
 	
-					if ($data = $this->Informacion_model->modificarInformacion($id, $this->input->post()))
+					if($id)
+					{
+						$data = $this->Informacion_model->modificarInformacion($id, $this->input->post());
+					}
+					else
+					{
+						$data = $this->Informacion_model->modificarInformacion($this->input->post('id'), $this->input->post());
+					}
+
+					if ($data)
 					{					
 				        foreach($idiomas as $idioma)
 				        {
+							if($id) { $id = $id; } else { $id = $this->input->post('id'); }
+							
 							$extension = $idioma['extension'];
 					        if(!empty($_FILES['imagen_'.$extension]['name']))
 					        {
-								$original = $this->upload($id, $_FILES['imagen_'.$extension]['name'], 'imagen_'.$extension, $extension); 
+								$original = $this->upload($id, $_FILES['imagen_'.$extension]['name'], 'imagen_'.$extension, $extension, 18, $this->input->post('medidas_slides')); 
 								//ASOCIO IMAGEN SLIDE
 								if ($this->input->post('destacado_slide') == 1)
 								{
 									$modificar = $this->Informacion_model->ingresarMedia($id, $original['id'], $extension, 18);
-									//$this->Informacion_model->asociarMedia($original['id'], $data['slide'.$extension]);
 								} 
 							}
 	
+					        if(!empty($_FILES['imagen2_'.$extension]['name']))
+					        {
+								$original = $this->upload($id, $_FILES['imagen2_'.$extension]['name'], 'imagen2_'.$extension, $extension, 19, $this->input->post('medidas_imagen2'), $this->input->post('medidas_miniatura_imagen2')); 
+							}
+
+					        if(!empty($_FILES['imagen3_'.$extension]['name']))
+					        {
+								$original = $this->upload($id, $_FILES['imagen3_'.$extension]['name'], 'imagen3_'.$extension, $extension, 20, $this->input->post('medidas_imagen3'), $this->input->post('medidas_miniatura_imagen3')); 
+							}
+
 					        if(!empty($_FILES['archivo1_'.$extension]['name']))
 					        {
-								$original = $this->upload($id, $_FILES['archivo1_'.$extension]['name'], 'archivo1_'.$extension, $extension); 
+								$original = $this->upload($id, $_FILES['archivo1_'.$extension]['name'], 'archivo1_'.$extension, $extension, null); 
 							}
 				        }
 	
-			            redirect(base_url('cms-v2/informacion/modificar/'.$id.'/'));
+						if(($this->input->post('template')) && ($this->input->post('template') == 1 || $this->input->post('template') == 2))
+						{
+					        $this->session->set_flashdata(array('noticia' => 1, 'resultado' => 'ok', 'data' => 'La noticia fue modificada correctamente.'));
+			            	echo 'SI';
+						}
+						else
+						{
+				            redirect(base_url('cms-v2/informacion/modificar/'.$id.'/'));
+				        }
 					}
 					else
 					{
-						$data['error'] = 'Ha habido un problema, por favor intenta más tarde';
-		
-						$this->load->view('cms-v2/error/');
+						if(($this->input->post('template')) && ($this->input->post('template') == 1 || $this->input->post('template') == 2))
+						{
+							echo 'NO';
+						}
+						else
+						{
+							$data['error'] = 'Ha habido un problema, por favor intenta más tarde';
+							$this->load->view('cms-v2/error/');
+						}
 					}
 				}
 			}
@@ -302,7 +362,15 @@ class Informacion extends MY_Controller {
 			{
 				if ($datos = $this->Informacion_model->eliminarItem($this->input->post(), 'con_contenidos'))
 		        {
-					redirect(base_url('cms-v2/informacion'));
+					if(($this->input->post('template')) && ($this->input->post('template') == 1 || $this->input->post('template') == 2))
+					{
+					     $this->session->set_flashdata(array('noticia' => 1, 'resultado' => 'ok', 'data' => 'La noticia fue eliminada correctamente.'));
+						redirect($this->input->post('url'));
+					}
+					else
+					{
+						redirect(base_url('cms-v2/informacion'));
+			        }
 		        }
 		        else
 		        {
@@ -327,7 +395,7 @@ class Informacion extends MY_Controller {
 	}				
 
 	//Ingresar imagen 
-	public function upload($id, $imagen, $nombre, $extension = null)
+	public function upload($id, $imagen, $nombre, $extension = null, $id_tipo = null, $medidas = null, $medidas_miniatura = null)
 	{
 		set_time_limit(0);
 		ini_set('memory_limit', -1);
@@ -363,38 +431,63 @@ class Informacion extends MY_Controller {
 			$data['id_tipo'] = $this->multimedia_model->getMediaTipoId($upload_data['file_ext']);
 			$data['nombre'] = $upload_data['orig_name'];
 			$data['archivo'] = $upload_data['file_name'];
+			$data['alto'] = $upload_data['image_height'];
+			$data['ancho'] = $upload_data['image_width'];
 			$data['peso'] = $upload_data['file_size'];
 			$data['estado'] = 2;
 			
 			//Ingreso
 			if ($data1 = $this->multimedia_model->ingresarMedia($data))
 	        {		        
+		        if ($medidas != null) { $medidas = $medidas; } else { $medidas = $data['ancho'].'x'.$data['alto']; }
+
 		        if ($this->multimedia_model->getMediaTipo($upload_data['file_ext']) == 'imagen')
 		        {
 			        //Asocio
-			        if ($id) $this->Informacion_model->asociarMedia($data1['id'], $id, $extension, 18);
+			        if ($id_tipo == 18) 
+			        {
+				        $this->Informacion_model->asociarMedia($data1['id'], $id, $extension, 18);
+				        //Sistema
+				        $thumb = $this->thumbFromImagen($upload_data['full_path'], null, '256x144');
+						$this->multimedia_model->ingresarThumb(1, $data1['id'], $thumb);
+	
+				        //Slide
+				        $thumb = $this->thumbFromImagen($upload_data['full_path'], null, $medidas);
+						$this->multimedia_model->ingresarThumb(18, $data1['id'], $thumb);
+					} 
+					else
+					{
+				        //Noticias 2 Imagen
+				        if($id_tipo == 20)
+				        {
+					        $imagen = @getimagesize($upload_data['full_path']);
+							$medidas_adicional = $imagen[0].'x'.$imagen[1];
 
-			        //Sistema
-			        $thumb = $this->thumbFromImagen($upload_data['full_path'], null, '256x144');
-					$this->multimedia_model->ingresarThumb(1, $data1['id'], $thumb);
+					        $this->Informacion_model->asociarMedia($data1['id'], $id, $extension, 20);
+							$thumb = $this->thumbFromImagen($upload_data['full_path'], null, $medidas_adicional);
+							$this->multimedia_model->ingresarThumb(20, $data1['id'], $thumb);
+						}
 
-			        //Slide
-			        $thumb = $this->thumbFromImagen($upload_data['full_path'], null, '1200x400');
-					$this->multimedia_model->ingresarThumb(18, $data1['id'], $thumb);
+				        //Noticias 1 Imagen
+						else
+				        {
+							$this->Informacion_model->asociarMedia($data1['id'], $id, $extension, 14);
+							$thumb = $this->thumbFromImagen($upload_data['full_path'], null, $medidas);
+							$this->multimedia_model->ingresarThumb(14, $data1['id'], $thumb);
 
-			        //Noticias
-					$thumb = $this->thumbFromImagen($upload_data['full_path'], null, '860x380');
-					$this->multimedia_model->ingresarThumb(14, $data1['id'], $thumb);
-					
-			        //Noticias Miniatura
-					$thumb = $this->thumbFromImagen($upload_data['full_path'], null, '380x240');
-					$this->multimedia_model->ingresarThumb(19, $data1['id'], $thumb);
+					        //Noticias Miniatura
+							$this->Informacion_model->asociarMedia($data1['id'], $id, $extension, 19);
+							$thumb = $this->thumbFromImagen($upload_data['full_path'], null, $medidas_miniatura);
+							$this->multimedia_model->ingresarThumb(19, $data1['id'], $thumb);
+						}
+					}
+
 		        }
 
 		        if($data['id_tipo'] == 9)
 		        {
 			        if ($id) $this->Informacion_model->asociarMedia($data1['id'], $id, $extension, 9);
-			        $archivo = $this->Informacion_model->ingresarArchivo($id, $data['nombre'], $nombre);
+/* 			        $archivo = $this->Informacion_model->ingresarArchivo($id, $data['nombre'], $nombre); */
 		        }
 	        }
 	        else

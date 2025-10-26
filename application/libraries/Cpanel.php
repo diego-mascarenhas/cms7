@@ -169,6 +169,7 @@ class Cpanel
 	}
 	
 	
+/*
 	function passwd($user, $valores)
 	{
 		// https://hostname.example.com:2087/cpsess##########/json-api/passwd?api.version=1&user=username&password=12345luggage&enabledigest=1
@@ -188,6 +189,7 @@ class Cpanel
 		
 		return (!empty($res)) ? $res : null;
 	}
+*/
 	
 	
 	function passwdpop($user, $valores)
@@ -359,9 +361,24 @@ class Cpanel
 		{
 			$res['error'] = $data['error'];
 		}
-		else
+		else if (isset($data['result']) && is_array($data['result']) && !empty($data['result']))
 		{
 			$res = $data['result'][0];
+		}
+		else if (isset($data['status']) && $data['status'] === 0 && isset($data['statusmsg']))
+		{
+			// Pass through the actual error message from the API
+			$res['status'] = 0;
+			$res['statusmsg'] = $data['statusmsg'];
+		}
+		else
+		{
+			// Provide a default response if 'result' is not in the expected format
+			$res['status'] = 0;
+			$res['statusmsg'] = 'Unknown response format from cPanel API';
+			if (isset($data)) {
+				$res['raw_response'] = $data;
+			}
 		}
 		
 		return (!empty($res)) ? $res : null;

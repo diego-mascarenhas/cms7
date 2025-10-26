@@ -4,7 +4,7 @@ class Informacion_model extends CI_Model {
 
 	public function getContenidos($parametros = null)
 	{
-		$sql = "SELECT con_contenidos.id, con_contenidos.id_con_secciones, con_contenidos.fecha_alta, con_contenidos.miniatura, con_contenidos.filtro1, con_contenidos.destacado, con_contenidos.estado as id_estado, con_contenido_items.titulo,  con_contenido_items.contenido1, con_contenido_items.url, con_contenidos.imagen, con_contenidos.orden, con_secciones.seccion, con_secciones_tipo.tipo,
+		$sql = "SELECT con_contenidos.id, con_contenidos.id_con_secciones, con_contenidos.fecha_alta, con_contenidos.miniatura, con_contenidos.color, con_contenidos.filtro1, con_contenidos.destacado, con_contenidos.estado as id_estado, con_contenido_items.titulo, con_contenido_items.subtitulo, con_contenido_items.contenido1, con_contenido_items.contenido2, con_contenido_items.url, con_contenidos.imagen, con_contenidos.orden, con_secciones.seccion, con_secciones_tipo.tipo,
 					CASE
 						WHEN con_contenidos.estado = 3 THEN 'label-primary'
 						WHEN con_contenidos.estado = 1 THEN 'label-danger'
@@ -13,7 +13,7 @@ class Informacion_model extends CI_Model {
 					CASE
 						WHEN con_contenidos.estado = 3 THEN 'Publicada'
 						WHEN con_contenidos.estado = 1 THEN 'Borrador'
-					END AS estado, con_contenidos.orden,media.id as id_media, (SELECT media_thumbs.archivo FROM media_thumbs WHERE media_thumbs.referencia = media.id AND media_thumbs.id_tipo = 19 LIMIT 1) AS imagen";
+					END AS estado, con_contenidos.orden,media.id as id_media, (SELECT media_thumbs.archivo FROM media_thumbs WHERE media_thumbs.referencia = media.id AND (media_thumbs.id_tipo = 19  || media_thumbs.id_tipo = 18) LIMIT 1) AS imagen";
 		$sql .= " FROM con_contenidos";
 		$sql .= " LEFT JOIN con_contenido_items ON con_contenido_items.id_contenido = con_contenidos.id";
 		$sql .= " LEFT JOIN con_secciones ON con_secciones.id = con_contenidos.id_con_secciones";
@@ -76,10 +76,22 @@ class Informacion_model extends CI_Model {
 				$sql .= " AND con_contenido_items.idioma = 'es'";
 			}
 
-		$sql .= " AND con_rel_contenidos_media.id_media = id_media";
-		$sql .= " AND con_rel_contenidos_media.idioma = 'es'";
+			if ( (!empty($parametros['tipo'])) && ($parametros['tipo'] != 10))
+			{
+				$sql .= " AND (con_rel_contenidos_media.id_tipo = 19  || con_rel_contenidos_media.id_tipo = 18)";
+				$sql .= " AND con_rel_contenidos_media.id_media = id_media";
+				if ( (!empty($parametros['template'])) && ($parametros['template'] == 2))
+				{
+					$sql .= " AND con_rel_contenidos_media.idioma = '".$parametros['idioma']."'";
+				}
+				else
+				{
+					$sql .= " AND con_rel_contenidos_media.idioma = 'es'";
+				}
+			}
 		
 			// orden
+			$sql .= " GROUP BY con_contenidos.id";
 			$sql .= " ORDER BY";
 			$sql .= (!empty($parametros['order_by'])) ? " " . $parametros['order_by'] : " con_contenidos.fecha_alta";
 			$sql .= (!empty($parametros['order'])) ? " " . $parametros['order'] : " DESC";
@@ -161,15 +173,17 @@ class Informacion_model extends CI_Model {
 	{
 		if($parametros['tipo'] == 9)
 		{
-			$sql = "SELECT con_contenido_items.id,con_contenidos.id as id_contenido, con_contenidos.id_tipo, con_contenidos.fecha_alta, con_contenidos.miniatura, con_contenidos.filtro1, con_contenidos.estado, con_contenido_items.titulo, con_contenido_items.contenido1, con_contenido_items.imagen as miembro, con_contenido_items.url, con_contenidos.orden,media.id as id_media, (SELECT media_thumbs.archivo FROM media_thumbs WHERE media_thumbs.referencia = media.id AND media_thumbs.id_tipo = 19 LIMIT 1) AS imagen";
+			$sql = "SELECT con_contenido_items.id,con_contenidos.id as id_contenido, con_contenidos.color, con_contenidos.id_con_secciones, con_contenidos.fecha_alta as fecha_alta_inicial, con_contenidos.id_tipo, con_secciones.seccion, con_secciones.descripcion, con_contenido_items.subtitulo, con_contenido_items.texto_adicional, con_contenido_items.contenido2, con_contenido_items.fecha_alta, con_contenidos.miniatura, con_contenidos.filtro1, con_contenidos.estado, con_contenido_items.titulo, con_contenido_items.contenido1, con_contenido_items.url, con_contenidos.orden,media.id as id_media, (SELECT media_thumbs.archivo FROM media_thumbs WHERE media_thumbs.referencia = media.id AND (media_thumbs.id_tipo = 19 || media_thumbs.id_tipo = 18) LIMIT 1) AS imagen, con_contenido_items_adicionales.imagen as miembro";
 		}
 		else 
 		{
-			$sql = "SELECT con_contenido_items.id,con_contenidos.id as id_contenido, con_contenidos.id_tipo, con_contenidos.fecha_alta, con_contenidos.miniatura, con_contenidos.filtro1, con_contenidos.estado, con_contenido_items.titulo,  con_contenido_items.contenido1, media.id as id_media, (SELECT media.archivo FROM media WHERE media.id = id_media AND media.id_tipo = 9 LIMIT 1) AS archivo1";
+			$sql = "SELECT con_contenido_items.id,con_contenidos.id as id_contenido, con_contenidos.id_tipo, con_contenido_items.fecha_alta, con_contenidos.miniatura, con_contenidos.filtro1, con_contenidos.estado, con_contenido_items.titulo,  con_contenido_items.contenido1, media.id as id_media, (SELECT media.archivo FROM media WHERE media.id = id_media AND media.id_tipo = 9 LIMIT 1) AS archivo1";
 		}
 
 			$sql .= " FROM con_contenido_items";
 			$sql .= " LEFT JOIN con_contenidos ON con_contenidos.id = con_contenido_items.id_contenido";
+			$sql .= " LEFT JOIN con_contenido_items_adicionales ON con_contenido_items_adicionales.id = con_contenidos.filtro1";
+			$sql .= " LEFT JOIN con_secciones ON con_secciones.id = con_contenidos.id_con_secciones";
 			$sql .= " LEFT JOIN con_rel_contenidos_media ON con_rel_contenidos_media.id_contenido = con_contenidos.id";
 			$sql .= " LEFT JOIN media ON media.id = con_rel_contenidos_media.id_media";
 			$sql .= " WHERE con_contenidos.grupo = ?";
@@ -216,14 +230,34 @@ class Informacion_model extends CI_Model {
 		if (!empty($parametros['destacado']))
 		{
 			$sql .= " AND con_contenidos.destacado = ?";
+			$sql .= " AND con_rel_contenidos_media.id_tipo = 19";
 			$placeholders[] = $parametros['destacado'];
-			$sql .= " ORDER BY con_contenidos.orden DESC, con_contenidos.fecha_alta DESC LIMIT 40";
+			$sql .= " ORDER BY con_contenidos.fecha_alta DESC, con_contenidos.orden DESC";
 		}
 		else
 		{
-			$sql .= " ORDER BY con_contenidos.orden ASC, con_contenidos.fecha_alta ASC LIMIT 40";
+			$sql .= " GROUP BY con_contenido_items.id";
+			$sql .= " ORDER BY con_contenidos.orden ASC, con_contenidos.fecha_alta ASC";
+		}
+		
+		//LIMITS
+		if (!empty($parametros['start']))
+		{
+			$limit = $parametros['limit'];
+			$start = $parametros['start'];
+			$sql .= " LIMIT $start,$limit";
+		}
+		elseif (!empty($parametros['limit']) && empty($parametros['start']))
+		{
+			$limit = $parametros['limit'];
+			$sql .= " LIMIT 0, $limit";
+		}
+		else
+		{
+			$sql .= " LIMIT 20";
 
 		}
+
 		// consulta
 		$query = $this->db->query($sql, $placeholders);
 
@@ -290,7 +324,7 @@ class Informacion_model extends CI_Model {
 		}
 		else
 		{	
-			$sql .= " ORDER BY con_contenidos.id D LIMIT 10";
+			$sql .= " ORDER BY con_contenidos.id DESC LIMIT 10";
 		}
 		
 
@@ -306,11 +340,12 @@ class Informacion_model extends CI_Model {
 
 	public function getDetallePublic($idioma, $url)
 	{
-		$sql = "SELECT con_contenido_items.titulo, con_contenido_items.contenido1, seo_titulo, seo_keywords, seo_descripcion, archivo1, media.id as id_media, (SELECT media_thumbs.archivo FROM media_thumbs WHERE media_thumbs.referencia = media.id AND media_thumbs.id_tipo = 14 LIMIT 1) AS imagen";
+		$sql = "SELECT con_contenidos.id_con_secciones, con_contenidos.color, con_contenido_items.id_contenido, con_contenido_items.url, con_contenido_items.titulo, con_contenido_items.subtitulo, con_contenido_items.texto_adicional, con_contenidos.fecha_alta, con_contenido_items.contenido1, con_contenido_items.contenido2, con_contenido_items.seo_titulo, con_contenido_items.seo_keywords, con_contenido_items.seo_descripcion, con_contenido_items.archivo1, media.id as id_media, (SELECT media_thumbs.archivo FROM media_thumbs WHERE media_thumbs.referencia = media.id AND media_thumbs.id_tipo = 14 LIMIT 1) AS imagen";
 		$sql .= " FROM con_contenido_items";
 		$sql .= " LEFT JOIN con_contenidos ON con_contenidos.id = con_contenido_items.id_contenido";
 		$sql .= " LEFT JOIN con_rel_contenidos_media ON con_rel_contenidos_media.id_contenido = con_contenidos.id";
 		$sql .= " LEFT JOIN media ON media.id = con_rel_contenidos_media.id_media";
+		$sql .= " LEFT JOIN media_thumbs ON media_thumbs.referencia = media.id";
 		$sql .= " WHERE con_contenidos.grupo = ?";
 
 		// permisos
@@ -339,6 +374,7 @@ class Informacion_model extends CI_Model {
 		$sql .= " AND con_contenido_items.url = '$url'";
 		$sql .= " AND con_contenidos.estado = 3";
 		$sql .= " AND con_rel_contenidos_media.id_media = id_media";
+		$sql .= " AND media_thumbs.id_tipo = 14 LIMIT 1";
 		if (!isset($res['error']))
 		{
 			// consulta
@@ -350,6 +386,24 @@ class Informacion_model extends CI_Model {
 		{
 			$res = $query->row_array();
 		}
+
+		//CORREGIR ID_TIPO EN TABLA REL Y LUEGO CAMBIAR POR ESTO
+/*
+		SELECT con_contenido_items.id_contenido, con_contenido_items.url, con_contenido_items.titulo, con_contenido_items.fecha_alta, con_contenido_items.contenido1, media.id as id_media, (SELECT media_thumbs.archivo FROM media_thumbs WHERE media_thumbs.referencia = media.id AND media_thumbs.id_tipo = 14 LIMIT 1) AS imagen
+ FROM con_contenido_items
+ LEFT JOIN con_contenidos ON con_contenidos.id = con_contenido_items.id_contenido
+ LEFT JOIN con_rel_contenidos_media ON con_rel_contenidos_media.id_contenido = con_contenidos.id
+ LEFT JOIN media ON media.id = con_rel_contenidos_media.id_media
+   WHERE con_contenidos.grupo = 502
+ AND con_contenidos.id_empresa = 7437
+AND con_contenido_items.idioma = 'es'
+AND con_rel_contenidos_media.idioma = 'es'
+ AND con_contenido_items.url = '$url'
+ AND con_contenidos.estado = 3
+AND con_rel_contenidos_media.id_media = id_media
+AND con_rel_contenidos_media.id_tipo = 14
+*/
+
 
 		return (!empty($res)) ? $res : null;
 	}
@@ -456,7 +510,7 @@ class Informacion_model extends CI_Model {
 		{
 			$padre[$valor['id']] = $valor['contenido1'];
 		}
-		return ($padre);
+		return (!empty($padre)) ? $padre : null;
 
 		return (!empty($res)) ? $res : null;
 	}
@@ -551,14 +605,60 @@ class Informacion_model extends CI_Model {
 
 	}
 	
-	public function getMedia($id, $idioma)
+	//COMBO 
+	public function comboCategorias($parametros = null)
+	{
+		$sql = "SELECT con_secciones.*, con_secciones_tipo.tipo as padre FROM con_secciones";
+		$sql .= " LEFT JOIN con_secciones_tipo ON con_secciones_tipo.id = con_secciones.id_secciones_tipo";
+		$sql .= " WHERE con_secciones.grupo = ? AND con_secciones.id_empresa = ?";
+		$placeholders[] = $this->usuario->grupo;
+		$placeholders[] = $this->usuario->id_empresa;
+
+		if (!empty($parametros['idioma']))
+		{
+			$sql .= " AND con_secciones.idioma = ?";
+			$placeholders[] = $parametros['idioma'];
+		}
+
+		if (!empty($parametros['tipo']))
+		{
+			$sql .= " AND con_secciones.id_secciones_tipo = ?";
+			$placeholders[] = $parametros['tipo'];
+		}
+		else
+		{
+			$sql .= " AND (con_secciones.id_secciones_tipo = 9 || con_secciones.id_secciones_tipo = 10)";
+		}
+		$sql .= " AND con_secciones.estado > 0";
+
+		$query = $this->db->query($sql, $placeholders);
+		$res = $query->result_array();
+
+		if (!empty($res))
+		{
+			$padre[0] = '--------';
+			foreach ($res as $obj => $valor)
+			{
+				$padre[$valor['id']] = $valor['seccion'];
+			}
+		}
+		else
+		{
+			$padre[0] = '--------';
+		}
+		
+		return (!empty($padre)) ? $padre : null;
+	}
+	
+	public function getMedia($id, $idioma, $id_tipo, $estado = null)
 	{
 		$sql = "SELECT media_thumbs.archivo FROM media_thumbs";
 		$sql .= " LEFT JOIN media ON media.id = media_thumbs.referencia";
 		$sql .= " LEFT JOIN con_rel_contenidos_media ON con_rel_contenidos_media.id_media = media.id";
 		$sql .= " WHERE con_rel_contenidos_media.id_contenido = $id";
-		$sql .= " AND media_thumbs.id_tipo = 18";
+		$sql .= " AND media_thumbs.id_tipo = $id_tipo";
 		$sql .= " AND con_rel_contenidos_media.idioma = '".$idioma."'";
+		if($estado == 3) { $sql .= " AND media.estado > 1"; }
 		$sql .= " ORDER BY con_rel_contenidos_media.id ASC";
 
 		$query = $this->db->query($sql);
@@ -594,10 +694,40 @@ class Informacion_model extends CI_Model {
 		$data['id_empresa'] = $this->usuario->id_empresa;
 		$data['id_tipo'] = $id_tipo['id_secciones_tipo'];
 		$data['id_con_secciones'] = $valores['id_con_secciones'];
-		$data['filtro1'] = $valores['filtro1'];
-		$data['orden'] = $valores['orden'];
-		$data['destacado'] = $valores['destacado'];
-		$data['destacado_slide'] = $valores['destacado_slide'];
+		if(isset($valores['filtro1'])) { $data['filtro1'] = $valores['filtro1']; }
+
+		//TRAIGO ORDEN ULTIMO
+		if(!empty($valores['orden'])) 
+		{ 
+			$data['orden'] = $valores['orden']; 
+		}
+		else
+		{
+			$sql = "SELECT id, orden";
+			$sql .= " FROM con_contenidos";
+			$sql .= " WHERE grupo = ? AND id_empresa = ? AND id_tipo = ?";
+			$sql .= " AND estado > 0";
+			$sql .= " ORDER BY orden DESC LIMIT 1";
+			$placeholders[] = $this->usuario->grupo;
+			$placeholders[] = $this->usuario->id_empresa;
+			$placeholders[] = $data['id_tipo'];
+			$query = $this->db->query($sql, $placeholders);
+			$orden = $query->row_array();
+	
+			if($orden)
+			{
+				$data['orden'] = $orden['orden']+1;
+			}
+			else
+			{
+				$data['orden'] = 0;
+			}
+		}
+		
+		if(isset($valores['destacado'])) { $data['destacado'] = $valores['destacado']; }
+		if(isset($valores['destacado_slide'])) { $data['destacado_slide'] = $valores['destacado_slide']; }
+		if(isset($valores['color'])) { $data['color'] = $valores['color']; }
+		if(isset($valores['imagen_adicional'])) { $data['imagen_adicional'] = $valores['imagen_adicional']; }
 		$data['estado'] = $valores['estado'];
 		$data['fecha_alta'] = unix_to_human(time(), TRUE, 'eu');
 		$data['user_alta'] = $this->usuario->id;
@@ -613,12 +743,13 @@ class Informacion_model extends CI_Model {
 			foreach($idiomas as $idioma)
 			{
 				$extension = $idioma['extension'];
-				if($valores['titulo_'.$extension])
+				if(isset($valores['titulo_'.$extension]))
 				{
 					$item['id_contenido'] = $res['id'];
 					$item['idioma'] = $idioma['extension'];
 					$item['titulo'] = $valores['titulo_'.$extension];
-					
+					if(isset($valores['subtitulo_'.$extension])) { $item['subtitulo'] = $valores['subtitulo_'.$extension]; } else { $item['subtitulo'] = NULL;}
+
 					//VERIFICO URL
 					if($valores['url_'.$extension])
 					{
@@ -631,51 +762,72 @@ class Informacion_model extends CI_Model {
 						if(!empty($url['url'])) { $item['url'] = strtolower(convert_accented_characters(url_title($valores['titulo_'.$extension]))).'-copy'; } else { $item['url'] = strtolower(convert_accented_characters(url_title($valores['titulo_'.$extension]))); } 
 					}
 
-					if(isset($valores['contenido1_'.$extension])) { $item['contenido1'] = $valores['contenido1_'.$extension]; }
+					if(isset($valores['contenido1_'.$extension])) { $item['contenido1'] = $valores['contenido1_'.$extension]; } else { $item['contenido1'] = NULL;}
+					if(isset($valores['contenido2_'.$extension])) { $item['contenido2'] = $valores['contenido2_'.$extension]; } else { $item['contenido2'] = NULL;}
+					if(isset($valores['contenido3_'.$extension])) { $item['contenido3'] = $valores['contenido3_'.$extension]; } else { $item['contenido3'] = NULL;}
+					if(isset($valores['contenido4_'.$extension])) { $item['contenido4'] = $valores['contenido4_'.$extension]; } else { $item['contenido4'] = NULL;}
+					if(isset($valores['contenido5_'.$extension])) { $item['contenido5'] = $valores['contenido5_'.$extension]; } else { $item['contenido5'] = NULL;}
+					if(isset($valores['contenido6_'.$extension])) { $item['contenido6'] = $valores['contenido6_'.$extension]; } else { $item['contenido6'] = NULL;}
+					if(isset($valores['contenido7_'.$extension])) { $item['contenido7'] = $valores['contenido7_'.$extension]; } else { $item['contenido7'] = NULL;}
 					
-					if ($valores['filtro1'] != 323)
+					if (isset($valores['filtro1'] ) && ($valores['filtro1'] != 323))
 					{			
-						$sqlthumb = "SELECT media_thumbs.archivo 
-						FROM media_thumbs 
-						LEFT JOIN con_rel_contenidos_media ON con_rel_contenidos_media.id_media = media_thumbs.referencia 
-						WHERE con_rel_contenidos_media.id_contenido = ".$valores['filtro1'];
+						$sqlthumb = "SELECT con_contenido_items_adicionales.imagen 
+						FROM con_contenido_items_adicionales 
+						WHERE con_contenido_items_adicionales.id = ".$valores['filtro1'];
 						$querythumb = $this->db->query($sqlthumb);
 						$thumb = $querythumb->row_array();
-						$item['imagen'] = $thumb['archivo'];
+						$item['imagen'] = $thumb['imagen'];
 					}
 
-					$item['seo_titulo'] = $valores['seo_titulo_'.$extension];
-					$item['seo_keywords'] = $valores['seo_keywords_'.$extension];
-					$item['seo_descripcion'] = $valores['seo_descripcion_'.$extension];
-					$item['fecha_alta'] = unix_to_human(time(), TRUE, 'eu');
-					$item['user_alta'] = $this->usuario->id;
-					$insert = $this->db->insert('con_contenido_items', $item);
-					$res['idioma_'.$extension] = $this->db->insert_id();
-					
-					//INGRESO SLIDE
-					if($valores['destacado_slide'] == 1)
+					if(isset($valores['seo_titulo_'.$extension])) { $item['seo_titulo'] = $valores['seo_titulo_'.$extension]; } else { $item['seo_titulo'] = NULL;}
+					if(isset($valores['seo_keywords_'.$extension])) { $item['seo_keywords'] = $valores['seo_keywords_'.$extension]; } else { $item['seo_keywords'] = NULL;}
+					if(isset($valores['seo_descripcion_'.$extension])) { $item['seo_descripcion'] = $valores['seo_descripcion_'.$extension]; } else { $item['seo_descripcion'] = NULL;}
+
+					if( (isset($valores['template'])) && ($valores['template'] == 1) )
 					{
-						$slide['id_con_contenido'] = $valores['slide_id_contenido'];
-						$slide['id_tipo'] = $valores['slide_tipo'];
-						$slide['idioma'] = $idioma['extension'];
-						$slide['titulo'] = $valores['titulo_'.$extension];
-						$slide['subtitulo'] = $valores['url_slide_'.$extension].'/'.$item['url'];
-						if(isset($valores['contenido1_'.$extension])) { $slide['contenido1'] = $valores['contenido1_'.$extension]; }
-						$slide['orden'] = $valores['orden'];
-						$slide['estado'] = $valores['estado'];
-						$slide['fecha_alta'] = unix_to_human(time(), TRUE, 'eu');
-						$slide['user_alta'] = $this->usuario->id;
-						$insert = $this->db->insert('con_contenido_items_adicionales', $slide);
-						$res['slide'.$extension] = $this->db->insert_id();
-						
-						//INGRESO RELACION
-						$relacion['grupo'] = $this->usuario->grupo;
-						$relacion['id_empresa'] = $this->usuario->id_empresa;
-						$relacion['id_contenido_principal']= $res['id'];
-						$relacion['id_contenido_relacionado']= $res['slide'.$extension];
-						$relacion['idioma']= $idioma['extension'];
-						$insert = $this->db->insert('con_rel_contenidos', $relacion);
+						//INGRESAR CONTENIDO TEMPLATE
+						$data1['id_contenido'] = $id;
+						$data1['idioma'] = $extension;
+						$data1['titulo'] = $valores['titulo_'.$extension];
+						$data1['fecha_alta'] = unix_to_human(time(), TRUE, 'eu');
+						$data1['user_alta'] = $this->usuario->id;
+						$data1['data'] = json_encode($item);
+						$insert = $this->db->insert('con_contenido_items', $data1);
 					}
+					else
+					{
+						//INGRESAR CONTENIDO ANTERIOR
+						$item['fecha_alta'] = unix_to_human(time(), TRUE, 'eu');
+						$item['user_alta'] = $this->usuario->id;
+						$insert = $this->db->insert('con_contenido_items', $item);
+						
+						//INGRESO SLIDE
+						if($valores['destacado_slide'] == 1)
+						{
+							$slide['id_con_contenido'] = $valores['slide_id_contenido'];
+							$slide['id_tipo'] = $valores['slide_tipo'];
+							$slide['idioma'] = $idioma['extension'];
+							$slide['titulo'] = $valores['titulo_'.$extension];
+							$slide['subtitulo'] = $valores['url_slide_'.$extension].'/'.$item['url'];
+							if(isset($valores['contenido1_'.$extension])) { $slide['contenido1'] = $valores['contenido1_'.$extension]; } else { $item['contenido1'] = NULL;}
+							$slide['orden'] = $valores['orden'];
+							$slide['estado'] = $valores['estado'];
+							$slide['fecha_alta'] = unix_to_human(time(), TRUE, 'eu');
+							$slide['user_alta'] = $this->usuario->id;
+							$insert = $this->db->insert('con_contenido_items_adicionales', $slide);
+							$res['slide'.$extension] = $this->db->insert_id();
+							
+							//INGRESO RELACION
+							$relacion['grupo'] = $this->usuario->grupo;
+							$relacion['id_empresa'] = $this->usuario->id_empresa;
+							$relacion['id_contenido_principal']= $res['id'];
+							$relacion['id_contenido_relacionado']= $res['slide'.$extension];
+							$relacion['idioma']= $idioma['extension'];
+							$insert = $this->db->insert('con_rel_contenidos', $relacion);
+						}
+					}
+					$res['idioma_'.$extension] = $this->db->insert_id();
 				}
 			}
 		}
@@ -693,12 +845,13 @@ class Informacion_model extends CI_Model {
 		//MODIFICAR CONTENIDO GENERAL
 		$data['id_tipo'] = $id_tipo['id_secciones_tipo'];
 		$data['id_con_secciones'] = $valores['id_con_secciones'];
-		$data['filtro1'] = $valores['filtro1'];
-		$data['orden'] = $valores['orden'];
-		$data['destacado'] = $valores['destacado'];
-		$data['destacado_slide'] = $valores['destacado_slide'];
+		if(isset($valores['filtro1'])) { $data['filtro1'] = $valores['filtro1']; }
+		if(isset($valores['orden'])) { $data['orden'] = $valores['orden']; }
+		if(isset($valores['destacado'])) { $data['destacado'] = $valores['destacado']; }
+		if(isset($valores['destacado_slide'])) { $data['destacado_slide'] = $valores['destacado_slide']; }
+		if(isset($valores['color'])) { $data['color'] = $valores['color']; }
+		if(isset($valores['imagen_adicional'])) { $data['imagen_adicional'] = $valores['imagen_adicional']; }
 		$data['estado'] = $valores['estado'];
-		$data['fecha_alta'] = $valores['fecha_alta'];
 		$data['fecha_modificacion'] = unix_to_human(time(), TRUE, 'eu');
 		$data['user_modificacion'] = $this->usuario->id;
 		$wherecon = "id = $id";
@@ -712,12 +865,14 @@ class Informacion_model extends CI_Model {
 			foreach($idiomas as $idioma)
 			{
 				$extension = $idioma['extension'];
-				if($valores['titulo_'.$extension])
+				if(isset($valores['titulo_'.$extension]))
 				{
 					$item['idioma'] = $idioma['extension'];
-					$item['titulo'] = $valores['titulo_'.$extension];
+					if(isset($valores['titulo_'.$extension])) { $item['titulo'] = $valores['titulo_'.$extension]; }
+					if(isset($valores['subtitulo_'.$extension])) { $item['subtitulo'] = $valores['subtitulo_'.$extension]; }
 					if(isset($valores['contenido1_'.$extension])) { $item['contenido1'] = $valores['contenido1_'.$extension]; }
-	
+					if(isset($valores['contenido2_'.$extension])) { $item['contenido2'] = $valores['contenido2_'.$extension]; }
+
 					//VERIFICO URL
 					if($valores['url_'.$extension])
 					{
@@ -730,19 +885,18 @@ class Informacion_model extends CI_Model {
 						if((!empty($url['url'])) && ($url['id_contenido'] != $id)) { $item['url'] = strtolower(convert_accented_characters(url_title($valores['titulo_'.$extension]))).'-copy'; } else { $item['url'] = strtolower(convert_accented_characters(url_title($valores['titulo_'.$extension]))); } 
 					}
 	
-					$item['seo_titulo'] = $valores['seo_titulo_'.$extension];
-					$item['seo_keywords'] = $valores['seo_keywords_'.$extension];
-					$item['seo_descripcion'] = $valores['seo_descripcion_'.$extension];
-	
-					if ($valores['filtro1'] != 323)
+					if(isset($valores['seo_titulo_'.$extension])) { $item['seo_titulo'] = $valores['seo_titulo_'.$extension]; } else { $item['seo_titulo'] = NULL;}
+					if(isset($valores['seo_keywords_'.$extension])) { $item['seo_keywords'] = $valores['seo_keywords_'.$extension]; } else { $item['seo_keywords'] = NULL;}
+					if(isset($valores['seo_descripcion_'.$extension])) { $item['seo_descripcion'] = $valores['seo_descripcion_'.$extension]; } else { $item['seo_descripcion'] = NULL;}
+
+					if (isset($valores['filtro1'] ) && ($valores['filtro1'] != 323))
 					{			
-						$sqlthumb = "SELECT media_thumbs.archivo 
-						FROM media_thumbs 
-						LEFT JOIN con_rel_contenidos_media ON con_rel_contenidos_media.id_media = media_thumbs.referencia 
-						WHERE con_rel_contenidos_media.id_contenido = ".$valores['filtro1'];
+						$sqlthumb = "SELECT con_contenido_items_adicionales.imagen 
+						FROM con_contenido_items_adicionales 
+						WHERE con_contenido_items_adicionales.id = ".$valores['filtro1'];
 						$querythumb = $this->db->query($sqlthumb);
 						$thumb = $querythumb->row_array();
-						$item['imagen'] = $thumb['archivo'];
+						$item['imagen'] = $thumb['imagen'];
 					}
 
 					//CHEQUEO E INGRESO IDIOMA
@@ -752,77 +906,43 @@ class Informacion_model extends CI_Model {
 	
 					if (!isset($ingresado))
 					{
-						$item['id_contenido'] = $id;
-						$item['idioma'] = $extension;
-						$item['fecha_alta'] = unix_to_human(time(), TRUE, 'eu');
-						$item['user_alta'] = $this->usuario->id;
-						$insert = $this->db->insert('con_contenido_items', $item);
-						$res['idioma_'.$extension] = $this->db->insert_id();
-
-						//INGRESO SLIDE
-						if($valores['destacado_slide'] == 1)
+						if( (isset($valores['template'])) && ($valores['template'] == 1) )
 						{
-							$slide['id_con_contenido'] = $valores['slide_id_contenido'];
-							$slide['id_tipo'] = $valores['slide_tipo'];
-							$slide['idioma'] = $idioma['extension'];
-							$slide['titulo'] = $valores['titulo_'.$extension];
-							$slide['subtitulo'] = $valores['url_slide_'.$extension].'/'.$item['url'];
-							if(isset($valores['imagen_slide_'.$extension])) { $slide['imagen'] = $valores['imagen_slide_'.$extension]; }
-							if(isset($valores['contenido1_'.$extension])) { $slide['contenido1'] = $valores['contenido1_'.$extension]; }
-							$slide['orden'] = $valores['orden'];
-							$slide['estado'] = $valores['estado'];
-							$slide['fecha_alta'] = unix_to_human(time(), TRUE, 'eu');
-							$slide['user_alta'] = $this->usuario->id;
-							$insert = $this->db->insert('con_contenido_items_adicionales', $slide);
-							$res['slide'.$extension] = $this->db->insert_id();
-							
-							//INGRESO RELACION
-							$relacion['grupo'] = $this->usuario->grupo;
-							$relacion['id_empresa'] = $this->usuario->id_empresa;
-							$relacion['id_contenido_principal']= $id;
-							$relacion['id_contenido_relacionado']= $res['slide'.$extension];
-							$relacion['idioma']= $idioma['extension'];
-							$insert = $this->db->insert('con_rel_contenidos', $relacion);
+							//INGRESAR CONTENIDO TEMPLATE
+							$data['id_contenido'] = $id;
+							$data['idioma'] = $extension;
+							$data['titulo'] = $valores['titulo_'.$extension];
+							$data['fecha_alta'] = unix_to_human(time(), TRUE, 'eu');
+							$data['user_alta'] = $this->usuario->id;
+							$data['data'] = json_encode($item);
+							$insert = $this->db->insert('con_contenido_items', $data);
 						}
-					}
-					else
-					{
-						$res['idioma_'.$extension] = $ingresado['id'];
-						$item['fecha_alta'] = $valores['fecha_alta'];
-						$item['fecha_modificacion'] = unix_to_human(time(), TRUE, 'eu');
-						$item['user_modificacion'] = $this->usuario->id;
-						$where = "id = ".$ingresado['id'];
-						$update = $this->db->update('con_contenido_items', $item, $where);
-	
-						//INGRESO SLIDE
-						if($valores['destacado_slide'] == 1)
+						else
 						{
-							$sql = "SELECT con_rel_contenidos.id_contenido_relacionado as id FROM con_rel_contenidos 
-							LEFT JOIN  con_contenido_items_adicionales ON con_contenido_items_adicionales.id = con_rel_contenidos.id_contenido_relacionado
-							 WHERE con_rel_contenidos.id_contenido_principal = $id 
-							 AND con_contenido_items_adicionales.id_tipo = 8
-							 AND con_rel_contenidos.idioma = '$extension'
-							 AND con_contenido_items_adicionales.idioma = '$extension'";
-							$query = $this->db->query($sql);
-							$item_adicional = $query->row_array();	
-					
-							$slide['id_con_contenido'] = $valores['slide_id_contenido'];
-							$slide['id_tipo'] = $valores['slide_tipo'];
-							$slide['idioma'] = $idioma['extension'];
-							$slide['titulo'] = $valores['titulo_'.$extension];
-							$slide['subtitulo'] = $valores['url_slide_'.$extension].'/'.$item['url'];
-							if(isset($valores['imagen_slide_'.$extension])) { $slide['imagen'] = $valores['imagen_slide_'.$extension]; }
-							if(isset($valores['contenido1_'.$extension])) { $slide['contenido1'] = $valores['contenido1_'.$extension]; }
-							$slide['orden'] = $valores['orden'];
-							$slide['estado'] = $valores['estado'];
-
-							if(!isset($item_adicional))
+							//INGRESAR CONTENIDO ANTERIOR
+							$item['id_contenido'] = $id;
+							$item['idioma'] = $extension;
+							$item['fecha_alta'] = unix_to_human(time(), TRUE, 'eu');
+							$item['user_alta'] = $this->usuario->id;
+							$insert = $this->db->insert('con_contenido_items', $item);
+	
+							//INGRESO SLIDE
+							if($valores['destacado_slide'] == 1)
 							{
+								$slide['id_con_contenido'] = $valores['slide_id_contenido'];
+								$slide['id_tipo'] = $valores['slide_tipo'];
+								$slide['idioma'] = $idioma['extension'];
+								$slide['titulo'] = $valores['titulo_'.$extension];
+								$slide['subtitulo'] = $valores['url_slide_'.$extension].'/'.$item['url'];
+								if(isset($valores['imagen_slide_'.$extension])) { $slide['imagen'] = $valores['imagen_slide_'.$extension]; }
+								if(isset($valores['contenido1_'.$extension])) { $slide['contenido1'] = $valores['contenido1_'.$extension]; }
+								$slide['orden'] = $valores['orden'];
+								$slide['estado'] = $valores['estado'];
 								$slide['fecha_alta'] = unix_to_human(time(), TRUE, 'eu');
 								$slide['user_alta'] = $this->usuario->id;
 								$insert = $this->db->insert('con_contenido_items_adicionales', $slide);
 								$res['slide'.$extension] = $this->db->insert_id();
-
+								
 								//INGRESO RELACION
 								$relacion['grupo'] = $this->usuario->grupo;
 								$relacion['id_empresa'] = $this->usuario->id_empresa;
@@ -831,37 +951,98 @@ class Informacion_model extends CI_Model {
 								$relacion['idioma']= $idioma['extension'];
 								$insert = $this->db->insert('con_rel_contenidos', $relacion);
 							}
-							else
-							{
-								$slide['fecha_modificacion'] = unix_to_human(time(), TRUE, 'eu');
-								$slide['user_modificacion'] = $this->usuario->id;
-								$whereslide = "id = ".$item_adicional['id'];
-								$updateslide = $this->db->update('con_contenido_items_adicionales', $slide, $whereslide);
-								$res['slide'.$extension] = $item_adicional['id'];
-							}
 						}
-
-						//CAMBIO ESTADO DE SLIDE SI ESTABA ACTIVO Y SE DESACTIVO
+						$res['idioma_'.$extension] = $this->db->insert_id();
+					}
+					else
+					{
+						if( (isset($valores['template'])) && ($valores['template'] == 1) )
+						{
+							//MODIFICAR CONTENIDO TEMPLATE
+							$data['fecha_modificacion'] = unix_to_human(time(), TRUE, 'eu');
+							$data['user_modificacion'] = $this->usuario->id;
+							$data['data'] = json_encode($item);
+							$where = "id = ".$ingresado['id'];
+							$update = $this->db->update('con_contenido_items', $data, $where);
+						}
 						else
 						{
-							$sql = "SELECT con_rel_contenidos.id_contenido_relacionado as id FROM con_rel_contenidos 
-							LEFT JOIN  con_contenido_items_adicionales ON con_contenido_items_adicionales.id = con_rel_contenidos.id_contenido_relacionado
-							 WHERE con_rel_contenidos.id_contenido_principal = $id 
-							 AND con_contenido_items_adicionales.id_tipo = 8
-							 AND con_rel_contenidos.idioma = '$extension'
-							 AND con_contenido_items_adicionales.idioma = '$extension'";
-							$query = $this->db->query($sql);
-							$item_estado = $query->row_array();	
-							
-							if(isset($item_estado))
+							//MODIFICAR CONTENIDO ANTERIOR
+							$item['fecha_modificacion'] = unix_to_human(time(), TRUE, 'eu');
+							$item['user_modificacion'] = $this->usuario->id;
+							$where = "id = ".$ingresado['id'];
+							$update = $this->db->update('con_contenido_items', $item, $where);
+		
+							//INGRESO SLIDE
+							if($valores['destacado_slide'] == 1)
 							{
-								$slide['estado'] = 1;
-								$slide['fecha_modificacion'] = unix_to_human(time(), TRUE, 'eu');
-								$slide['user_modificacion'] = $this->usuario->id;
-								$whereslide = "id = ".$item_estado['id'];
-								$updateslide = $this->db->update('con_contenido_items_adicionales', $slide, $whereslide);
+								$sql = "SELECT con_rel_contenidos.id_contenido_relacionado as id FROM con_rel_contenidos 
+								LEFT JOIN  con_contenido_items_adicionales ON con_contenido_items_adicionales.id = con_rel_contenidos.id_contenido_relacionado
+								 WHERE con_rel_contenidos.id_contenido_principal = $id 
+								 AND con_contenido_items_adicionales.id_tipo = 8
+								 AND con_rel_contenidos.idioma = '$extension'
+								 AND con_contenido_items_adicionales.idioma = '$extension'";
+								$query = $this->db->query($sql);
+								$item_adicional = $query->row_array();	
+						
+								$slide['id_con_contenido'] = $valores['slide_id_contenido'];
+								$slide['id_tipo'] = $valores['slide_tipo'];
+								$slide['idioma'] = $idioma['extension'];
+								$slide['titulo'] = $valores['titulo_'.$extension];
+								$slide['subtitulo'] = $valores['url_slide_'.$extension].'/'.$item['url'];
+								if(isset($valores['imagen_slide_'.$extension])) { $slide['imagen'] = $valores['imagen_slide_'.$extension]; }
+								if(isset($valores['contenido1_'.$extension])) { $slide['contenido1'] = $valores['contenido1_'.$extension]; }
+								$slide['orden'] = $valores['orden'];
+								$slide['estado'] = $valores['estado'];
+	
+								if(!isset($item_adicional))
+								{
+									$slide['fecha_alta'] = unix_to_human(time(), TRUE, 'eu');
+									$slide['user_alta'] = $this->usuario->id;
+									$insert = $this->db->insert('con_contenido_items_adicionales', $slide);
+									$res['slide'.$extension] = $this->db->insert_id();
+	
+									//INGRESO RELACION
+									$relacion['grupo'] = $this->usuario->grupo;
+									$relacion['id_empresa'] = $this->usuario->id_empresa;
+									$relacion['id_contenido_principal']= $id;
+									$relacion['id_contenido_relacionado']= $res['slide'.$extension];
+									$relacion['idioma']= $idioma['extension'];
+									$insert = $this->db->insert('con_rel_contenidos', $relacion);
+								}
+								else
+								{
+									$slide['fecha_modificacion'] = unix_to_human(time(), TRUE, 'eu');
+									$slide['user_modificacion'] = $this->usuario->id;
+									$whereslide = "id = ".$item_adicional['id'];
+									$updateslide = $this->db->update('con_contenido_items_adicionales', $slide, $whereslide);
+									$res['slide'.$extension] = $item_adicional['id'];
+								}
+							}
+	
+							//CAMBIO ESTADO DE SLIDE SI ESTABA ACTIVO Y SE DESACTIVO
+							else
+							{
+								$sql = "SELECT con_rel_contenidos.id_contenido_relacionado as id FROM con_rel_contenidos 
+								LEFT JOIN  con_contenido_items_adicionales ON con_contenido_items_adicionales.id = con_rel_contenidos.id_contenido_relacionado
+								 WHERE con_rel_contenidos.id_contenido_principal = $id 
+								 AND con_contenido_items_adicionales.id_tipo = 8
+								 AND con_rel_contenidos.idioma = '$extension'
+								 AND con_contenido_items_adicionales.idioma = '$extension'";
+								$query = $this->db->query($sql);
+								$item_estado = $query->row_array();	
+								
+								if(isset($item_estado))
+								{
+									$slide['estado'] = 1;
+									$slide['fecha_modificacion'] = unix_to_human(time(), TRUE, 'eu');
+									$slide['user_modificacion'] = $this->usuario->id;
+									$whereslide = "id = ".$item_estado['id'];
+									$updateslide = $this->db->update('con_contenido_items_adicionales', $slide, $whereslide);
+								}
 							}
 						}
+						$res['idioma_'.$extension] = $ingresado['id'];
 					}
 				}
 			}
@@ -896,6 +1077,7 @@ class Informacion_model extends CI_Model {
 		$data['id_media'] = $id;
 		$data['id_contenido'] = $proyecto;
 		$data['idioma'] = $idioma;
+		$data['id_tipo'] = $tipo;
 		
 		if (!isset($res['error']))
 		{
@@ -975,6 +1157,8 @@ class Informacion_model extends CI_Model {
 		$data['orden'] = $valores['orden'];
 		$data['destacado'] = $valores['destacado'];
 		$data['destacado_slide'] = $valores['destacado_slide'];
+		$data['color'] = $valores['color'];
+		if($valores['imagen_adicional']) { $data['imagen_adicional'] = $valores['imagen_adicional'].'-copy'; }
 		$data['estado'] = 1;
 		$data['fecha_alta'] = unix_to_human(time(), TRUE, 'eu');
 		$data['user_alta'] = $this->usuario->id;
@@ -996,7 +1180,14 @@ class Informacion_model extends CI_Model {
 					$idioma1['id_contenido'] = $res['id'];
 					$idioma1['idioma'] = $valores1['idioma'];
 					$idioma1['titulo'] = $valores1['titulo'].'-copy';
+					$idioma1['subtitulo'] = $valores1['subtitulo'];
+					$idioma1['url'] = $valores1['url'];
+					$idioma1['texto_adicional'] = $valores1['texto_adicional'];
 					if(isset($valores1['contenido1'])) { $idioma1['contenido1'] = $valores1['contenido1']; }
+					if(isset($valores1['contenido2'])) { $idioma1['contenido2'] = $valores1['contenido2']; }
+					if(isset($valores1['contenido3'])) { $idioma1['contenido3'] = $valores1['contenido3']; }
+					if(isset($valores1['contenido4'])) { $idioma1['contenido4'] = $valores1['contenido4']; }
+					if(isset($valores1['contenido5'])) { $idioma1['contenido5'] = $valores1['contenido5']; }
 					$idioma1['imagen'] = $valores1['imagen'];
 					$idioma1['seo_titulo'] = $valores1['seo_titulo'];
 					$idioma1['seo_keywords'] = $valores1['seo_keywords'];
@@ -1004,6 +1195,23 @@ class Informacion_model extends CI_Model {
 					$idioma1['fecha_alta'] = unix_to_human(time(), TRUE, 'eu');
 					$idioma1['user_alta'] = $this->usuario->id;
 					$insert = $this->db->insert('con_contenido_items', $idioma1);
+				}
+
+				//DUPLICO RELACION DE IMAGEN
+				$sql1 = "SELECT con_rel_contenidos_media.*";
+				$sql1 .= " FROM con_rel_contenidos_media";
+				$sql1 .= " WHERE con_rel_contenidos_media.id_contenido = $id";
+				$sql1 .= " AND con_rel_contenidos_media.idioma = '$extension'";
+				$query = $this->db->query($sql1);
+				$imagenes = $query->result_array();
+				
+				foreach($imagenes as $imagen)
+				{
+					$imagen1['id_contenido'] = $res['id'];
+					$imagen1['id_media'] = $imagen['id_media'];
+					$imagen1['idioma'] = $imagen['idioma'];
+					$imagen1['id_tipo'] = $imagen['id_tipo'];
+					$insert_imagen1 = $this->db->insert('con_rel_contenidos_media', $imagen1);
 				}
 			}
 		}
@@ -1142,8 +1350,8 @@ class Informacion_model extends CI_Model {
 		$data['id_empresa'] = $this->usuario->id_empresa;
 		$data['id_secciones_tipo'] = $valores['id_secciones_tipo'];
 		$data['seccion'] = $valores['seccion'];
-		$data['descripcion'] = $valores['descripcion'];
-		$data['contenido1'] = $valores['contenido1'];
+		if(!empty($valores['descripcion'])) { $data['descripcion'] = $valores['descripcion']; }
+		if(!empty($valores['contenido1'])) { $data['contenido1'] = $valores['contenido1']; }
 		$data['estado'] = $valores['estado'];
 		$data['orden'] = $valores['orden'];
 		$data['fecha_alta'] = unix_to_human(time(), TRUE, 'eu');
@@ -1163,8 +1371,8 @@ class Informacion_model extends CI_Model {
 		//MODIFICAR CONTENIDO GENERAL
 		$data['id_secciones_tipo'] = $valores['id_secciones_tipo'];
 		$data['seccion'] = $valores['seccion'];
-		$data['descripcion'] = $valores['descripcion'];
-		$data['contenido1'] = $valores['contenido1'];
+		if(!empty($valores['descripcion'])) { $data['descripcion'] = $valores['descripcion']; }
+		if(!empty($valores['contenido1'])) { $data['contenido1'] = $valores['contenido1']; }
 		$data['estado'] = $valores['estado'];
 		$data['orden'] = $valores['orden'];
 		$data['fecha_modificacion'] = unix_to_human(time(), TRUE, 'eu');
@@ -1350,10 +1558,7 @@ class Informacion_model extends CI_Model {
 	{
 		for ($i=0; $i<count($items); ++$i)
 		{
-			$data['orden'] = $i;
-			$data['fecha_modificacion'] = unix_to_human(time(), TRUE, 'eu');
-			$data['user_modificacion'] = $this->usuario->id;
-		    
+			$data['orden'] = $i;		    
 		    $this->db->update($tabla, $data, array('id'=>$items[$i]));
 		    
 		    $res[] = $i . ' ' . $items[$i];

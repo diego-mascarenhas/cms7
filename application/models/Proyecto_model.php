@@ -6,7 +6,7 @@ class Proyecto_model extends CI_Model {
 	public function getProyectos($parametros = null)
 	{
 		$sql = "	
-				SELECT SQL_CALC_FOUND_ROWS proyectos.id, proyectos.numero_proyecto, proyectos.id_empresa, empresas.empresa AS empresa, proyectos.id_categoria, categorias_gestion.nombre_categoria AS categoria, proyectos.numero_proyecto, proyectos.titulo, proyectos.descripcion, proyectos.notas, proyectos.valor, proyectos.costo, proyectos.factura, proyectos.agencia, UNIX_TIMESTAMP(proyectos.desde) AS desde, UNIX_TIMESTAMP(proyectos.hasta) AS hasta, proyectos.responsable, proyectos.estado AS id_estado, proyectos_estado.estado, UNIX_TIMESTAMP(CONVERT_TZ(proyectos.fecha_alta, '+00:00', @@global.time_zone)) AS fecha_alta,
+				SELECT SQL_CALC_FOUND_ROWS proyectos.id, proyectos.numero_proyecto, proyectos.id_empresa, empresas.empresa AS empresa, proyectos.id_categoria, categorias_gestion.nombre_categoria AS categoria, proyectos.numero_proyecto, proyectos.titulo, proyectos.descripcion, proyectos.notas, proyectos.valor, proyectos.costo, proyectos.factura, proyectos.agencia, UNIX_TIMESTAMP(proyectos.desde) AS desde, UNIX_TIMESTAMP(proyectos.hasta) AS hasta, proyectos.responsable, proyectos.estado AS id_estado, proyectos_estado.estado, UNIX_TIMESTAMP(proyectos.fecha_alta) AS fecha_alta,
 		
 						CASE
 						   WHEN proyectos.estado = 1 THEN 'label-warning'
@@ -121,7 +121,7 @@ class Proyecto_model extends CI_Model {
 		else
 		{
 			$sql = "	
-					SELECT SQL_CALC_FOUND_ROWS proyectos.id, proyectos.numero_proyecto, proyectos.id_empresa, empresas.empresa AS empresa, proyectos.id_categoria, categorias_gestion.nombre_categoria AS categoria, proyectos.numero_proyecto, proyectos.titulo, proyectos.descripcion, proyectos.notas, proyectos.valor, proyectos.costo, proyectos.factura, proyectos.agencia, UNIX_TIMESTAMP(proyectos.desde) AS desde, UNIX_TIMESTAMP(proyectos.hasta) AS hasta, proyectos.responsable, proyectos.estado AS id_estado, proyectos_estado.estado, UNIX_TIMESTAMP(CONVERT_TZ(proyectos.fecha_alta, '+00:00', @@global.time_zone)) AS fecha_alta,
+					SELECT SQL_CALC_FOUND_ROWS proyectos.id, proyectos.numero_proyecto, proyectos.id_empresa, empresas.empresa AS empresa, proyectos.id_categoria, categorias_gestion.nombre_categoria AS categoria, proyectos.numero_proyecto, proyectos.titulo, proyectos.descripcion, proyectos.notas, proyectos.valor, proyectos.costo, proyectos.factura, proyectos.agencia, UNIX_TIMESTAMP(proyectos.desde) AS desde, UNIX_TIMESTAMP(proyectos.hasta) AS hasta, proyectos.responsable, proyectos.estado AS id_estado, proyectos_estado.estado, UNIX_TIMESTAMP(proyectos.fecha_alta) AS fecha_alta,
 		
 						CASE
 						   WHEN proyectos.estado = 1 THEN 'label-warning'

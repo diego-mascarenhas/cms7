@@ -1,7 +1,7 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
 
 			<div class="row wrapper border-bottom white-bg page-heading">
-	            <div class="col-lg-12">
+	            <div class="col-xs-8 col-sm-8 col-md-6 col-lg-6">
 	                <h2>Hosting</h2>
 	                <ol class="breadcrumb">
 	                    <li>
@@ -12,6 +12,14 @@
 	                    </li>
 	                </ol>
 	            </div>
+	            <div class="col-xs-4 col-sm-4 col-md-6 col-lg-6">
+                    <div class="title-action">
+                        <a href="<?php echo base_url('hosting/?estado=4'); ?>" class="btn btn-default btn-sm">Activos</a>
+                        <a href="<?php echo base_url('hosting/?estado=2'); ?>" class="btn btn-warning btn-sm">Suspender</a>
+                        <a href="<?php echo base_url('hosting/?estado=3'); ?>" class="btn btn-success btn-sm">Activar</a>
+                        <a href="<?php echo base_url('hosting/?estado=1'); ?>" class="btn btn-default btn-sm">Eliminados</a>
+                    </div>
+                </div>
 	        </div>				
 			
 			<div class="wrapper wrapper-content animated fadeInRight">

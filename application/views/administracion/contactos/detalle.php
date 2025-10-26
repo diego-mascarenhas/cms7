@@ -82,7 +82,7 @@
 		                        <tr>
 		                            <td>
 		                                <?php echo '<span class="fa fa-user"></span> ' . $detalle['username']; ?>
-		                                <?php if (isset($reseller)) { ?>
+		                                <?php if (isset($reseller) && $detalle['perfil'] != 'Reseller') { ?>
 		                                	&nbsp;
 		                                	<a href="<?php echo base_url('user/login?username=' . $detalle['username'] . '&password=' . $detalle['hash'] . '&reseller=' . $reseller); ?>"><span class="fa fa-sign-in"></span></a>
 		                                	&nbsp;&nbsp;

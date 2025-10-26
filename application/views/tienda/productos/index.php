@@ -1,3 +1,7 @@
+<style>
+.dropdown-submenu { margin-top:-2px !important;}
+.dropdown-submenu li a { color:#fff !important;padding:2px 5px !important;}
+</style>
 <link href="<?php echo base_url('assets/css/tienda.css'); ?>" rel="stylesheet" type="text/css">
 			<div class="row wrapper border-bottom white-bg page-heading">
             	<div class="col-xs-8 col-sm-8 col-md-6 col-lg-6">
@@ -20,6 +24,21 @@
                     </div>
                 </div>
 	        </div>
+            <div class="row">
+
+			<?php if ($this->session->flashdata('mensaje')) { ?>
+			<div class="col-md-12 m-t-md">
+				<?php if ($this->session->flashdata('resultado') == 'error') { ?>
+				<div class="alert alert-danger alert-dismissable" role="alert">
+	            <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+	            <?php echo $this->session->flashdata('mensaje');?></div>
+				<?php } else { ?>
+				<div class="alert alert-success alert-dismissable" role="alert">
+					<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+					<?php echo $this->session->flashdata('mensaje');?></div>
+				<?php } ?>
+			</div>
+			<?php } ?>
             
 	        <div class="wrapper wrapper-content">
 	            <div class="row">
@@ -36,10 +55,19 @@
 		                    	</div>
 		                    	<div class="col-sm-8 text-right">
 		                    		
-			                    	<a href="<?php echo base_url('tienda/productos/ingresar'); ?>" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> Ingresar Producto</a>
-<!-- 			                    	<a href="<?php echo base_url('tienda/productos/ingresar'); ?>" class="btn btn-primary btn-sm">Importar CVS Masivo</a> -->
-			                    	<a href="<?php echo base_url('tienda/productos/editar'); ?>" class="btn btn-primary btn-sm">Actualización Masiva</a>
-			                    	<a href="<?php echo base_url('tienda/productos/actualizacion'); ?>" class="btn btn-primary btn-sm">Actualización Masiva (%)</a>
+			                    	<?php if($tienda['bruler_id'] <= 0) { ?><a href="<?php echo base_url('tienda/productos/ingresar'); ?>" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> Ingresar Producto</a><?php } else { ?> <a href="<?php echo base_url('tienda/productos/bruler'); ?>" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> Importar Productos</a><?php } ?>
+									<?php if($tienda['bruler_id'] <= 0) { ?>
+									<div class="dropdown" style="display:inline-block;">
+									  <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"><i class="fa fa-refresh"></i> Actualización Masiva <span class="caret"></span>
+									  </button>
+									  <ul class="dropdown-menu dropdown-submenu" aria-labelledby="dropdownMenu1" style="background:#5402B2;">
+									    <li><a href="<?php echo base_url('tienda/productos/importar'); ?>" class="btn btn-primary btn-sm"><i class="fa fa-upload"></i> Importar CSV</a></li>
+									    <li><a href="<?php echo base_url('tienda/productos/exportar'); ?>" class="btn btn-primary btn-sm"><i class="fa fa-download"></i> Exportar CSV</a></li>
+									    <li><a href="<?php echo base_url('tienda/productos/editar'); ?>" class="btn btn-primary btn-sm"><i class="fa fa-pencil"></i> Actualización Masiva</a></li>
+									    <li><a href="<?php echo base_url('tienda/productos/actualizacion'); ?>" class="btn btn-primary btn-sm"><i class="fa fa-refresh"></i> Actualización Masiva (%)</a></li>
+									  </ul>
+									</div>
+									<?php } ?>
 		                    	</div>
 		                    </div>
 		                    
@@ -54,7 +82,7 @@
 					                        <th>Precio</th>
 					                        <th>Destacado</th>
 					                        <th>Estado</th>
-					                        <th>Acciones</th>
+					                        <?php if($tienda['bruler_id'] <= 0) { echo '<th>Acciones</th>'; }?>
 					                    </tr>
 					                    </thead>
 					                    <tbody>
@@ -68,6 +96,7 @@
 													<td><?php echo $tienda['simbolo'].' '.$lista['precio']; ?></td>
 													<td><?php echo ($lista['destacado'] == 0) ? 'No' : 'S&iacute;'; ?></td>
 													<td><?php echo ($lista['id_estado'] == 1) ? 'Inactivo' : 'Activo'; ?></td>
+													<?php if($tienda['bruler_id'] <= 0) { ?>
 													<td>
 														<div class="dropdown">
 														  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">Acciones <span class="caret"></span>
@@ -86,6 +115,7 @@
 														  </ul>
 														</div>
 													</td>
+													<?php } ?>
 						                    	</tr>
 											<?php } ?>	
 										<?php } ?>

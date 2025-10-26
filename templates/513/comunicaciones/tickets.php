@@ -11,8 +11,8 @@
 	a:hover { text-decoration:underline; }
 	</style>
 </head>
-<body bgcolor="#f7f7f7" marginheight="0" marginwidth="0">
-	<table width="100%" bgcolor="#f7f7f7" border="0" cellpadding="0" cellspacing="0">
+<body bgcolor="#F5EFEF" marginheight="0" marginwidth="0">
+	<table width="100%" bgcolor="#F5EFEF" border="0" cellpadding="0" cellspacing="0">
 		<tr>
 			<td height="20"></td>
 		</tr>
@@ -150,7 +150,7 @@
 													www.pedimosfacil.com</a>
 												</td>
 												<td align="right">
-													<span style="color:#FFFFFF"><strong>Cont&aacute;ctenos:</strong> <span style="color:#FFFFFF !important">+54.11 5274.8490</span><br>
+													<span style="color:#FFFFFF"><strong>Cont&aacute;ctenos:</strong> <span style="color:#FFFFFF !important">+54 11.5219.0345</span><br>
 													<strong>Email:</strong> <a href="mailto:administracion@pedimosfacil.com?subject=Consulta" style="color:inherit;">administracion@pedimosfacil.com</a></span>
 												</td>
 											</tr>

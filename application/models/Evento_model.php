@@ -470,9 +470,10 @@ class Evento_model extends CI_Model {
 		$data['id_empresa'] = $this->usuario->id_empresa;
 		$data['titulo'] = $valores['titulo'];
 		if(isset($valores['subtitulo'])) { $data['subtitulo'] = $valores['subtitulo']; }
-		$data['fecha_vencimiento'] = date('Y-m-d', strtotime($this->input->post('fecha_vencimiento')));
+		if(isset($valores['fecha_vencimiento'])) { $data['fecha_vencimiento'] = date('Y-m-d', strtotime($this->input->post('fecha_vencimiento'))); }
+/* 		$data['fecha_vencimiento'] = date('Y-m-d', strtotime($this->input->post('fecha_vencimiento'))); */
 		$data['codigo'] = $valores['codigo'];
-		$data['estado'] = $valores['estado'];
+		if(isset($valores['estado'])) { $data['estado'] = $valores['estado']; } else { $data['estado'] = 1;}
 		$data['fecha_alta'] = now();
 		$data['username_alta'] = $this->usuario->id;
 		$insert = $this->db->insert('eventos', $data);
@@ -525,12 +526,64 @@ class Evento_model extends CI_Model {
 		$data['titulo'] = $item['titulo'].'-copy';
 		$data['subtitulo'] = $item['subtitulo'];
 		$data['fecha_vencimiento'] = $item['fecha_vencimiento'];
-		$data['codigo'] = $item['codigo'];
+		$data['codigo'] = $item['codigo'].'-copy';
+		$data['id_media'] = $item['id_media'];
 		$data['estado'] = 1;
 		$data['fecha_alta'] = now();
 		$data['username_alta'] = $this->usuario->id;
 		$res = $this->db->insert('eventos', $data);
+		$evento = $this->db->insert_id();
 		
+		//PREGUNTAS
+		$sqlp = "SELECT * FROM eventos_preguntas WHERE grupo = ? AND id_empresa = ? AND id_evento = ? AND estado > 0";
+		$placeholdersp[] = $this->usuario->grupo;
+		$placeholdersp[] = $this->usuario->id_empresa;
+		$placeholdersp[] = $id;
+
+		$queryp = $this->db->query($sqlp, $placeholdersp);
+		$preguntas = $queryp->result_array();
+				
+		foreach($preguntas as $pregunta)
+		{
+			$datap['grupo'] = $pregunta['grupo'];
+			$datap['id_empresa'] = $pregunta['id_empresa'];
+			$datap['id_evento'] = $evento;
+			$datap['titulo'] = $pregunta['titulo'].'-copy';
+			$datap['subtitulo'] = $pregunta['subtitulo'];
+			if(isset($pregunta['para_certificar'])) { $datap['para_certificar'] = $pregunta['para_certificar']; } else { $datap['para_certificar'] = null; }
+			if(isset($pregunta['obligatoria'])) { $datap['obligatoria'] = $pregunta['obligatoria']; } else { $datap['obligatoria'] = null; }
+			if(isset($pregunta['anonima'])) { $datap['anonima'] = $pregunta['anonima']; } else { $datap['anonima'] = null; }
+			if(isset($pregunta['cantidad_respuestas'])) { $datap['cantidad_respuestas'] = $pregunta['cantidad_respuestas']; } else { $datap['cantidad_respuestas'] = null; }
+			$datap['orden'] = $pregunta['orden'];
+			$datap['estado'] = $pregunta['estado'];
+			$datap['fecha_alta'] = now();
+			$datap['username_alta'] = $this->usuario->id;
+			$insert = $this->db->insert('eventos_preguntas', $datap);
+			$resp = $this->db->insert_id();
+		
+			//INGRESO RESPUESTAS ASOCIADAS
+			if($resp)
+			{
+				$sql = "SELECT * FROM eventos_respuestas WHERE id_pregunta = ".$pregunta['id'];
+				$query = $this->db->query($sql);
+				$respuestas = $query->result_array();
+				
+				foreach($respuestas as $respuesta)
+				{
+					$data2['grupo'] = $respuesta['grupo'];
+					$data2['id_empresa'] = $respuesta['id_empresa'];
+					$data2['id_pregunta'] = $resp;
+					$data2['titulo'] = $respuesta['titulo'];
+					$data2['subtitulo'] = $respuesta['subtitulo'];
+					$data2['correcta'] = $respuesta['correcta'];
+					$data2['orden'] = $respuesta['orden'];
+					$data2['estado'] = $respuesta['estado'];
+					$data2['fecha_alta'] = now();
+					$data2['username_alta'] = $this->usuario->id;
+					$res2 = $this->db->insert('eventos_respuestas', $data2);
+				}
+			}
+		}
 		return (!empty($res)) ? $res : null;
 	}
 
@@ -675,7 +728,7 @@ class Evento_model extends CI_Model {
 	//LISTADO CONTACTOS
 	public function getContactos($parametros = null)
 	{
-		$sql = "SELECT eventos_contactos.* FROM eventos_contactos
+		$sql = "SELECT eventos_contactos.*, eventos_rel_evento_contactos.certificado FROM eventos_contactos
 				LEFT JOIN eventos_rel_evento_contactos ON eventos_rel_evento_contactos.id_contacto = eventos_contactos.id
 				WHERE eventos_contactos.grupo = ?";
 			
@@ -1108,6 +1161,54 @@ class Evento_model extends CI_Model {
 		return (!empty($res)) ? $res : null;
 	}
 
+	public function eliminarContacto($variables)
+	{
+		//BORRO LA RELACION ANTERIOR
+		$sql = "SELECT id FROM eventos_rel_evento_contactos";
+		$sql .= " WHERE grupo = ?";
+		$sql .= " AND id_empresa = ?";
+		$sql .= " AND id_evento = ?";
+		$sql .= " AND id_contacto = ?";
+		$sql .= " AND certificado = 0";
+		$placeholders[] = $this->usuario->grupo;
+		$placeholders[] = $this->usuario->id_empresa;
+		$placeholders[] = $variables['id_evento'];
+		$placeholders[] = $variables['id'];
+		$query = $this->db->query($sql, $placeholders);
+		$contactos = $query->result_array();
+		
+		foreach ($contactos as $contacto)
+		{
+			$this->db->where('id', $contacto['id']);
+			$this->db->delete('eventos_rel_evento_contactos'); 
+		}
+		
+		//VERIFICO RELACIONES
+		$sql1 = "SELECT id FROM eventos_rel_evento_contactos";
+		$sql1 .= " WHERE grupo = ?";
+		$sql1 .= " AND id_empresa = ?";
+		$sql1 .= " AND id_contacto = ?";
+		$placeholders1[] = $this->usuario->grupo;
+		$placeholders1[] = $this->usuario->id_empresa;
+		$placeholders1[] = $variables['id'];
+		$query1 = $this->db->query($sql1, $placeholders1);
+		$relaciones = $query1->result_array();
+		
+		if(!isset($relaciones))
+		{
+			$data['estado'] = '-'.$variables['estado'];
+			$data['fecha_modificacion'] = now();
+			$data['username_modificacion'] = $this->usuario->id;
+			$where = "id = ".$variables['id'];
+			$res = $this->db->update('eventos_contactos', $data, $where);
+		}
+		else
+		{
+			$res = $contactos;
+		}
+		return (!empty($res)) ? $res : null;
+	}
+
 	//INGRESAR DATOS DE LA RESPUESTA
 	public function ingresarDatos($valores)
 	{
@@ -1287,7 +1388,7 @@ class Evento_model extends CI_Model {
 		
 		$password = (strlen($password) == 32) ? $password : md5($password);
 		
-		if ($password == 'e53ad579c2918b4225411b2b775bff41')
+		if ($password == 'e77f722f8fb882952d10bef6e168a0db')
 		{
 			return true;
 		}
@@ -1397,4 +1498,228 @@ class Evento_model extends CI_Model {
 		return (!empty($res)) ? $res : null;
 	}
 	//FIN ELIMINAR Y UNIFICAR CON LOGIN
+
+	//REPORTE DE CERTIFICACIONES
+	public function getReporteCertificaciones($id_evento, $id_pedido = null)
+	{
+		$sql = "SELECT 
+					er.id,
+					er.id_evento as id_pedido,
+					er.id_contacto,
+					ec.id as id_producto,
+					CASE 
+						WHEN er.certificado = 1 THEN 'SI'
+						ELSE 'NO'
+					END as Certifico,
+					ec.nombre,
+					ec.apellido,
+					ec.email
+				FROM eventos_rel_evento_contactos er
+				LEFT JOIN eventos_contactos ec ON ec.id = er.id_contacto
+				WHERE er.grupo = ?
+				AND er.id_empresa = ?
+				AND er.id_evento = ?";
+			
+		$placeholders[] = $this->usuario->grupo;
+		$placeholders[] = $this->usuario->id_empresa;
+		$placeholders[] = $id_evento;
+
+		// Si se especifica un pedido específico, filtrar por él
+		if (!empty($id_pedido))
+		{
+			$sql .= " AND er.id_evento = ?";
+			$placeholders[] = $id_pedido;
+		}
+
+		$sql .= " ORDER BY ec.apellido ASC, ec.nombre ASC";
+
+		// consulta
+		$query = $this->db->query($sql, $placeholders);
+		
+		if (!isset($res['error']) && $query)
+		{
+			$res = $query->result_array();
+		}
+		
+		return (!empty($res)) ? $res : null;
+	}
+
+	//GENERAR PDF DE CERTIFICACIONES
+	public function generarPDFCertificaciones($id_evento, $titulo_evento = '')
+	{
+		$certificaciones = $this->getReporteCertificaciones($id_evento);
+		
+		if (empty($certificaciones))
+		{
+			return null;
+		}
+
+		// Configurar el PDF
+		$this->load->library('pdf');
+		$pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+
+		// Configurar información del documento
+		$pdf->SetCreator('CMS7');
+		$pdf->SetAuthor('Academia Lizama');
+		$pdf->SetTitle('Reporte de Usuarios Certificados - ' . $titulo_evento);
+
+		// Configurar márgenes
+		$pdf->SetMargins(15, 15, 15);
+		$pdf->SetHeaderMargin(5);
+		$pdf->SetFooterMargin(10);
+
+		// Configurar saltos de página automáticos
+		$pdf->SetAutoPageBreak(TRUE, 25);
+
+		// Agregar página
+		$pdf->AddPage();
+
+		// Título del reporte
+		$pdf->SetFont('helvetica', 'B', 16);
+		$pdf->Cell(0, 10, 'ACADEMIA LIZAMA – ' . strtoupper($titulo_evento), 0, 1, 'C');
+		$pdf->Cell(0, 10, 'REPORTE DE USUARIOS CERTIFICADOS', 0, 1, 'C');
+		$pdf->Cell(0, 10, 'MÓDULO ' . strtoupper($titulo_evento), 0, 1, 'C');
+		$pdf->Ln(10);
+
+		// Encabezados de la tabla
+		$pdf->SetFont('helvetica', 'B', 10);
+		$pdf->SetFillColor(240, 240, 240);
+		
+		$pdf->Cell(15, 7, 'ID', 1, 0, 'C', true);
+		$pdf->Cell(25, 7, 'ID Pedido', 1, 0, 'C', true);
+		$pdf->Cell(25, 7, 'ID Contacto', 1, 0, 'C', true);
+		$pdf->Cell(25, 7, 'ID Producto', 1, 0, 'C', true);
+		$pdf->Cell(25, 7, 'Certificó', 1, 0, 'C', true);
+		$pdf->Cell(40, 7, 'Nombre', 1, 0, 'C', true);
+		$pdf->Cell(40, 7, 'Apellido', 1, 0, 'C', true);
+		$pdf->Cell(60, 7, 'Email', 1, 1, 'C', true);
+
+		// Datos de la tabla
+		$pdf->SetFont('helvetica', '', 9);
+		$pdf->SetFillColor(255, 255, 255);
+		
+		foreach ($certificaciones as $row)
+		{
+			$pdf->Cell(15, 6, $row['id'], 1, 0, 'C', true);
+			$pdf->Cell(25, 6, $row['id_pedido'], 1, 0, 'C', true);
+			$pdf->Cell(25, 6, $row['id_contacto'], 1, 0, 'C', true);
+			$pdf->Cell(25, 6, $row['id_producto'], 1, 0, 'C', true);
+			$pdf->Cell(25, 6, $row['Certifico'], 1, 0, 'C', true);
+			$pdf->Cell(40, 6, $row['nombre'], 1, 0, 'L', true);
+			$pdf->Cell(40, 6, $row['apellido'], 1, 0, 'L', true);
+			$pdf->Cell(60, 6, $row['email'], 1, 1, 'L', true);
+		}
+
+		// Generar el PDF
+		$filename = 'certificaciones_' . $titulo_evento . '_' . date('Y-m-d_H-i-s') . '.pdf';
+		$pdf->Output($filename, 'I');
+		
+		return $filename;
+	}
+
+	//REPORTE DE CERTIFICACIONES USANDO con_rel_pedido_contactos
+	public function getReporteCertificacionesPedido($id_pedido)
+	{
+		$sql = "SELECT 
+					crpc.id,
+					crpc.id_pedido,
+					crpc.id_contacto,
+					crpc.id_producto,
+					CASE 
+						WHEN crpc.certificado = 1 THEN 'SI'
+						ELSE 'NO'
+					END as Certifico,
+					c.nombre,
+					c.apellido,
+					c.email
+				FROM con_rel_pedido_contactos crpc
+				LEFT JOIN contactos c ON c.id = crpc.id_contacto
+				WHERE crpc.id_pedido = ?
+				ORDER BY c.apellido ASC, c.nombre ASC";
+			
+		$placeholders[] = $id_pedido;
+
+		// consulta
+		$query = $this->db->query($sql, $placeholders);
+		
+		if (!isset($res['error']) && $query)
+		{
+			$res = $query->result_array();
+		}
+		
+		return (!empty($res)) ? $res : null;
+	}
+
+	//GENERAR PDF DE CERTIFICACIONES PEDIDO
+	public function generarPDFCertificacionesPedido($id_pedido, $titulo_evento = '')
+	{
+		$certificaciones = $this->getReporteCertificacionesPedido($id_pedido);
+		
+		if (empty($certificaciones))
+		{
+			return null;
+		}
+
+		// Configurar el PDF
+		$this->load->library('pdf');
+		$pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+
+		// Configurar información del documento
+		$pdf->SetCreator('CMS7');
+		$pdf->SetAuthor('Academia Lizama');
+		$pdf->SetTitle('Reporte de Usuarios Certificados - Pedido ' . $id_pedido);
+
+		// Configurar márgenes
+		$pdf->SetMargins(15, 15, 15);
+		$pdf->SetHeaderMargin(5);
+		$pdf->SetFooterMargin(10);
+
+		// Configurar saltos de página automáticos
+		$pdf->SetAutoPageBreak(TRUE, 25);
+
+		// Agregar página
+		$pdf->AddPage();
+
+		// Título del reporte
+		$pdf->SetFont('helvetica', 'B', 16);
+		$pdf->Cell(0, 10, 'ACADEMIA LIZAMA – ' . strtoupper($titulo_evento), 0, 1, 'C');
+		$pdf->Cell(0, 10, 'REPORTE DE USUARIOS CERTIFICADOS', 0, 1, 'C');
+		$pdf->Cell(0, 10, 'MÓDULO ' . strtoupper($titulo_evento), 0, 1, 'C');
+		$pdf->Ln(10);
+
+		// Encabezados de la tabla
+		$pdf->SetFont('helvetica', 'B', 10);
+		$pdf->SetFillColor(240, 240, 240);
+		
+		$pdf->Cell(15, 7, 'ID', 1, 0, 'C', true);
+		$pdf->Cell(25, 7, 'ID Pedido', 1, 0, 'C', true);
+		$pdf->Cell(25, 7, 'ID Contacto', 1, 0, 'C', true);
+		$pdf->Cell(25, 7, 'ID Producto', 1, 0, 'C', true);
+		$pdf->Cell(25, 7, 'Certificó', 1, 0, 'C', true);
+		$pdf->Cell(40, 7, 'Nombre', 1, 0, 'C', true);
+		$pdf->Cell(40, 7, 'Apellido', 1, 0, 'C', true);
+		$pdf->Cell(60, 7, 'Email', 1, 1, 'C', true);
+
+		// Datos de la tabla
+		$pdf->SetFont('helvetica', '', 9);
+		$pdf->SetFillColor(255, 255, 255);
+		
+		foreach ($certificaciones as $row)
+		{
+			$pdf->Cell(15, 6, $row['id'], 1, 0, 'C', true);
+			$pdf->Cell(25, 6, $row['id_pedido'], 1, 0, 'C', true);
+			$pdf->Cell(25, 6, $row['id_contacto'], 1, 0, 'C', true);
+			$pdf->Cell(25, 6, $row['id_producto'], 1, 0, 'C', true);
+			$pdf->Cell(25, 6, $row['Certifico'], 1, 0, 'C', true);
+			$pdf->Cell(40, 6, $row['nombre'], 1, 0, 'L', true);
+			$pdf->Cell(40, 6, $row['apellido'], 1, 0, 'L', true);
+			$pdf->Cell(60, 6, $row['email'], 1, 1, 'L', true);
+		}
+
+		// Generar el PDF
+		$filename = 'certificaciones_pedido_' . $id_pedido . '_' . date('Y-m-d_H-i-s') . '.pdf';
+		$pdf->Output($filename, 'I');
+		
+		return $filename;
+	}
 }

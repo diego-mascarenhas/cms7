@@ -6,28 +6,28 @@ class Papelera_model extends CI_Model {
 	public function getEliminados($parametros = null)
 	{
 		$sql = "	
-				SELECT contenido.id, UNIX_TIMESTAMP(CONVERT_TZ(contenido.fecha_modificacion, '+00:00', @@global.time_zone)) AS fecha_modificacion, contenido.username_modificacion, contenido.titulo as nombre, 'contenido' AS tipo
+				SELECT contenido.id, UNIX_TIMESTAMP(contenido.fecha_modificacion) AS fecha_modificacion, contenido.username_modificacion, contenido.titulo as nombre, 'contenido' AS tipo
 				FROM contenido
 				WHERE contenido.grupo = ?
 				AND contenido.estado < 0
 				
 				UNION
 				
-				SELECT contactos.id, UNIX_TIMESTAMP(CONVERT_TZ(contactos.fecha_modificacion, '+00:00', @@global.time_zone)) AS fecha_modificacion, contactos.fecha_modificacion, CONCAT(contactos.nombre,' ',contactos.apellido) as nombre, 'contactos' AS tipo
+				SELECT contactos.id, UNIX_TIMESTAMP(contactos.fecha_modificacion) AS fecha_modificacion, contactos.fecha_modificacion, CONCAT(contactos.nombre,' ',contactos.apellido) as nombre, 'contactos' AS tipo
 				FROM contactos
 				WHERE contactos.grupo = ?
 				AND contactos.estado < 0
 					
 				UNION
 				
-				SELECT empresas.id, UNIX_TIMESTAMP(CONVERT_TZ(empresas.fecha_modificacion, '+00:00', @@global.time_zone)) AS fecha_modificacion, empresas.fecha_modificacion, empresas.empresa as nombre, 'empresas' AS tipo
+				SELECT empresas.id, UNIX_TIMESTAMP(empresas.fecha_modificacion) AS fecha_modificacion, empresas.fecha_modificacion, empresas.empresa as nombre, 'empresas' AS tipo
 				FROM empresas
 				WHERE empresas.grupo = ?
 				AND empresas.estado < 0
 				
 				UNION
 				
-				SELECT empresas_fiscales.id, UNIX_TIMESTAMP(CONVERT_TZ(empresas_fiscales.fecha_modificacion, '+00:00', @@global.time_zone)) AS fecha_modificacion, empresas_fiscales.username_modificacion, empresas_fiscales.razon_social as nombre, 'empresas_fiscales' AS tipo
+				SELECT empresas_fiscales.id, UNIX_TIMESTAMP(empresas_fiscales.fecha_modificacion) AS fecha_modificacion, empresas_fiscales.username_modificacion, empresas_fiscales.razon_social as nombre, 'empresas_fiscales' AS tipo
 				FROM empresas_fiscales
 				WHERE empresas_fiscales.grupo = ?
 				AND empresas_fiscales.id NOT IN (SELECT id_empresa_fiscal FROM facturas)
@@ -35,14 +35,14 @@ class Papelera_model extends CI_Model {
 				
 				UNION
 				
-				SELECT servicios.id, UNIX_TIMESTAMP(CONVERT_TZ(servicios.fecha_modificacion, '+00:00', @@global.time_zone)) AS fecha_modificacion, servicios.username_modificacion, servicios.descripcion as nombre, 'servicios' AS tipo
+				SELECT servicios.id, UNIX_TIMESTAMP(servicios.fecha_modificacion) AS fecha_modificacion, servicios.username_modificacion, servicios.descripcion as nombre, 'servicios' AS tipo
 				FROM servicios
 				WHERE servicios.grupo = ?
 				AND servicios.estado < 0
 				
 				UNION
 				
-				SELECT cuentas.id, UNIX_TIMESTAMP(CONVERT_TZ(cuentas.fecha_modificacion, '+00:00', @@global.time_zone)) AS fecha_modificacion, cuentas.username_modificacion, cuentas.titular as nombre, 'cuentas' AS tipo
+				SELECT cuentas.id, UNIX_TIMESTAMP(cuentas.fecha_modificacion) AS fecha_modificacion, cuentas.username_modificacion, cuentas.titular as nombre, 'cuentas' AS tipo
 				FROM cuentas
 				WHERE cuentas.grupo = ?
 				AND cuentas.estado < 0

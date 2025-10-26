@@ -132,8 +132,21 @@ if (!function_exists('isValidTimeStamp'))
 
 if (!function_exists('verificarPermiso'))
 {
+	/**
+	 * Verifica si un elemento existe en un array, incluso en subarrays
+	 *
+	 * @param	mixed	$needle		Elemento a buscar
+	 * @param	array	$haystack	Array donde buscar
+	 * @param	bool	$strict		Usar comparación estricta
+	 * @return	bool				True si encuentra el elemento, False si no
+	 */
 	function verificarPermiso($needle, $haystack, $strict = false)
 	{
+		// Verificar que haystack sea un array
+		if (!is_array($haystack)) {
+			return false;
+		}
+		
 	    foreach ($haystack as $item)
 	    {
 	        if (($strict ? $item === $needle : $item == $needle) || (is_array($item) && verificarPermiso($needle, $item, $strict)))
@@ -141,6 +154,9 @@ if (!function_exists('verificarPermiso'))
 	            return true;
 	        }
 	    }
+	    
+	    // Si no se encontró, retornar false explícitamente
+	    return false;
 	}
 }
 

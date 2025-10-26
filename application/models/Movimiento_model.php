@@ -6,7 +6,7 @@ class Movimiento_model extends CI_Model {
 	public function getMovimientos($parametros = null)
 	{
 		$sql = "	
-				SELECT SQL_CALC_FOUND_ROWS movimientos.id, UNIX_TIMESTAMP(movimientos.fecha) AS fecha, movimientos.id_empresa, movimientos.valor, empresas.empresa, formas_pago.forma_pago, formas_pago.id AS id_forma_pago, CONCAT(facturas_tipo.factura_tipo, ' ', lpad(facturas.numero_talonario, 4, '0'), '-', lpad(IF(facturas.numero_factura, facturas.numero_factura, '********'), 8, '0')) AS comprobante, cuentas.nombre_cuenta AS cuenta, movimientos.id_factura, sys_monedas.simbolo, movimientos.estado AS id_estado,
+				SELECT SQL_CALC_FOUND_ROWS movimientos.id, UNIX_TIMESTAMP(movimientos.fecha) AS fecha, movimientos.id_empresa, movimientos.valor, movimientos.comprobante, empresas.empresa, formas_pago.forma_pago, formas_pago.id AS id_forma_pago, CONCAT(facturas_tipo.factura_tipo, ' ', lpad(facturas.numero_talonario, 4, '0'), '-', lpad(IF(facturas.numero_factura, facturas.numero_factura, '********'), 8, '0')) AS comprobante_factura, cuentas.nombre_cuenta AS cuenta, movimientos.id_factura, sys_monedas.simbolo, movimientos.estado AS id_estado,
 
 					CASE
 					   WHEN movimientos.estado = 1 THEN 'label-warning'
@@ -129,7 +129,9 @@ class Movimiento_model extends CI_Model {
 				$value = trim($parametros['search']);
 				
 				$sql .= " AND (facturas.numero_factura LIKE '%" . $value . "%'";
+				$sql .= " OR facturas.total_neto LIKE '%" . $value . "%'";
 				$sql .= " OR movimientos.id_externo LIKE '%" . $value . "%'";
+				$sql .= " OR movimientos.observaciones LIKE '%" . $value . "%'";
 				$sql .= " OR empresas.empresa LIKE '%" . $value . "%') ";
 			}
 			
@@ -174,7 +176,7 @@ class Movimiento_model extends CI_Model {
 		else
 		{
 			$sql = "	
-					SELECT movimientos.id, UNIX_TIMESTAMP(movimientos.fecha) AS fecha, movimientos.id_empresa, movimientos.valor, empresas.empresa, formas_pago.forma_pago, formas_pago.id AS id_forma_pago, CONCAT(facturas_tipo.factura_tipo, ' ', lpad(facturas.numero_talonario, 4, '0'), '-', lpad(facturas.numero_factura, 8, '0')) as comprobante, cuentas.nombre_cuenta AS cuenta, movimientos.id_factura, sys_monedas.simbolo, movimientos.estado AS id_estado,
+					SELECT movimientos.id, UNIX_TIMESTAMP(movimientos.fecha) AS fecha, movimientos.id_empresa, movimientos.valor, movimientos.comprobante, empresas.empresa, formas_pago.forma_pago, formas_pago.id AS id_forma_pago, CONCAT(facturas_tipo.factura_tipo, ' ', lpad(facturas.numero_talonario, 4, '0'), '-', lpad(facturas.numero_factura, 8, '0')) as comprobante_factura, cuentas.nombre_cuenta AS cuenta, movimientos.id_factura, sys_monedas.simbolo, movimientos.estado AS id_estado,
 	
 						CASE
 						   WHEN movimientos.estado = 1 THEN 'label-warning'
@@ -408,8 +410,9 @@ class Movimiento_model extends CI_Model {
 				
 				WHERE facturas.grupo = ?
 				AND empresas_fiscales.id_empresa = ?
-				AND (facturas.estado = 2 OR facturas.estado = 4)
-				
+				# AND (facturas.estado = 2 OR facturas.estado = 4)
+				AND (facturas.estado = 2 OR facturas.estado = 4 OR facturas.estado = 1)
+
 				UNION
 				
 				SELECT movimientos.id, movimientos.id_factura, 'MOV' AS tipo, UNIX_TIMESTAMP(movimientos.fecha) AS fecha, movimientos.transaccion AS operacion,
@@ -765,12 +768,35 @@ class Movimiento_model extends CI_Model {
 			$data['estado'] = 2;
 			
 			$data['fecha_modificacion'] = unix_to_human(now(), true, 'eu');
-			$data['username_modificacion'] = (!empty($valores['username_modificacion'])) ? $valores['username_modificacion'] : $this->usuario->username;
+			$data['username_modificacion'] = $this->usuario->username;
+			
+			// Actualizar el movimiento
+			$res = $this->db->update('movimientos', $data, array('id'=>$id, 'grupo'=>$this->usuario->grupo));
+			
+			if ($res)
+			{
+				// Obtener información del movimiento para actualizar factura si existe
+				$movimiento = $this->getMovimientoDetalleRaw($id);
+				
+				if (!empty($movimiento['id_factura']))
+				{
+					// Cargar modelo de factura y actualizar saldo
+					$CI =& get_instance();
+					$CI->load->model('factura_model');
+					$CI->factura_model->actualizarFacturaSaldo($movimiento['id_factura']);
+				}
+				
+				return array('success' => true, 'message' => 'Pago aprobado correctamente');
+			}
+			else
+			{
+				return array('success' => false, 'message' => 'Error al aprobar el pago');
+			}
 		}
-		
-		$res = $this->db->update('movimientos', $data, array('id'=>$id, 'grupo'=>$this->usuario->grupo)); // CORREGIR PERMISOS
-
-		return (!empty($res)) ? $res : null;
+		else
+		{
+			return array('success' => false, 'message' => 'El pago ya está aprobado');
+		}
 	}
 	
 	
@@ -861,11 +887,18 @@ class Movimiento_model extends CI_Model {
 	public function generarDebito()
 	{	
 		$sql = "
-				SELECT empresas.codigo, empresas.empresa, empresas.id AS id_empresa, UNIX_TIMESTAMP(CONVERT_TZ(facturas.fecha, '-03:00', @@global.time_zone)) AS fecha, COUNT(facturas.id) AS cantidad, SUM(IF(nota.total_neto, facturas.saldo-nota.total_neto, facturas.saldo)) AS saldo
+				SELECT empresas.codigo, 
+					   empresas.empresa, 
+					   empresas.id AS id_empresa, 
+					   cuentas.cbu26 as cbu, 
+					   UNIX_TIMESTAMP(facturas.fecha) AS fecha, 
+					   COUNT(facturas.id) AS cantidad, 
+					   SUM(IF(nota.total_neto, facturas.saldo-nota.total_neto, facturas.saldo)) AS saldo
 				
 				FROM facturas
 				LEFT JOIN empresas_fiscales ON facturas.id_empresa_fiscal = empresas_fiscales.id
 				LEFT JOIN empresas ON empresas_fiscales.id_empresa = empresas.id
+				LEFT JOIN cuentas ON cuentas.id_empresa = empresas.id
 				LEFT JOIN facturas AS nota ON nota.padre = facturas.id
 				
 				WHERE 1
@@ -876,6 +909,51 @@ class Movimiento_model extends CI_Model {
 				AND facturas.total_neto <= facturas.saldo
 				AND facturas.estado = 2
 				AND facturas.id NOT IN (SELECT id FROM facturas WHERE nota.padre = facturas.id)
+
+				GROUP BY empresas.codigo, facturas.id_moneda
+				ORDER BY empresas.codigo ASC
+			";
+
+		
+		// consulta
+		$query = $this->db->query($sql);
+
+		
+		if (!isset($res['error']) && $query)
+		{
+			$res = $query->result_array();
+		}
+		
+		return (!empty($res)) ? $res : null;
+	}
+
+	public function generarDebitoMensual()
+	{	
+		$sql = "
+				SELECT empresas.codigo, 
+					   empresas.empresa, 
+					   empresas.id AS id_empresa, 
+					   cuentas.cbu26 as cbu, 
+					   UNIX_TIMESTAMP(facturas.fecha) AS fecha, 
+					   COUNT(facturas.id) AS cantidad, 
+					   SUM(IF(nota.total_neto, facturas.saldo-nota.total_neto, facturas.saldo)) AS saldo
+				
+				FROM facturas
+				LEFT JOIN empresas_fiscales ON facturas.id_empresa_fiscal = empresas_fiscales.id
+				LEFT JOIN empresas ON empresas_fiscales.id_empresa = empresas.id
+				LEFT JOIN cuentas ON cuentas.id_empresa = empresas.id
+				LEFT JOIN facturas AS nota ON nota.padre = facturas.id
+				
+				WHERE 1
+				#AND facturas.grupo = ?
+				AND empresas.estado > 0
+				AND facturas.operacion = 'V'
+				AND (facturas.id_forma_pago = 5 OR facturas.id_forma_pago = 15)
+				AND facturas.total_neto <= facturas.saldo
+				AND facturas.estado = 2
+				AND facturas.id NOT IN (SELECT id FROM facturas WHERE nota.padre = facturas.id)
+				AND MONTH(facturas.fecha) = MONTH(CURRENT_DATE())  -- Solo facturas del mes actual
+				AND YEAR(facturas.fecha) = YEAR(CURRENT_DATE())    -- Del año actual
 				
 				GROUP BY empresas.codigo, facturas.id_moneda
 				ORDER BY empresas.codigo ASC
@@ -913,6 +991,41 @@ class Movimiento_model extends CI_Model {
 				AND facturas.total_neto <= facturas.saldo
 				AND facturas.estado = 2
 				AND facturas.id NOT IN (SELECT id FROM facturas WHERE nota.padre = facturas.id)
+			";
+
+		
+		// consulta
+		$query = $this->db->query($sql);
+
+		
+		if (!isset($res['error']) && $query)
+		{
+			$res = $query->row_array()['total'];
+		}
+		
+		return (!empty($res)) ? $res : null;
+	}
+
+	public function totalDebitoMensual()
+	{	
+		$sql = "
+				SELECT SUM(IF(nota.total_neto, facturas.saldo-nota.total_neto, facturas.saldo)) AS total
+				
+				FROM facturas
+				LEFT JOIN empresas_fiscales ON facturas.id_empresa_fiscal = empresas_fiscales.id
+				LEFT JOIN empresas ON empresas_fiscales.id_empresa = empresas.id
+				LEFT JOIN facturas AS nota ON nota.padre = facturas.id
+				
+				WHERE 1
+				#AND facturas.grupo = ?
+				AND empresas.estado > 0
+				AND facturas.operacion = 'V'
+				AND (facturas.id_forma_pago = 5 OR facturas.id_forma_pago = 15)
+				AND facturas.total_neto <= facturas.saldo
+				AND facturas.estado = 2
+				AND facturas.id NOT IN (SELECT id FROM facturas WHERE nota.padre = facturas.id)
+				AND MONTH(facturas.fecha) = MONTH(CURRENT_DATE())  -- Solo facturas del mes actual
+				AND YEAR(facturas.fecha) = YEAR(CURRENT_DATE())    -- Del año actual
 			";
 
 		
@@ -1234,4 +1347,104 @@ class Movimiento_model extends CI_Model {
 	}
 	
 	
+	public function actualizarComprobantePago($id, $nombre_archivo)
+	{
+		$data = array(
+			'comprobante_pago' => $nombre_archivo,
+			'fecha_modificacion' => unix_to_human(now(), true, 'eu'),
+			'username_modificacion' => $this->usuario->username
+		);
+		
+		$where = array(
+			'id' => $id,
+			'grupo' => $this->usuario->grupo
+		);
+		
+		// Verificar permisos adicionales para usuarios admin
+		if ($this->usuario->perfil == 'admin')
+		{
+			$where['id_empresa'] = $this->usuario->id_empresa;
+		}
+		
+		$result = $this->db->update('movimientos', $data, $where);
+		
+		if ($result && $this->db->affected_rows() > 0)
+		{
+			return array('success' => true, 'message' => 'Comprobante actualizado correctamente');
+		}
+		else
+		{
+			return array('success' => false, 'message' => 'No se pudo actualizar el comprobante');
+		}
+	}
+	
+	
+	public function eliminarComprobantePago($id)
+	{
+		// Primero obtener el nombre del archivo para eliminarlo físicamente
+		$movimiento = $this->getMovimientoDetalleRaw($id);
+		
+		if (!$movimiento || empty($movimiento['comprobante_pago']))
+		{
+			return array('success' => false, 'message' => 'No se encontró comprobante para eliminar');
+		}
+		
+		$data = array(
+			'comprobante_pago' => null,
+			'fecha_modificacion' => unix_to_human(now(), true, 'eu'),
+			'username_modificacion' => $this->usuario->username
+		);
+		
+		$where = array(
+			'id' => $id,
+			'grupo' => $this->usuario->grupo
+		);
+		
+		// Verificar permisos adicionales para usuarios admin
+		if ($this->usuario->perfil == 'admin')
+		{
+			$where['id_empresa'] = $this->usuario->id_empresa;
+		}
+		
+		$result = $this->db->update('movimientos', $data, $where);
+		
+		if ($result && $this->db->affected_rows() > 0)
+		{
+			// Intentar eliminar el archivo físico
+			$ruta_archivo = FCPATH . 'uploads/comprobantes/' . $movimiento['comprobante_pago'];
+			if (file_exists($ruta_archivo))
+			{
+				unlink($ruta_archivo);
+			}
+			
+			return array('success' => true, 'message' => 'Comprobante eliminado correctamente');
+		}
+		else
+		{
+			return array('success' => false, 'message' => 'No se pudo eliminar el comprobante');
+		}
+	}
+
+    /**
+     * Obtener información del movimiento con comprobante
+     * @param int $id ID del movimiento
+     * @return object|null Objeto con información del movimiento o null si no se encuentra
+     */
+    public function get_movimiento_con_comprobante($id)
+    {
+        $this->db->select('id, grupo, id_empresa, fecha, id_factura, valor, observaciones, comprobante, estado');
+        $this->db->from('movimientos');
+        $this->db->where('id', $id);
+        $this->db->where('grupo', $this->usuario->grupo);
+        
+        $query = $this->db->get();
+        
+        if ($query->num_rows() > 0) {
+            return $query->row();
+        }
+        
+        return null;
+    }
+
+
 }

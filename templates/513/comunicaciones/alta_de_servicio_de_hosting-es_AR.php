@@ -36,10 +36,8 @@
 		<a href="https://www.revisionalpha.com/instructivos/cpanel/administrador-de-archivos/" style="color:blueviolet;">Administrador de archivos (cPanel)</a><br>
 		<br>
 		
-		Para ver el estado de sus servicios y el balance de su cuenta puede hacerlo desde el <a href="<?php echo 'https://cms.revisionalpha.com/user/login/?username=' . $_POST['username'] . '&password=' . $_POST['hash'] . '&redirect=https://cms.revisionalpha.com/micuenta/'; ?>" style="color:blueviolet;">&aacute;rea de clientes</a> de nuestro sitio.
-		<br>
-		<br>
-		<span>Para ingresar a su perfil de usuario y modificar sus datos puede hacerlo haciendo <a href="<?php echo 'https://cms.revisionalpha.com/user/login/?username=' . $_POST['username'] . '&password=' . $_POST['hash'] . '&redirect=https://cms.revisionalpha.com/micuenta/perfil/'; ?>" style="color:blueviolet;">click aqu&iacute;</a>.</span>
+		<!-- Para ver el estado de sus servicios y el balance de su cuenta puede hacerlo desde el <a href="<?php echo 'https://cms.revisionalpha.com/user/login/?username=' . $_POST['username'] . '&password=' . $_POST['hash'] . '&redirect=https://cms.revisionalpha.com/micuenta/'; ?>" style="color:#FF1A1D;">&aacute;rea de clientes</a> de nuestro sitio.-->
+		Para consultar por el estado de sus servicios y balance de su cuenta puede hacerlo a través de nuestro canal exclusivo de <a href="https://api.whatsapp.com/send/?phone=12202137800&text=<?php echo urlencode('Mi usuario es ' . $_POST['username'] . ' y tengo una consulta sobre mi factura ' . $_POST['comprobante']); ?>" style="color:#FF1A1D;">WhatsApp.</a>
 		<br>
 		<br>
 		<table width="100%" bgcolor="blueviolet" border="0" cellpadding="0" cellspacing="10">

@@ -4,33 +4,43 @@
 	    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	    <meta name="viewport" content="width=device-width, initial-scale=1.0">   
 	
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">   
-		<script type="text/javascript" src="https://wowzamedia.wpengine.com/wp-content/themes/wowzav1/js/wp/wowzaplayer.min.js?ver=1.0.0"></script>
+		<link rel="stylesheet" href="https://cdn.flowplayer.com/releases/native/3/stable/style/flowplayer.css">
+		<script src="https://cdn.flowplayer.com/releases/native/3/stable/flowplayer.min.js"></script>
+		<script src="https://cdn.flowplayer.com/releases/native/3/stable/plugins/hls.min.js"></script>
 	</head>
 	        
 	<body style="margin:0;padding:0">
             
             <?php if ($detalle['tipo'] == 'video') { ?>
+				<style>
+					#playerElement {
+						width: 100%;
+						height: 0;
+						padding: 0 0 56.25% 0;
+						position: relative;
+					}
+					#playerElement .flowplayer {
+						position: absolute;
+						top: 0;
+						left: 0;
+						width: 100%;
+						height: 100%;
+					}
+				</style>
+
+				<div id="playerElement"></div>
+
 				<script type="text/javascript">
-					WowzaPlayer.create('playerElement',
-					    {
-					    "license":"PLAY1-jrUYJ-nfkDV-kf7xx-dMH4Q-7x6xD",
-					    "sourceURL":"<?php echo $detalle['video']; ?>",
-					    "autoPlay":true,
-					    "volume":"75",
-					    "mute":false,
-					    "loop":false,
-					    "audioOnly":false,
-					    "uiShowQuickRewind":true,
-					    "uiQuickRewindSeconds":"10",
-						"uiShowFullscreen":true,
-						"uiShowBitrateSelector":false,
-						"posterFrameURL":"<?php echo $detalle['thumb']; ?>"
-					    }
-					);
+					flowplayer('#playerElement', {
+						src: "<?php echo $detalle['video']; ?>",
+						token: "eyJraWQiOiJZMzQ5cVlIUDFRd1IiLCJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiJ9.eyJjIjoie1wiYWNsXCI6MjIsXCJpZFwiOlwiWTM0OXFZSFAxUXdSXCJ9IiwiaXNzIjoiRmxvd3BsYXllciJ9.URiG5fT4w3-TaPyT76AjZw9Cw8Bt4_Ug9uz2S3X5Tg9I2O0WV5hNUW-hjgY61ZxMFF8THpirCkW8NhWAE0zwXQ",
+						poster: "<?php echo $detalle['thumb']; ?>",
+						autoplay: true,
+						volume: 0.75,
+						muted: false,
+						loop: false
+					});
 				</script>
-				
-				<div id="playerElement" style="width: 100%; height: 0; padding: 0 0 56.25% 0;"></div>
             
             <?php } elseif ($detalle['tipo'] == 'audio') { ?>
 				<audio controls>

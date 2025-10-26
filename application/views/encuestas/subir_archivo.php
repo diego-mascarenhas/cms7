@@ -1,3 +1,6 @@
+<style>
+.tooltip-inner {max-width: 250px;width: 250px;}
+</style>
 
 			<div class="row wrapper border-bottom white-bg page-heading">
             	<div class="col-xs-8 col-sm-8 col-md-6 col-lg-6">
@@ -65,3 +68,7 @@
             </div>
 	        <!-- Fin Contenido -->
 			<?php echo form_close(); ?>
+<script>
+$('[data-toggle="tooltip"]').tooltip(); 
+</script>
+			

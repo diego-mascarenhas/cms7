@@ -77,7 +77,7 @@ class Encuestas extends MY_Controller {
 				}
 				else
 				{
-					$data['error'] = 'Ha habido un problema, por favor intenta más tarde';
+					$data['error'] = 'Ha habido un problema, por favor intenta mÃ¡s tarde';
 					
 					$this->load->view('cms-v2/error/');
 				}
@@ -137,7 +137,7 @@ class Encuestas extends MY_Controller {
 				}
 				else
 				{
-					$data['error'] = 'Ha habido un problema, por favor intenta más tarde';
+					$data['error'] = 'Ha habido un problema, por favor intenta mÃ¡s tarde';
 					
 					$this->load->view('cms-v2/error/');
 				}
@@ -219,8 +219,16 @@ class Encuestas extends MY_Controller {
 					//si es correcto, entonces damos permisos de lectura para subir
 					$filename = $_FILES['archivo']['tmp_name'];
 					$handle = fopen($filename, "r");
-					
-					while (($data = fgetcsv($handle, 1000, ',')) !== FALSE)
+					if(strpos(fgets($handle), ';'))
+					{
+						$separador = ';';
+					}
+					else
+					{
+						$separador = ',';
+					}
+
+					while (($data = fgetcsv($handle, 1000, $separador)) !== FALSE)
 					{ 
 						//INGRESO EN CONTACTOS
 						$valores['grupo'] = $this->usuario->grupo;
@@ -319,6 +327,10 @@ class Encuestas extends MY_Controller {
 			$data['detalle'] = $this->evento_model->detalleEvento($id);
 
 			$parametros['id_evento'] = $id;
+			if(isset($data['detalle']['id_elearning']))
+			{
+				$parametros['id_tipo'] = 2;
+			}
 			$data['listado'] = $this->evento_model->getContactos($parametros);
 		
 			$this->load->view('header', array('buscador'=>true));
@@ -380,7 +392,7 @@ class Encuestas extends MY_Controller {
 				}
 				else
 				{
-					$data['error'] = 'Ha habido un problema, por favor intenta más tarde';
+					$data['error'] = 'Ha habido un problema, por favor intenta mÃ¡s tarde';
 					
 					$this->load->view('cms-v2/error/');
 				}
@@ -423,7 +435,7 @@ class Encuestas extends MY_Controller {
 				}
 				else
 				{
-					$data['error'] = 'Ha habido un problema, por favor intenta más tarde';
+					$data['error'] = 'Ha habido un problema, por favor intenta mÃ¡s tarde';
 					
 					$this->load->view('cms-v2/error/');
 				}
@@ -529,7 +541,7 @@ class Encuestas extends MY_Controller {
 				}
 				else
 				{
-					echo 'Ha habido un problema, por favor intenta más tarde';
+					echo 'Ha habido un problema, por favor intenta mÃ¡s tarde';
 					die();
 				}
 			}
@@ -568,7 +580,7 @@ class Encuestas extends MY_Controller {
 				}
 				else
 				{
-					echo 'Ha habido un problema, por favor intenta más tarde';
+					echo 'Ha habido un problema, por favor intenta mÃ¡s tarde';
 					die();
 				}
 			}
@@ -598,6 +610,28 @@ class Encuestas extends MY_Controller {
 		        $data = 'Error';
 				$this->load->view('/header', array('buscador'=>true));
 				$this->load->view('encuestas/ingresar_pregunta', $data);
+				$this->load->view('/footer');
+	        }
+		}
+		else
+		{
+			redirect(base_url('user/login/'));
+		}
+	}				
+
+	public function eliminar_contacto($id = NULL)
+	{
+		if ($this->is_logged_in())
+		{
+			if ($datos = $this->evento_model->eliminarContacto($this->input->post()))
+	        {
+	            redirect(base_url('encuestas/contactos/'.$this->input->post('id_evento')));
+	        }
+	        else
+	        {
+		        $data = 'Error';
+				$this->load->view('/header', array('buscador'=>true));
+				$this->load->view('encuestas', $data);
 				$this->load->view('/footer');
 	        }
 		}
@@ -649,26 +683,27 @@ class Encuestas extends MY_Controller {
 			$data['estado'] = 2;
 
 			//Ingreso
-			if ($data = $this->multimedia_model->ingresarMedia($data))
-	        {
-		        //Asocio
-		        if ($this->multimedia_model->getMediaTipo($upload_data['file_ext']) == 'imagen')
-		        {					
-					//Ingreso imagen con sus medidas
-					$thumb = $this->thumbFromImagen($upload_data['full_path'], null, '842x597');
-					$this->multimedia_model->ingresarThumb(28, $data['id'], $thumb);
-					//Ingreso miniatura
-					$thumb = $this->thumbFromImagen($upload_data['full_path'], null, '256x144');
-					$this->multimedia_model->ingresarThumb(1, $data['id'], $thumb);
-		        }
-		        return $data;
-	        }
-	        else
-	        {
-		        // Error!
-		        echo 'Error!';
-	        }
-		}
+        if ($data = $this->multimedia_model->ingresarMedia($data))
+        {
+            //Asocio
+            if ($this->multimedia_model->getMediaTipo($upload_data['file_ext']) == 'imagen')
+            {					
+                // Ingreso imagen redimensionada (y elimino la original)
+                $thumb = $this->thumbFromImagen($upload_data['full_path'], dirname($upload_data['full_path']), '1011x715', true);
+                $this->multimedia_model->ingresarThumb(28, $data['id'], $thumb);
+
+                //Comento imagen miniatura
+                // $thumb = $this->thumbFromImagen($upload_data['full_path'], dirname($upload_data['full_path']), '256x144');
+                // $this->multimedia_model->ingresarThumb(1, $data['id'], $thumb);
+            }
+            
+            return $data;
+        }
+        else
+        {
+            // Error!
+            echo 'Error!';
+        }		}
 	}
 	
 	function thumbFromImagen($origen, $destino=null, $tamanio, $eliminar=false)

@@ -1,5 +1,18 @@
+<style>
+.dropdown-menu>li>a { padding:3px 10px; margin: 4px 0; line-height: 20px;}
+.ocultar { visibility:visible !important;}
+
+@media(max-width:1200px) {
+.dropdown-menu>li>a { padding:3px 10px; margin: 4px 0;}
+.ocultar { display:none; visibility: hidden !important;}
+.table td { width:33% !important;}
+}
+@media(max-width:680px) {
+.dropdown-menu { right:0 !important; left:auto;}
+}
+</style>
 			<div class="row wrapper border-bottom white-bg page-heading">
-            	<div class="col-xs-8 col-sm-8 col-md-6 col-lg-6">
+            	<div class="col-xs-12 col-sm-8 col-md-6 col-lg-6">
 	                <h2>Encuestas</h2>
 	                <ol class="breadcrumb">
 	                    <li>
@@ -10,9 +23,9 @@
 	                    </li>
 	                </ol>
 	            </div>
-	            <div class="col-xs-4 col-sm-4 col-md-6 col-lg-6">
+	            <div class="col-xs-0 col-sm-4 col-md-6 col-lg-6">
                     <div class="title-action">
-                        <a href="<?php echo base_url('encuestas/ingresar/'); ?>" class="btn btn-primary btn-sm">Ingresar evento</a>
+                        <a href="<?php echo base_url('encuestas/ingresar/'); ?>" class="btn btn-primary btn-sm m-t-sm">Ingresar evento</a>
                     </div>
                 </div>
 	        </div>
@@ -23,13 +36,12 @@
 		                <div class="ibox float-e-margins">
 	                    	<div class="ibox-title"><h5>Listado de eventos</h5></div>
 		                    <div class="ibox-content">
-		                        <div class="table-responsive">
-				                    <table class="table table-striped table-bordered table-hover dataTables-example" >
+				                    <table class="table table-striped table-bordered table-hover dataTables-listados">
 					                    <thead>
 					                    <tr>
-					                        <th>Nombre Evento</th>
-					                        <th>Código</th>
-					                        <th>Fecha de vencimiento</th>
+					                        <th class="titulo-lista">Nombre Evento</th>
+					                        <th class="ocultar">Código</th>
+					                        <th class="ocultar">Fecha de vencimiento</th>
 					                        <th>Estado</th>
 					                        <th>Acciones</th>
 					                    </tr>
@@ -39,26 +51,31 @@
 						                <?php if (isset($listado)) { ?>
 											<?php foreach($listado as $lista) { ?>	
 						                   		<tr class="gradeX">
-													<td><?php echo $lista['titulo']; ?></td>
-													<td><?php echo $lista['codigo']; ?></td>
-													<td><?php echo $lista['fecha_vencimiento']; ?></td>
+													<td class="titulo-lista"><?php echo $lista['titulo']; ?></td>
+													<td class="ocultar"><?php echo $lista['codigo']; ?></td>
+													<td class="ocultar"><?php echo $lista['fecha_vencimiento']; ?></td>
 													<td><?php echo ($lista['estado'] == 2) ? 'Activa' : 'Inactiva'; ?></td>
 													<td>
-							                        	<a href="<?php echo base_url('encuestas/modificar/' . $lista['id']); ?>" title="Modificar" class="btn btn-primary btn-sm"><i class="fa fa-pencil"></i> Modificar</a> 
-														<a href="<?php echo base_url('encuestas/duplicar/' . $lista['id']); ?>" title="Duplicar" class="btn btn-primary btn-sm"><i class="fa fa-copy"></i> Duplicar</a> 
-							                        	<a href="<?php echo base_url('encuestas/ordenar/' . $lista['id']); ?>" title="Ordenar" class="btn btn-primary btn-sm"><i class="fa fa-sort"></i> Ordenar</a> 
-							                        	<a href="<?php echo base_url('encuestas/contactos/' . $lista['id']); ?>" title="Ver contactos" class="btn btn-primary btn-sm"><i class="fa fa-eye"></i> Ver Contactos</a> 
-							                        	<a href="<?php echo base_url('encuestas/subir_archivo/' . $lista['id']); ?>" title="Suvir CVS con contactos" class="btn btn-primary btn-sm"><i class="fa fa-upload"></i> Subir Contactos</a> 
-														<a href="<?php echo base_url('encuestas/preguntas/' . $lista['id']); ?>" title="Preguntas/Encuenta" class="btn btn-primary btn-sm"><i class="fa fa-bookmark"></i> Preguntas</a> 
-														<a href="<?php echo base_url('encuestas/resultados-generales/' . $lista['id']); ?>" title="Preguntas/Resultados" class="btn btn-primary btn-sm"><i class="fa fa-download"></i> Resultados Preguntas</a> 
-														<a title="Eliminar" id="item" href="#" data-toggle="modal" data-seccion="<?php echo $lista['titulo'];?>?" data-estado="<?php echo $lista['estado'];?>" data-id="<?php echo $lista['id'];?>" data-target="#myModalEliminarItem" class="sepV_a btn btn-primary btn-sm"><i class="fa fa-minus-circle"></i> Eliminar</a></td>
+														<div class="dropdown">
+														  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">Acciones <span class="caret"></span>
+														  </button>
+														  <ul class="dropdown-menu dropdown-clientes" aria-labelledby="dropdownMenu1">
+														    <li><a href="<?php echo base_url('encuestas/modificar/' . $lista['id']); ?>" title="Modificar" class="btn btn-sm"><i class="fa fa-pencil"></i> Modificar</a></li>
+														    <li><a href="<?php echo base_url('encuestas/duplicar/' . $lista['id']); ?>" title="Duplicar" class="btn btn-sm"><i class="fa fa-copy"></i> Duplicar</a></li>
+														    <li><a href="<?php echo base_url('encuestas/ordenar/' . $lista['id']); ?>" title="Ordenar" class="btn btn-sm"><i class="fa fa-sort"></i> Ordenar</a></li>
+														    <li><a href="<?php echo base_url('encuestas/contactos/' . $lista['id']); ?>" title="Ver contactos" class="btn btn-sm"><i class="fa fa-eye"></i> Ver Contactos</a></li>
+														    <li><a href="<?php echo base_url('encuestas/subir_archivo/' . $lista['id']); ?>" title="Suvir CVS con contactos" class="btn btn-sm"><i class="fa fa-upload"></i> Subir Contactos</a></li>
+														    <li><a href="<?php echo base_url('encuestas/preguntas/' . $lista['id']); ?>" title="Preguntas/Encuenta" class="btn btn-sm"><i class="fa fa-bookmark"></i> Preguntas</a></li> 
+														    <li><a href="<?php echo base_url('encuestas/resultados-generales/' . $lista['id']); ?>" title="Preguntas/Resultados" class="btn btn-sm"><i class="fa fa-download"></i> Resultados Preguntas</a></li> 
+														    <li><a title="Eliminar" id="item" href="#" data-toggle="modal" data-seccion="<?php echo $lista['titulo'];?>?" data-estado="<?php echo $lista['estado'];?>" data-id="<?php echo $lista['id'];?>" data-target="#myModalEliminarItem" class="sepV_a btn btn-sm"><i class="fa fa-minus-circle"></i> Eliminar</a></li> 
+														  </ul>
+														</div>
 													</td>
 						                    	</tr>
 											<?php } ?>	
 										<?php } ?>
 					                    </tbody>
 				                    </table>
-		                        </div>
 							</div>
 	
 	                	</div>
@@ -94,7 +111,7 @@
 <script src="<?php echo base_url('assets/js/plugins/dataTables/datatables.min.js'); ?>"></script>
 <script>
 $(document).ready(function(){
-    $('.dataTables-example').DataTable({
+    $('.dataTables-listados').DataTable({
 	    "language": {
             "lengthMenu": "Mostrar _MENU_ resultados por p&aacute;gina",
             "zeroRecords": "No se encontraron resultados",
@@ -119,7 +136,7 @@ $(document).ready(function(){
 		    }
         },
         pageLength: 25,
-        responsive: true
+        responsive: false
     });
 });
 

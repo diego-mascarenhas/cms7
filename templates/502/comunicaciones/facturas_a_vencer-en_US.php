@@ -1,7 +1,7 @@
 <?php include('header.php'); ?>
 <tr>
 	<td>
-		<h2 style="font-size:30px; color:#FF6666; border-bottom:1px solid lightgrey;">Due Date Notification</h2>
+		<h2 style="font-size:30px; color:#FF1A1D; border-bottom:1px solid lightgrey;">Due Date Notification</h2>
 		<br><br>
 	</td>
 </tr>
@@ -24,21 +24,21 @@
 		<?php elseif (($_POST['id_forma_pago'] == 2 || $_POST['id_forma_pago'] == 3) && ($_POST['id_factura_tipo'] == 30 || $_POST['id_factura_tipo'] == 31)) : ?>
 			Datos de la cuenta a transferir:<br><br>
 			<strong>Banco:</strong> Galicia<br>
-			<strong>Titular:</strong> revision alpha S.A.S.<br>
+			<strong>Titular:</strong> REVISION ALPHA S.A.S.<br>
 			<strong>C.U.I.T.:</strong> 30-71671007-2<br>
 			<strong>Cuenta Corriente:</strong> 12416-2 019-8<br>
 			<strong>CBU:</strong> 00700191 20000012416286<br>
 			<br>
 		
 		<?php elseif (($_POST['id_forma_pago'] == 13) && ($_POST['id_factura_tipo'] == 15 || $_POST['id_factura_tipo'] == 16 || $_POST['id_factura_tipo'] == 30 || $_POST['id_factura_tipo'] == 31)) : ?>
-			To submit payment via Mercado Pago, <a href="<?php echo 'https://cms.revisionalpha.com/user/login/?username=' . $_POST['username'] . '&password=' . $_POST['hash'] . '&redirect=https://cms.revisionalpha.com/micuenta/facturas/detalle/' . $_POST['id']; ?>" style="color:#FF6666;">please press here.</a>
+			To submit payment via Mercado Pago, <a href="<?php echo 'https://cms.revisionalpha.com/user/login/?username=' . $_POST['username'] . '&password=' . $_POST['hash'] . '&redirect=https://cms.revisionalpha.com/micuenta/facturas/detalle/' . $_POST['id']; ?>" style="color:#FF1A1D;">please press here.</a>
 			<br>
 			<br>
 			Remember that if you choose any payment option alternative to a credit card, you must consider mailing/clearing times in relation to the billing due date, to avoid any inconvenience.<br>
 			<br>
 			
 		<?php endif; ?>
-			 <a href="<?php echo 'https://cms.revisionalpha.com/user/login/?username=' . $_POST['username'] . '&password=' . $_POST['hash'] . '&redirect=https://cms.revisionalpha.com/micuenta/'; ?>" style="color:#FF6666;">Log into your account</a> to review your services status and the balance of your account
+			 <a href="<?php echo 'https://cms.revisionalpha.com/user/login/?username=' . $_POST['username'] . '&password=' . $_POST['hash'] . '&redirect=https://cms.revisionalpha.com/micuenta/'; ?>" style="color:#FF1A1D;">Log into your account</a> to review your services status and the balance of your account
 			<br>
 			
 	</td>

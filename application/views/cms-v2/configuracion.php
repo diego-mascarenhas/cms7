@@ -48,7 +48,7 @@
 
 	                 	<div class="form-group">
 		                    <div class="col-md-4">
-		                    	<div class="ibox-title" style="background:#f7f7f7;"><h5>Logo</h5></div>
+		                    	<div class="ibox-title" style="background:#F5EFEF;"><h5>Logo</h5></div>
 								<div class="ibox-content">
 		                            <?php if(!empty($item['logo'])) { ?>
 	                            	<p>Imagen Actual</p>
@@ -64,7 +64,7 @@
 		                    </div>
 
 		                    <div class="col-md-4">
-		                    	<div class="ibox-title" style="background:#f7f7f7;"><h5>Logo Pie</h5></div>
+		                    	<div class="ibox-title" style="background:#F5EFEF;"><h5>Logo Pie</h5></div>
 								<div class="ibox-content">
 		                            <?php if(!empty($item['logo_pie'])) { ?>
 	                            	<p>Imagen Actual</p>
@@ -79,7 +79,7 @@
 								</div>
 		                    </div>
 		                    <div class="col-md-4">
-		                    	<div class="ibox-title" style="background:#f7f7f7;"><h5>Favicon</h5></div>
+		                    	<div class="ibox-title" style="background:#F5EFEF;"><h5>Favicon</h5></div>
 								<div class="ibox-content">
 		                            <?php if(!empty($item['favicon'])) { ?>
 	                            	<p>Imagen Actual</p>
@@ -136,19 +136,19 @@
 						<h2>SEO</h2>
 	                 	<div class="form-group">
 		                    <div class="col-md-4 sm-12 m_b_25">
-						        <div class="ibox-title" style="background:#f7f7f7;"><h5>Descripci&oacute;n</h5> <button type="button" class="btn btn-primary btn-circle m-l-md" data-toggle="tooltip" data-placement="top" data-original-title="Descripción de la página." title=""> <i class="fa fa-question"></i></button></div>
+						        <div class="ibox-title" style="background:#F5EFEF;"><h5>Descripci&oacute;n</h5> <button type="button" class="btn btn-primary btn-circle m-l-md" data-toggle="tooltip" data-placement="top" data-original-title="Descripción de la página." title=""> <i class="fa fa-question"></i></button></div>
 			                    <div class="ibox-content no-padding">
 				                    <textarea class="form-control summernote" name="descripcion" rows="11"><?php echo (isset($item['descripcion'])) ? $item['descripcion']: null?></textarea>
 			                    </div>
 		                    </div>
 		                    <div class="col-md-4 sm-12 m_b_25">
-						        <div class="ibox-title" style="background:#f7f7f7;"><h5>Keywords</h5> <button type="button" class="btn btn-primary btn-circle m-l-md" data-toggle="tooltip" data-placement="top" data-original-title="Si bien están prácticamente en desuso, son palabras o frases que se asocian al contenido de la página." title=""> <i class="fa fa-question"></i></button></div>
+						        <div class="ibox-title" style="background:#F5EFEF;"><h5>Keywords</h5> <button type="button" class="btn btn-primary btn-circle m-l-md" data-toggle="tooltip" data-placement="top" data-original-title="Si bien están prácticamente en desuso, son palabras o frases que se asocian al contenido de la página." title=""> <i class="fa fa-question"></i></button></div>
 			                    <div class="ibox-content no-padding">
 				                    <textarea class="form-control summernote" name="keywords" rows="11"><?php echo (isset($item['keywords'])) ? $item['keywords']: null?></textarea>
 			                    </div>
 		                    </div>
 		                    <div class="col-md-4 sm-12 m_b_25">
-		                    	<div class="ibox-title" style="background:#f7f7f7;"><h5>Analytics</h5></div>
+		                    	<div class="ibox-title" style="background:#F5EFEF;"><h5>Analytics</h5></div>
 			                    <div class="ibox-content no-padding">
 				                    <textarea class="form-control summernote" name="analytics" rows="11"><?php echo (isset($item['analytics'])) ? $item['analytics']: null?></textarea>
 			                    </div>

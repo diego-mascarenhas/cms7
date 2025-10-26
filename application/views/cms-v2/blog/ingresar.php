@@ -93,7 +93,7 @@
 	
 		                    <!-- Imagenes Generales -->
 		                    <div class="col-sm-7 col-sm-offset-1">
-		                    	<div class="ibox-title" style="background:#f7f7f7;"><h5>Imagen</h5></div>
+		                    	<div class="ibox-title" style="background:#F5EFEF;"><h5>Imagen</h5></div>
 								<div class="ibox-content b_bottom">
 		                            <?php if(!empty($contenido['imagen'])) { ?>
 	                            	<p>Imagen Actual</p>
@@ -120,7 +120,7 @@
 
                     <div class="ibox-content" style="float: left; width:100%;">
 						<div class="col-lg-12">
-		                    <div class="ibox-title" style="background:#f7f7f7;"><h5>Contenido</h5></div>
+		                    <div class="ibox-title" style="background:#F5EFEF;"><h5>Contenido</h5></div>
 		                    	<div class="ibox-content no-padding"><textarea class="form-control summernote" name="contenido1" rows="11"><?php echo (isset($item['id'])) ? $item['contenido1']: null; ?></textarea></div>
 	                   	</div>
                 	</div>
@@ -138,15 +138,15 @@
 						<div class="col-lg-12">
 		                 	<div class="form-group">
 			                    <div class="col-md-4 sm-12 m_b_25">
-			                    	<div class="ibox-title" style="background:#f7f7f7;"><h5>Título</h5></div>
+			                    	<div class="ibox-title" style="background:#F5EFEF;"><h5>Título</h5></div>
 				                    <div class="ibox-content no-padding"><textarea class="form-control" name="seo_titulo" rows="5"><?php echo (isset($item['seo_titulo'])) ? $item['seo_titulo']: null?></textarea></div>
 			                    </div>
 			                    <div class="col-md-4 sm-12 m_b_25">
-			                    	<div class="ibox-title" style="background:#f7f7f7;"><h5>Descripci&oacute;n</h5></div>
+			                    	<div class="ibox-title" style="background:#F5EFEF;"><h5>Descripci&oacute;n</h5></div>
 				                    <div class="ibox-content no-padding"><textarea class="form-control" name="seo_descripcion" rows="5"><?php echo (isset($item['seo_descripcion'])) ? $item['seo_descripcion']: null?></textarea></div>
 			                    </div>
 			                    <div class="col-md-4 sm-12 m_b_25">
-			                    	<div class="ibox-title" style="background:#f7f7f7;"><h5>Keywords</h5></div>
+			                    	<div class="ibox-title" style="background:#F5EFEF;"><h5>Keywords</h5></div>
 				                    <div class="ibox-content no-padding"><textarea class="form-control" name="seo_keywords" rows="5"><?php echo (isset($item['seo_keywords'])) ? $item['seo_keywords']: null?></textarea></div>
 			                    </div>
 		                 	</div>
@@ -327,7 +327,7 @@
 	                    </div>
 	                </div>
             	</div>
-				<div class="slimScrollBar" style="background-color: rgb(0, 0, 0); width: 7px; position: absolute; top: 2px; opacity: 0.4; display: none; border-top-left-radius: 7px; border-top-right-radius: 7px; border-bottom-right-radius: 7px; border-bottom-left-radius: 7px; z-index: 99; right: 1px; height: 675.0260416666666px; background-position: initial initial; background-repeat: initial initial;"></div>
+				<div class="slimScrollBar" style="background-color: rgb(0, 0, 0); width: 7px; position: absolute; top: 2px; opacity: 0.4; display: none; border-top-left-radius: 7px; border-top-right-radius: 7px; border-bottom-right-radius: 7px; border-bottom-left-radius: 7px; z-index: 99; right: 1px; height: 675.0260412A333D6px; background-position: initial initial; background-repeat: initial initial;"></div>
 				<div class="slimScrollRail" style="width: 7px; height: 100%; position: absolute; top: 0px; display: none; border-top-left-radius: 7px; border-top-right-radius: 7px; border-bottom-right-radius: 7px; border-bottom-left-radius: 7px; background-color: rgb(51, 51, 51); opacity: 0.4; z-index: 90; right: 1px; background-position: initial initial; background-repeat: initial initial;"></div>
             </div>
 		</div>
