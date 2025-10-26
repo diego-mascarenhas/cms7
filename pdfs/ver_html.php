@@ -132,43 +132,6 @@ function corregirRutasHTML($html)
 	return $html;
 }
 
-// Generar código QR para AFIP
-function generarQR($datos) {
-	// Codificar datos en base64
-	$base64 = base64_encode(json_encode($datos));
-	
-	// URL de la API de QR de AFIP
-	$urlQR = "https://www.afip.gob.ar/fe/qr/?p=" . $base64;
-	
-	// Crear objeto QRcode con la URL
-	$qrcode = new QRcode($urlQR, 'L');
-	$qrcode_array = $qrcode->getBarcodeArray();
-	
-	// Generar HTML para el código QR
-	$html = '<div style="text-align:center;">';
-	$html .= '<div style="border:1px solid #000;width:150px;height:150px;margin:0 auto;">';
-	$html .= '<table style="border-collapse:collapse;width:130px;height:130px;margin:10px auto;">';
-	
-	// Generar tabla para mostrar el código QR (cada celda es un módulo)
-	$width = $qrcode_array['num_cols'];
-	$height = $qrcode_array['num_rows'];
-	
-	for ($r = 0; $r < $height; $r++) {
-		$html .= '<tr style="height:' . (130/$height) . 'px">';
-		for ($c = 0; $c < $width; $c++) {
-			$color = ($qrcode_array['bcode'][$r][$c] == 1) ? '#000' : '#fff';
-			$html .= '<td style="width:' . (130/$width) . 'px;background-color:' . $color . '"></td>';
-		}
-		$html .= '</tr>';
-	}
-	
-	$html .= '</table>';
-	$html .= '</div>';
-	$html .= '<p style="font-size:9px;margin-top:5px">Código QR AFIP</p>';
-	$html .= '</div>';
-	
-	return $html;
-}
 
 // Armar código QR para AFIP
 $codigoqr = array(

@@ -1,4 +1,4 @@
-$data<?php
+<?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Encuestas extends MY_Controller {
@@ -703,103 +703,97 @@ class Encuestas extends MY_Controller {
         {
             // Error!
             echo 'Error!';
-        }
-
-		}
+        }		}
 	}
 	
-	function thumbFromImagen($origen, $destino = null, $tamanio, $eliminar = false)
-{
-    // Carga de librería
-    $this->load->library('image_lib');
+	function thumbFromImagen($origen, $destino=null, $tamanio, $eliminar=false)
+	{
+		// helpers and libraries
+	    $this->load->library('image_lib');
+		
+		if (!is_array($tamanio))
+		{
+			if (preg_match('/x/i', $tamanio))
+			{
+				$tamanio = explode('x', $tamanio);
+			}
+			else
+			{
+				$tamanio = array($tamanio);
+			}
+		}
+		
+		if (empty($tamanio[1])) $tamanio[1] = $tamanio[0];
+	
+		$imagen = @getimagesize($origen);
+		$upload_data['image_width'] = $imagen[0];
+		$upload_data['image_height'] = $imagen[1];
+		
+		$upload_data['source'] = $origen;
+		
+		$url_segment = explode('/', $upload_data['source']);
+		$upload_data['archivo'] = end($url_segment);
+		
+		$upload_data['target'] = (isset($destino)) ? $destino . '/' : FCPATH . 'multimedia/thumbs/';
+		$upload_data['thumb'] = 'thumb_' . $tamanio[0] . 'x' . $tamanio[1] . '-' . $upload_data['archivo'];
+		
+		$image_config['image_library'] = 'gd2';
+		$image_config['source_image'] = $upload_data['source'];
+		$image_config['create_thumb'] = FALSE;
+		$image_config['maintain_ratio'] = TRUE;
+		$image_config['new_image'] = $upload_data['target'] . $upload_data['thumb'];
+		$image_config['quality'] = 100;
+		$image_config['width'] = $tamanio[0];
+		$image_config['height'] = $tamanio[1];
+		$dim = (intval($upload_data['image_width']) / intval($upload_data['image_height'])) - ($image_config['width'] / $image_config['height']);
+		$image_config['master_dim'] = ($dim > 0) ? 'height' : 'width';
+		
+		$this->image_lib->initialize($image_config);
+		 
+		if (!$this->image_lib->resize())
+		{
+			$res['error'] = $this->image_lib->display_errors();
+		}
+		else
+		{
+			$image_config['image_library'] = 'gd2';
+			$image_config['source_image'] = $upload_data['target'] . $upload_data['thumb'];
+			$image_config['new_image'] = $upload_data['target'] . $upload_data['thumb'];
+			$image_config['quality'] = 80;
+			$image_config['maintain_ratio'] = FALSE;
+			$image_config['width'] = $tamanio[0];
+			$image_config['height'] = $tamanio[1];
 
-    // Normalización de tamaño
-    if (!is_array($tamanio)) {
-        if (preg_match('/^(\d+)x(\d+)$/', $tamanio, $matches)) {
-            $tamanioA = (int)$matches[1]; // ancho
-            $tamanioB = (int)$matches[2]; // alto
-        } else {
-            $tamanioA = (int)$tamanio;
-            $tamanioB = $tamanioA;
-        }
-    } else {
-        $tamanioA = (int)$tamanio[0];
-        $tamanioB = isset($tamanio[1]) ? (int)$tamanio[1] : $tamanioA;
-    }
+			$vals = @getimagesize($upload_data['target'] . $upload_data['thumb']);
+			$width = $vals['0'];
+			$height = $vals['1'];
+			$image_config['x_axis'] = ($width-$tamanio[0])/2;
+			$image_config['y_axis'] = ($height-$tamanio[1])/2;
+			
+			 
+			$this->image_lib->clear();
+			$this->image_lib->initialize($image_config); 
+			 
+			if (!$this->image_lib->crop())
+			{
+				$res['error'] = $this->image_lib->display_errors();
+			}
+			else
+			{
+				if ($eliminar == true) unlink($upload_data['source']);
+				
+				$res['archivo'] = $upload_data['thumb'];
+				$res['ancho'] = $tamanio[0];
+				$res['alto'] = $tamanio[1];
+			}
+		}
 
-    // Información de la imagen original
-    $imagen = @getimagesize($origen);
-    $upload_data['image_width'] = $imagen[0];
-    $upload_data['image_height'] = $imagen[1];
-    $upload_data['source'] = $origen;
-
-    // Extraer nombre original
-    $url_segment = explode('/', $upload_data['source']);
-    $upload_data['archivo'] = end($url_segment);
-
-    // Determinar destino
-    $upload_data['target'] = (!empty($destino)) ? rtrim($destino, '/') . '/' : dirname($origen) . '/';
-
-    // Limpiar nombre de archivo si tiene prefijo con medidas anteriores
-    $nombre_archivo_sin_ext = pathinfo($upload_data['archivo'], PATHINFO_FILENAME);
-    $extension = pathinfo($upload_data['archivo'], PATHINFO_EXTENSION);
-    $nombre_archivo_sin_ext = preg_replace('/^(thumb_)?\d+x\d+-/i', '', $nombre_archivo_sin_ext);
-    $upload_data['archivo'] = $nombre_archivo_sin_ext . '.' . $extension;
-
-    // Generar nombre del thumb
-    $upload_data['thumb'] = 'thumb_' . $tamanioA . 'x' . $tamanioB . '-' . $upload_data['archivo'];
-
-    // Redimensionar
-    $image_config['image_library'] = 'gd2';
-    $image_config['source_image'] = $upload_data['source'];
-    $image_config['new_image'] = $upload_data['target'] . $upload_data['thumb'];
-    $image_config['create_thumb'] = FALSE;
-    $image_config['maintain_ratio'] = TRUE;
-    $image_config['quality'] = 100;
-    $image_config['width'] = $tamanioA;
-    $image_config['height'] = $tamanioB;
-
-    $dim = ($upload_data['image_width'] / $upload_data['image_height']) - ($tamanioA / $tamanioB);
-    $image_config['master_dim'] = ($dim > 0) ? 'height' : 'width';
-
-    $this->image_lib->initialize($image_config);
-
-    if (!$this->image_lib->resize()) {
-        $res['error'] = $this->image_lib->display_errors();
-    } else {
-        // Recorte exacto si es necesario
-        $image_config['image_library'] = 'gd2';
-        $image_config['source_image'] = $upload_data['target'] . $upload_data['thumb'];
-        $image_config['new_image'] = $upload_data['target'] . $upload_data['thumb'];
-        $image_config['quality'] = 80;
-        $image_config['maintain_ratio'] = FALSE;
-        $image_config['width'] = $tamanioA;
-        $image_config['height'] = $tamanioB;
-
-        $vals = @getimagesize($upload_data['target'] . $upload_data['thumb']);
-        $width = $vals[0];
-        $height = $vals[1];
-        $image_config['x_axis'] = ($width - $tamanioA) / 2;
-        $image_config['y_axis'] = ($height - $tamanioB) / 2;
-
-        $this->image_lib->clear();
-        $this->image_lib->initialize($image_config);
-
-        if (!$this->image_lib->crop()) {
-            $res['error'] = $this->image_lib->display_errors();
-        } else {
-            if ($eliminar == true) unlink($upload_data['source']);
-
-            $res['archivo'] = $upload_data['thumb'];
-            $res['ancho'] = $tamanioA;
-            $res['alto'] = $tamanioB;
-        }
-    }
-
-    $this->image_lib->clear();
-    return (!empty($res)) ? $res : null;
-}
-
+	    // clear //
+	    $this->image_lib->clear();
+	    
+	    return (!empty($res)) ? $res : null;
+	}
+	
 	public function resultados($id, $id_pregunta)
 	{
 		if ($this->is_logged_in())

@@ -67,3 +67,8 @@ application/sessions/*
 # but keep the structure to avoid losing files on the server
 multimedia/**/*
 !multimedia/.gitkeep
+
+# Ignore the landings folder and its content
+# but keep the structure to avoid losing files on the server
+landings/**/*
+!landings/.gitkeep

@@ -15,6 +15,9 @@
 	.table-detalle th { border-left:1px solid #DDD; border-top:1px solid #DDD; border-bottom:1px solid #DDD; }
 </style>
 <div id="wrap" style="height:100%;">
+	<!-- Espacio adicional al inicio del documento -->
+	<div style="height:15px;"></div>
+	
 	<table cellspacing="0">
 		<tbody>
 			<tr>

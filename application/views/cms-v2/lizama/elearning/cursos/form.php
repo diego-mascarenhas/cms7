@@ -228,7 +228,7 @@
 										<?php if((isset($item['titulo'])) && $imagen['archivo']) { ?>
 										<div class="form-group m-b-md pull-left full-width m-t-md">
 		                            		<label class="m-l-md" >Imagen Actual</label><br>
-		                            		<div class="col-sm-12 m-t-md m-l-md"><img src="<?php echo base_url('/multimedia/thumbs/'.$imagen['archivo']);?>" style="height:auto;width:250px;float: left;padding-bottom: 24px;padding-right: 25px;"/></div>
+		                            		<div class="col-sm-12 m-t-md m-l-md"><img src="<?php echo base_url('multimedia/thumbs/'.$imagen['archivo']);?>" style="height:auto;width:250px;float: left;padding-bottom: 24px;padding-right: 25px;"/></div>
 										</div>
 										<?php } ?>
 											<div class="form-group m-b-md pull-left full-width m-t-md">
@@ -249,11 +249,15 @@
 
 					                <div class="col-lg-12 p-xxs">
 										<?php if((isset($item['titulo'])) && $archivo['archivo']) { ?>
-										<div class="form-group m-b-md pull-left full-width m-t-md">
-		                            		<label class="text-right col-sm-4 control-label">Archivo Actual</label>
-		                            		<div class="col-sm-8"><img src="<?php echo base_url('/multimedia/thumbs/'.$archivo['archivo']);?>" style="height:auto;width:250px;float: left;padding-bottom: 24px;padding-right: 25px;"/></div>
-										</div>
-										<?php } ?>
+   										<div class="form-group m-b-md pull-left full-width m-t-md">
+       							<label class="text-right col-sm-4 control-label">Archivo Actual</label>
+        						<div class="col-sm-8">
+         						<a href="<?php echo base_url('multimedia/'.$this->usuario->grupo.'/'.$this->usuario->id_empresa.'/'.$archivo['archivo']); ?>" target="_blank" class="btn btn-success">
+         			      				 Ver o descargar archivo PDF
+           						</a>
+      							</div>
+   							</div>
+							<?php } ?>
 											<div class="form-group m-b-md pull-left full-width m-t-md">
 						                    <label class="text-right col-sm-1 control-label">Archivo</label>
 							                <div class="col-sm-4">

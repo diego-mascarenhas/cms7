@@ -347,77 +347,78 @@ class Cursos extends MY_Controller {
 
 	//Ingresar imagen 
 	public function upload($id, $imagen, $nombre, $tipo, $extension = null, $medidas = null)
+{
+	set_time_limit(0);
+	ini_set('memory_limit', -1);
+
+	// models
+	$this->load->model('multimedia_model');
+
+	$config['upload_path'] = FCPATH . 'multimedia/' . $this->usuario->grupo . '/' . $this->usuario->id_empresa . '/';
+
+	if (!is_dir($config['upload_path']))
 	{
-		set_time_limit(0);
-		ini_set('memory_limit', -1);
-
-		// models
-		$this->load->model('multimedia_model');
-		
-		$config['upload_path'] = FCPATH . 'multimedia/' . $this->usuario->grupo . '/' . $this->usuario->id_empresa . '/';
-		
-		if (!is_dir($config['upload_path']))
+		if (!mkdir($config['upload_path'], 0777, TRUE))
 		{
-	    	if (!mkdir($config['upload_path'], 0777, TRUE))
-	    	{
-	    		exit('No se puede crear la carpeta.');									
-	    	}
+			exit('No se puede crear la carpeta.');
 		}
-		
-	    $config['encrypt_name'] = true;
-	    $config['file_ext_tolower'] = 'true';
-		$config['allowed_types'] = implode('|', $this->multimedia_model->getMediaArchivosPermitidos());
-		
-		$this->load->library('upload', $config);
-
-        if (!$this->upload->do_upload($nombre))
-        {
-            $error = array('error' => $this->upload->display_errors());
-			echo '<pre>' . print_r($error, true) . '</pre>';
-        }
-        else
-        {
-			$upload_data = $this->upload->data();
-			
-			$data['id_tipo'] = $this->multimedia_model->getMediaTipoId($upload_data['file_ext']);
-			$data['nombre'] = $upload_data['orig_name'];
-			$data['archivo'] = $upload_data['file_name'];
-			$data['peso'] = $upload_data['file_size'];
-			$data['estado'] = 2;
-			
-			//Ingreso
-			if ($data1 = $this->multimedia_model->ingresarMedia($data))
-	        {		        
-		        if ($this->multimedia_model->getMediaTipo($upload_data['file_ext']) == 'imagen')
-		        {
-			        //Asocio
-			        if ($id) $this->Elearning_model->asociarMedia($data1['id'], $id, $extension, $tipo);
-
-			        //Sistema
-			        $thumb = $this->thumbFromImagen($upload_data['full_path'], null, '256x144');
-					$this->multimedia_model->ingresarThumb(1, $data1['id'], $thumb);
-
-			        //Imagen
-					$thumb = $this->thumbFromImagen($upload_data['full_path'], null, $medidas);
-					$this->multimedia_model->ingresarThumb($tipo, $data1['id'], $thumb);
-
-		        }
-		        else
-		        {
-			        if($data['id_tipo'] == 9)
-			        {
-				        if ($id) $this->Elearning_model->asociarMedia($data1['id'], $id, $extension, 9);
-			        }
-		        }
-	        }
-	        else
-	        {
-		        // Error!
-		        echo 'Error!';
-	        }
-		}
-		return($data1);
 	}
+
+	$config['encrypt_name'] = true;
+	$config['file_ext_tolower'] = 'true';
+	$config['allowed_types'] = implode('|', $this->multimedia_model->getMediaArchivosPermitidos());
+
+	$this->load->library('upload', $config);
+
+	if (!$this->upload->do_upload($nombre))
+	{
+		$error = array('error' => $this->upload->display_errors());
+		echo '<pre>' . print_r($error, true) . '</pre>';
+	}
+	else
+	{
+		$upload_data = $this->upload->data();
+
+		$data['id_tipo'] = $this->multimedia_model->getMediaTipoId($upload_data['file_ext']);
+		$data['nombre'] = $upload_data['orig_name'];
+		$data['archivo'] = $upload_data['file_name'];
+		$data['peso'] = $upload_data['file_size'];
+		$data['estado'] = 2;
+
+		// Ingreso
+		if ($data1 = $this->multimedia_model->ingresarMedia($data))
+		{
+			if ($this->multimedia_model->getMediaTipo($upload_data['file_ext']) == 'imagen')
+			{
+				// Asocio imagen al curso
+				if ($id) $this->Elearning_model->asociarMedia($data1['id'], $id, $extension, $tipo);
+
+				// Miniatura sistema
+				$thumb = $this->thumbFromImagen($upload_data['full_path'], null, '256x144');
+				$this->multimedia_model->ingresarThumb(1, $data1['id'], $thumb);
+
+				// Miniatura personalizada
+				$thumb = $this->thumbFromImagen($upload_data['full_path'], null, $medidas);
+				$this->multimedia_model->ingresarThumb($tipo, $data1['id'], $thumb);
+			}
+			else
+			{
+				if ($data['id_tipo'] == 9)
+				{
+					log_message('error', '[UPLOAD PDF] Asociando PDF ID '.$data1['id'].' al curso ID '.$id.' con extensión '.$extension);
+					if ($id) $this->Elearning_model->asociarMedia($data1['id'], $id, $extension, 9);
+				}
+			}
+		}
+		else
+		{
+			// Error!
+			echo 'Error!';
+		}
+	}
+
+	return($data1);
+}
 		
 	function thumbFromImagen($origen, $destino=null, $tamanio, $eliminar=false)
 	{
@@ -466,6 +467,11 @@ class Cursos extends MY_Controller {
 		if (!$this->image_lib->resize())
 		{
 			$res['error'] = $this->image_lib->display_errors();
+log_message('error', '[RESIZE ERROR] ' . $this->image_lib->display_errors());
+if (!$this->image_lib->crop())
+log_message('error', '[CROP ERROR] ' . $this->image_lib->display_errors());
+
+
 		}
 		else
 		{

@@ -221,8 +221,8 @@ $config['directory_trigger'] = 'd';
 | your log files will fill up very fast.
 |
 */
-$config['log_threshold'] = 1;
-
+$config['log_threshold'] = 4; // Para ver todo: errores, debug, etc.
+$config['log_path'] = ''; // O indicá uno absoluto si querés otro dir.
 /*
 |--------------------------------------------------------------------------
 | Error Logging Directory Path

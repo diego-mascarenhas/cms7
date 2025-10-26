@@ -163,8 +163,24 @@
 													Vto. de CAE: <?php echo $_POST['CAEFchVto']; ?></p>
 												</td>
 												<td style="width:305px;" align="center">
-													<barcode type="I25" value="<?php echo $_POST['numeroCodigoBarras']; ?>" label="none" style="width:80mm; height:8mm; font-size: 1mm"></barcode>
-													<?php echo $_POST['numeroCodigoBarras']; ?>
+													<?php if (isset($_POST['codigoqrjson_base64']) && !empty($_POST['codigoqrjson_base64'])): 
+														// Extract just the base64 data part from the URL
+														$qr_data = $_POST['codigoqrjson_base64'];
+														if (strpos($qr_data, 'https://www.afip.gob.ar/fe/qr/?p=') === 0) {
+															$qr_data = substr($qr_data, strlen('https://www.afip.gob.ar/fe/qr/?p='));
+														}
+													?>
+														<!-- Use HTML2PDF's built-in barcode tag for QR codes with just the base64 data -->
+														<barcode type="QRCODE" value="<?php echo $qr_data; ?>" style="width:25mm; height:25mm; margin: 0;" />
+													<?php else: ?>
+														<!-- Ensure numeric string for I25 barcode -->
+														<?php 
+														$barcode_value = preg_replace('/[^0-9]/', '', $_POST['numeroCodigoBarras']); 
+														if (empty($barcode_value)) $barcode_value = '00000000'; // Fallback if no valid numbers
+														?>
+														<barcode type="C39" value="<?php echo $barcode_value; ?>" style="width:80mm; height:8mm; font-size: 1mm"></barcode>
+													<?php endif; ?>
+													<br><?php echo $_POST['numeroCodigoBarras']; ?>
 												</td>
 											</tr>
 										</tbody>

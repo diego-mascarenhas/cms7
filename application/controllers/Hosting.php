@@ -730,5 +730,40 @@ class Hosting extends MY_Controller {
 		}
 	}
 	
+	/**
+	 * Obtiene el contenido de un template desde una URL externa
+	 * 
+	 * @param string $url URL opcional, por defecto obtiene el template de tickets
+	 * @return void
+	 */
+	public function get_template_content($url = '')
+	{
+		if ($this->is_logged_in('admin'))
+		{
+			// Si no se proporciona URL, usar la de tickets por defecto
+			if (empty($url)) {
+				$url = 'https://cms.revisionalpha.com/templates/502/comunicaciones/tickets.php';
+			}
+			
+			// Cargar la biblioteca cURL
+			$this->load->library('curl');
+			
+			// Obtener el contenido del template
+			$content = $this->curl->simple_get($url);
+			
+			// Mostrar el contenido del template
+			echo '<h2>Contenido del Template</h2>';
+			echo '<pre>' . htmlspecialchars($content) . '</pre>';
+			
+			// Mostrar el contenido sin formato para copiar/pegar
+			echo '<h2>Contenido Raw (para copiar)</h2>';
+			echo '<textarea style="width:100%; height:300px;">' . $content . '</textarea>';
+		}
+		else
+		{
+			redirect(base_url('user/login'));
+		}
+	}
+	
 
 }

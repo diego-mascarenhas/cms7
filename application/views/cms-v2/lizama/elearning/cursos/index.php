@@ -62,7 +62,7 @@
 			                        <td><?php echo $lista['titulo'];?></td>
 									<td>
 										<?php if(!empty($lista['imagen'])) { ?>	
-				                        <img src="<?php echo base_url('/multimedia/thumbs/'.$lista['imagen']);?>" title="<?php echo $lista['seccion'];?>" alt="<?php echo $lista['seccion'];?>" 	width="70">
+				                        <img src="<?php echo base_url('/multimedia/thumbs/'.$lista['imagen']);?>" title="<?php echo $lista['seccion'];?>" alt="<?php echo $lista['seccion'];?>"width="70">
 										<?php } else { echo 'Sin imagen'; } ?></td>
 			                        <td><?php echo ($lista['destacado'] == 1) ? 'Destacada' : 'No destacada';?></td>
 			                        <td><?php echo ($lista['estado'] == 3) ? 'Activo': 'Inactivo';?></td>

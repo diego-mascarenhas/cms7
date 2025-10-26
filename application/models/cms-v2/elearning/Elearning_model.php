@@ -486,7 +486,6 @@ class Elearning_model extends CI_Model {
 			foreach($idiomas as $idioma)
 			{
 				$extension = $idioma['extension'];
-
 				if($valores['titulo_'.$extension])
 				{
 					$data['id_elearning'] = $id;

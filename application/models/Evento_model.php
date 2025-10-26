@@ -1498,4 +1498,228 @@ class Evento_model extends CI_Model {
 		return (!empty($res)) ? $res : null;
 	}
 	//FIN ELIMINAR Y UNIFICAR CON LOGIN
+
+	//REPORTE DE CERTIFICACIONES
+	public function getReporteCertificaciones($id_evento, $id_pedido = null)
+	{
+		$sql = "SELECT 
+					er.id,
+					er.id_evento as id_pedido,
+					er.id_contacto,
+					ec.id as id_producto,
+					CASE 
+						WHEN er.certificado = 1 THEN 'SI'
+						ELSE 'NO'
+					END as Certifico,
+					ec.nombre,
+					ec.apellido,
+					ec.email
+				FROM eventos_rel_evento_contactos er
+				LEFT JOIN eventos_contactos ec ON ec.id = er.id_contacto
+				WHERE er.grupo = ?
+				AND er.id_empresa = ?
+				AND er.id_evento = ?";
+			
+		$placeholders[] = $this->usuario->grupo;
+		$placeholders[] = $this->usuario->id_empresa;
+		$placeholders[] = $id_evento;
+
+		// Si se especifica un pedido específico, filtrar por él
+		if (!empty($id_pedido))
+		{
+			$sql .= " AND er.id_evento = ?";
+			$placeholders[] = $id_pedido;
+		}
+
+		$sql .= " ORDER BY ec.apellido ASC, ec.nombre ASC";
+
+		// consulta
+		$query = $this->db->query($sql, $placeholders);
+		
+		if (!isset($res['error']) && $query)
+		{
+			$res = $query->result_array();
+		}
+		
+		return (!empty($res)) ? $res : null;
+	}
+
+	//GENERAR PDF DE CERTIFICACIONES
+	public function generarPDFCertificaciones($id_evento, $titulo_evento = '')
+	{
+		$certificaciones = $this->getReporteCertificaciones($id_evento);
+		
+		if (empty($certificaciones))
+		{
+			return null;
+		}
+
+		// Configurar el PDF
+		$this->load->library('pdf');
+		$pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+
+		// Configurar información del documento
+		$pdf->SetCreator('CMS7');
+		$pdf->SetAuthor('Academia Lizama');
+		$pdf->SetTitle('Reporte de Usuarios Certificados - ' . $titulo_evento);
+
+		// Configurar márgenes
+		$pdf->SetMargins(15, 15, 15);
+		$pdf->SetHeaderMargin(5);
+		$pdf->SetFooterMargin(10);
+
+		// Configurar saltos de página automáticos
+		$pdf->SetAutoPageBreak(TRUE, 25);
+
+		// Agregar página
+		$pdf->AddPage();
+
+		// Título del reporte
+		$pdf->SetFont('helvetica', 'B', 16);
+		$pdf->Cell(0, 10, 'ACADEMIA LIZAMA – ' . strtoupper($titulo_evento), 0, 1, 'C');
+		$pdf->Cell(0, 10, 'REPORTE DE USUARIOS CERTIFICADOS', 0, 1, 'C');
+		$pdf->Cell(0, 10, 'MÓDULO ' . strtoupper($titulo_evento), 0, 1, 'C');
+		$pdf->Ln(10);
+
+		// Encabezados de la tabla
+		$pdf->SetFont('helvetica', 'B', 10);
+		$pdf->SetFillColor(240, 240, 240);
+		
+		$pdf->Cell(15, 7, 'ID', 1, 0, 'C', true);
+		$pdf->Cell(25, 7, 'ID Pedido', 1, 0, 'C', true);
+		$pdf->Cell(25, 7, 'ID Contacto', 1, 0, 'C', true);
+		$pdf->Cell(25, 7, 'ID Producto', 1, 0, 'C', true);
+		$pdf->Cell(25, 7, 'Certificó', 1, 0, 'C', true);
+		$pdf->Cell(40, 7, 'Nombre', 1, 0, 'C', true);
+		$pdf->Cell(40, 7, 'Apellido', 1, 0, 'C', true);
+		$pdf->Cell(60, 7, 'Email', 1, 1, 'C', true);
+
+		// Datos de la tabla
+		$pdf->SetFont('helvetica', '', 9);
+		$pdf->SetFillColor(255, 255, 255);
+		
+		foreach ($certificaciones as $row)
+		{
+			$pdf->Cell(15, 6, $row['id'], 1, 0, 'C', true);
+			$pdf->Cell(25, 6, $row['id_pedido'], 1, 0, 'C', true);
+			$pdf->Cell(25, 6, $row['id_contacto'], 1, 0, 'C', true);
+			$pdf->Cell(25, 6, $row['id_producto'], 1, 0, 'C', true);
+			$pdf->Cell(25, 6, $row['Certifico'], 1, 0, 'C', true);
+			$pdf->Cell(40, 6, $row['nombre'], 1, 0, 'L', true);
+			$pdf->Cell(40, 6, $row['apellido'], 1, 0, 'L', true);
+			$pdf->Cell(60, 6, $row['email'], 1, 1, 'L', true);
+		}
+
+		// Generar el PDF
+		$filename = 'certificaciones_' . $titulo_evento . '_' . date('Y-m-d_H-i-s') . '.pdf';
+		$pdf->Output($filename, 'I');
+		
+		return $filename;
+	}
+
+	//REPORTE DE CERTIFICACIONES USANDO con_rel_pedido_contactos
+	public function getReporteCertificacionesPedido($id_pedido)
+	{
+		$sql = "SELECT 
+					crpc.id,
+					crpc.id_pedido,
+					crpc.id_contacto,
+					crpc.id_producto,
+					CASE 
+						WHEN crpc.certificado = 1 THEN 'SI'
+						ELSE 'NO'
+					END as Certifico,
+					c.nombre,
+					c.apellido,
+					c.email
+				FROM con_rel_pedido_contactos crpc
+				LEFT JOIN contactos c ON c.id = crpc.id_contacto
+				WHERE crpc.id_pedido = ?
+				ORDER BY c.apellido ASC, c.nombre ASC";
+			
+		$placeholders[] = $id_pedido;
+
+		// consulta
+		$query = $this->db->query($sql, $placeholders);
+		
+		if (!isset($res['error']) && $query)
+		{
+			$res = $query->result_array();
+		}
+		
+		return (!empty($res)) ? $res : null;
+	}
+
+	//GENERAR PDF DE CERTIFICACIONES PEDIDO
+	public function generarPDFCertificacionesPedido($id_pedido, $titulo_evento = '')
+	{
+		$certificaciones = $this->getReporteCertificacionesPedido($id_pedido);
+		
+		if (empty($certificaciones))
+		{
+			return null;
+		}
+
+		// Configurar el PDF
+		$this->load->library('pdf');
+		$pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+
+		// Configurar información del documento
+		$pdf->SetCreator('CMS7');
+		$pdf->SetAuthor('Academia Lizama');
+		$pdf->SetTitle('Reporte de Usuarios Certificados - Pedido ' . $id_pedido);
+
+		// Configurar márgenes
+		$pdf->SetMargins(15, 15, 15);
+		$pdf->SetHeaderMargin(5);
+		$pdf->SetFooterMargin(10);
+
+		// Configurar saltos de página automáticos
+		$pdf->SetAutoPageBreak(TRUE, 25);
+
+		// Agregar página
+		$pdf->AddPage();
+
+		// Título del reporte
+		$pdf->SetFont('helvetica', 'B', 16);
+		$pdf->Cell(0, 10, 'ACADEMIA LIZAMA – ' . strtoupper($titulo_evento), 0, 1, 'C');
+		$pdf->Cell(0, 10, 'REPORTE DE USUARIOS CERTIFICADOS', 0, 1, 'C');
+		$pdf->Cell(0, 10, 'MÓDULO ' . strtoupper($titulo_evento), 0, 1, 'C');
+		$pdf->Ln(10);
+
+		// Encabezados de la tabla
+		$pdf->SetFont('helvetica', 'B', 10);
+		$pdf->SetFillColor(240, 240, 240);
+		
+		$pdf->Cell(15, 7, 'ID', 1, 0, 'C', true);
+		$pdf->Cell(25, 7, 'ID Pedido', 1, 0, 'C', true);
+		$pdf->Cell(25, 7, 'ID Contacto', 1, 0, 'C', true);
+		$pdf->Cell(25, 7, 'ID Producto', 1, 0, 'C', true);
+		$pdf->Cell(25, 7, 'Certificó', 1, 0, 'C', true);
+		$pdf->Cell(40, 7, 'Nombre', 1, 0, 'C', true);
+		$pdf->Cell(40, 7, 'Apellido', 1, 0, 'C', true);
+		$pdf->Cell(60, 7, 'Email', 1, 1, 'C', true);
+
+		// Datos de la tabla
+		$pdf->SetFont('helvetica', '', 9);
+		$pdf->SetFillColor(255, 255, 255);
+		
+		foreach ($certificaciones as $row)
+		{
+			$pdf->Cell(15, 6, $row['id'], 1, 0, 'C', true);
+			$pdf->Cell(25, 6, $row['id_pedido'], 1, 0, 'C', true);
+			$pdf->Cell(25, 6, $row['id_contacto'], 1, 0, 'C', true);
+			$pdf->Cell(25, 6, $row['id_producto'], 1, 0, 'C', true);
+			$pdf->Cell(25, 6, $row['Certifico'], 1, 0, 'C', true);
+			$pdf->Cell(40, 6, $row['nombre'], 1, 0, 'L', true);
+			$pdf->Cell(40, 6, $row['apellido'], 1, 0, 'L', true);
+			$pdf->Cell(60, 6, $row['email'], 1, 1, 'L', true);
+		}
+
+		// Generar el PDF
+		$filename = 'certificaciones_pedido_' . $id_pedido . '_' . date('Y-m-d_H-i-s') . '.pdf';
+		$pdf->Output($filename, 'I');
+		
+		return $filename;
+	}
 }

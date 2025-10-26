@@ -1199,7 +1199,7 @@ class Multimedia_model extends CI_Model {
 	public function getUsuariosAsociadosAlProyecto($id_proyecto)
 	{
 		$sql = "
-				SELECT contactos.id, contactos.avatar, CONCAT(contactos.nombre, ' ', contactos.apellido) AS contacto, contactos.username, contactos.email, UNIX_TIMESTAMP(contactos.ultima_visita) AS ultima_visita, empresas.empresa
+				SELECT contactos.id, contactos.avatar, trim(CONCAT(contactos.nombre, ' ', IFNULL(contactos.apellido, ''))) AS contacto, contactos.username, contactos.email, UNIX_TIMESTAMP(CONVERT_TZ(contactos.ultima_visita, '+00:00', @@global.time_zone)) AS ultima_visita, empresas.empresa
 				
 					FROM contactos
 					LEFT JOIN empresas ON empresas.id = contactos.id_empresa

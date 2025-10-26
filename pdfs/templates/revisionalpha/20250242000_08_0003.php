@@ -22,12 +22,12 @@
 					<table cellspacing="0">
 						<tbody>
 							<tr>
-								<td style="width:328px;">
+								<td style="width:328px; padding-left: 10px;">
 									<h1><img src="/home/forge/cms.revisionalpha.com/pdfs/templates/revisionalpha/images/revision-alpha.png" alt="REVISION ALPHA" height="35"></h1><br>
 								</td>
 								<td style="width:100px;">&nbsp;</td>
 								<td style="width:328px;">
-									<h2>NOTA DE CR&Eacute;DITO N&deg; <?php echo $_POST['numero_talonario']; ?>-<?php echo $_POST['numero_factura']; ?></h2>
+									<h2>NOTA DE CR&Eacute;DITO B <?php echo $_POST['numero_talonario']; ?>-<?php echo $_POST['numero_factura']; ?></h2>
 									<h3><?php if ( !empty( $_POST['vencimiento'] ) ) : ?>
 											VTO: <?php echo $_POST['vencimiento']; ?>
 										<?php else : ?>
@@ -37,7 +37,7 @@
 								</td>
 							</tr>
 							<tr>
-								<td>
+								<td style="padding-left: 10px;">
 									<p>Diego Adri&aacute;n Mascarenhas<br>
 									Vidal 4691, CABA<br>
 									+54.11 6632.2134<br>
@@ -156,15 +156,28 @@
 							<tr>
 								<td>
 									<table cellspacing="0">
-										<tbody>
+									<tbody>
 											<tr>
-												<td style="width:451px;">
-													<p>CAE N&deg;: <?php echo $_POST['CAE']; ?><br>
-													Vto. de CAE: <?php echo $_POST['CAEFchVto']; ?></p>
+												<td style="width:150px;" align="center">
+													<?php
+													if (isset($_POST['qr']))
+													{
+														echo $_POST['qr'];
+													}
+													else
+													{
+														?>
+														<barcode type="I25"
+															value="<?php echo $_POST['numeroCodigoBarras']; ?>" label="none"
+															style="width:50px; height:50px; font-size: 1mm"></barcode>
+														<?php
+													}
+													?>
 												</td>
-												<td style="width:305px;" align="center">
-													<barcode type="I25" value="<?php echo $_POST['numeroCodigoBarras']; ?>" label="none" style="width:80mm; height:8mm; font-size: 1mm"></barcode>
-													<?php echo $_POST['numeroCodigoBarras']; ?>
+												<td style="width:451px; padding-left: 20px;">
+													<p class="tw-semibold">CAE N&deg;: <?php echo $_POST['CAE']; ?><br>
+														Vto. de CAE: <?php echo $_POST['CAEFchVto']; ?><br>
+														<?php echo $_POST['numeroCodigoBarras']; ?></p>
 												</td>
 											</tr>
 										</tbody>
