@@ -115,6 +115,7 @@
 			                        <th>Nombre</th>
 			                        <th>Apellido</th>
 			                        <th>Email</th>
+			                        <th>Última Visita</th>
 			                        <th>Estado</th>
 			                        <th>Acciones</th>
 			                    </tr>
@@ -125,6 +126,7 @@
 				                        <td><?php echo $usuario['nombre'];?></td>
 				                        <td><?php echo $usuario['apellido'];?></td>
 				                        <td><?php echo $usuario['email'];?></td>
+				                        <td><?php echo (isset($usuario['ultima_visita']) && $usuario['ultima_visita']) ? formatear_fecha($usuario['ultima_visita'], 'd-m-Y H:i', ' hs', $this->usuario->timezone) : 'Nunca';?></td>
 				                        <td><?php echo $usuario['estado'];?></td>
 				                        <td>
 											<a class="btn btn-primary btn-sm" data-toggle="collapse" data-target="#demo<?php echo $usuario['id'];?>"><i class="fa fa-pencil"></i> Modificar</a> 
@@ -132,7 +134,7 @@
 										</td>
 				                     </tr>
 				                     <tr id="demo<?php echo $usuario['id'];?>" class="collapse">
-					                     	<td colspan="5">
+					                     	<td colspan="6">
 										        <form name="eliminar" class="form_ingresar" method="post" action="<?php echo base_url('cms-v2/elearning/pedidos/modificar_usuario/'.$detalle['id']); ?>">
 								                   <input type="hidden" name="id" value="<?php echo $usuario['id'];?>">
 								                   <div class="col-sm-4 m-b-sm">

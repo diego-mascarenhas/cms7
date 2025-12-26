@@ -660,7 +660,7 @@ class Pedidos_model extends CI_Model {
 
 	public function getContactosPedido($id_pedido)
 	{
-		$sql = "SELECT contactos.nombre, contactos.apellido, contactos.id, contactos.email, contactos.estado as id_estado,
+		$sql = "SELECT contactos.nombre, contactos.apellido, contactos.id, contactos.email, contactos.estado as id_estado, contactos.ultima_visita,
 				CASE
 					WHEN contactos.estado = 1 THEN 'Inactivo'
 					WHEN contactos.estado = 2 THEN 'Activo'
