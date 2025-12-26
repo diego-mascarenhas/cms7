@@ -348,6 +348,77 @@ class Pedidos extends MY_Controller {
 		}
 	}
 
+	public function descargar_csv($id_pedido)
+	{
+		if ($this->is_logged_in())
+		{
+			// Obtener datos del pedido y usuarios
+			$parametros['id_pedido'] = $id_pedido;
+			$detalle_pedido = $this->Pedidos_model->detallePedido($parametros);
+			$usuarios = $this->Pedidos_model->getContactosPedido($id_pedido);
+			$items = $this->Pedidos_model->listadoPedidoItems($parametros);
+			
+			if (!$usuarios)
+			{
+				$this->session->set_flashdata('resultado', '0');
+				$this->session->set_flashdata('mensaje', 'No hay usuarios para exportar.');
+				redirect(base_url('cms-v2/elearning/pedidos/detalle/' . $id_pedido));
+				return;
+			}
+			
+			// Obtener ID del curso para generar los links
+			$id_curso = isset($items[0]['id_producto']) ? $items[0]['id_producto'] : 0;
+			$id_item = isset($items[0]['id']) ? $items[0]['id'] : 0;
+			$clave_secreta = 'lizama2024cert';
+			
+			// Preparar el CSV con fecha en formato español
+			$fecha_esp = date('d-m-Y');
+			$filename = 'Listado_Usuarios_Pedido_' . $id_pedido . '_' . $fecha_esp . '.csv';
+			
+			// Headers para forzar descarga
+			header('Content-Type: text/csv; charset=utf-8');
+			header('Content-Disposition: attachment; filename="' . $filename . '"');
+			
+			// Abrir output
+			$output = fopen('php://output', 'w');
+			
+			// BOM para UTF-8
+			fprintf($output, chr(0xEF).chr(0xBB).chr(0xBF));
+			
+			// Encabezados del CSV
+			fputcsv($output, array('Nombre', 'Apellido', 'Email', 'Última Visita', 'Estado', 'Link Certificado'), ';');
+			
+			// Datos de los usuarios
+			foreach ($usuarios as $usuario)
+			{
+				// Generar hash de seguridad para el link del certificado
+				$hash = md5($id_curso . $id_item . $usuario['id'] . $clave_secreta);
+				$link_certificado = 'https://academializama.cl/certificado_publico/' . $id_curso . '/' . $id_item . '?contacto=' . $usuario['id'] . '&hash=' . $hash;
+				
+				// Formatear última visita en formato español
+				$ultima_visita = (isset($usuario['ultima_visita']) && $usuario['ultima_visita']) 
+					? date('d-m-Y H:i', strtotime($usuario['ultima_visita'])) . ' hs'
+					: 'Nunca';
+				
+				fputcsv($output, array(
+					$usuario['nombre'],
+					$usuario['apellido'],
+					$usuario['email'],
+					$ultima_visita,
+					$usuario['estado'],
+					$link_certificado
+				), ';');
+			}
+			
+			fclose($output);
+			exit();
+		}
+		else
+		{
+			redirect(base_url('user/login/'));
+		}
+	}
+
 	public function subir_archivo($id)
 	{
 		if ($this->is_logged_in())

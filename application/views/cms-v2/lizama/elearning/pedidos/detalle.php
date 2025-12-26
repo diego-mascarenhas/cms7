@@ -98,12 +98,13 @@
             </div>
 
             <?php if($contacto['tipo_contacto'] == 1) { ?>
-            <div class="row">
+            <div class="row"></div></div>
 		        <div class="col-lg-12 m-b-md">
 	               <div class="ibox-title pull-left full-width">
 	                    <h2 class="bg-muted p-sm">Usuarios 
 							<a title="Ingresar" id="item" href="#" data-toggle="modal" data-target="#myModalUsuario" class="sepV_a btn btn-primary btn-sm pull-right m-l-sm"><i class="fa fa-plus-circle"></i> Ingresar Usuario</a>
-		                    <a title="Subir CSV" href="<?php echo base_url('cms-v2/elearning/pedidos/subir_archivo/'.$detalle['id']);?>" class="sepV_a btn btn-primary btn-sm pull-right m-l-sm"><i class="fa fa-sort-circle"></i> Subir Archivo CSV</a> 		                    
+		                    <a title="Subir CSV" href="<?php echo base_url('cms-v2/elearning/pedidos/subir_archivo/'.$detalle['id']);?>" class="sepV_a btn btn-primary btn-sm pull-right m-l-sm"><i class="fa fa-sort-circle"></i> Subir Archivo CSV</a>
+		                    <a title="Descargar Listado CSV" href="<?php echo base_url('cms-v2/elearning/pedidos/descargar_csv/'.$detalle['id']);?>" class="sepV_a btn btn-success btn-sm pull-right m-l-sm"><i class="fa fa-download"></i> Descargar CSV</a>
 	                    </h2>
 	                </div>
 	                <div class="ibox-content" style="border-top:0;">
@@ -126,7 +127,7 @@
 				                        <td><?php echo $usuario['nombre'];?></td>
 				                        <td><?php echo $usuario['apellido'];?></td>
 				                        <td><?php echo $usuario['email'];?></td>
-				                        <td><?php echo (isset($usuario['ultima_visita']) && $usuario['ultima_visita']) ? formatear_fecha($usuario['ultima_visita'], 'd-m-Y H:i', ' hs', $this->usuario->timezone) : 'Nunca';?></td>
+				                        <td><?php echo (isset($usuario['ultima_visita']) && $usuario['ultima_visita'] && $usuario['ultima_visita'] != '0000-00-00 00:00:00') ? date('d-m-Y H:i', strtotime($usuario['ultima_visita'])) . ' hs' : 'Nunca';?></td>
 				                        <td><?php echo $usuario['estado'];?></td>
 				                        <td>
 											<a href="<?php echo base_url('cms-v2/elearning/pedidos/generar_certificado/'.$detalle['id'].'/'.$usuario['id']); ?>" title="Generar Certificado" class="btn btn-success btn-xs" target="_blank"><i class="fa fa-certificate"></i> Certificado</a>
