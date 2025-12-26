@@ -310,6 +310,116 @@ class Pedidos extends MY_Controller {
 		}
 	}
 	
+	public function generar_certificado($id_pedido, $id_contacto)
+	{
+		if ($this->is_logged_in())
+		{
+			// Obtener datos del pedido
+			$parametros['id_pedido'] = $id_pedido;
+			$detalle_pedido = $this->Pedidos_model->detallePedido($parametros);
+			
+			// Obtener datos del contacto/usuario
+			$contacto = $this->contacto_model->detalleContacto($id_contacto);
+			
+			// Obtener datos de la empresa (contacto padre)
+			$empresa = $this->contacto_model->detalleContacto($detalle_pedido['id_contacto']);
+			
+			// Obtener items del pedido para obtener el curso
+			$items = $this->Pedidos_model->listadoPedidoItems($parametros);
+			$curso_titulo = isset($items[0]['titulo']) ? $items[0]['titulo'] : 'CURSO DE CAPACITACIÓN';
+			
+			// Limpiar cualquier salida previa y desactivar output buffering de CodeIgniter
+			if (ob_get_level())
+			{
+				ob_end_clean();
+			}
+			
+			// Cargar biblioteca HTML2PDF (versión antigua compatible)
+			require_once(FCPATH . 'pdfs/html2pdf/html2pdf.class.php');
+			
+			try
+			{
+				// Suprimir warnings de count() en versiones antiguas de PHP
+				error_reporting(E_ERROR | E_PARSE);
+				
+				// Inicializar HTML2PDF con orientación horizontal
+				$html2pdf = new HTML2PDF('L', 'A4', 'es', true, 'UTF-8');
+				$html2pdf->setDefaultFont('helvetica');
+				
+				// Generar el contenido HTML del certificado
+				$html = '
+				<style>
+					body { font-family: helvetica; }
+					.certificado-container { width: 100%; text-align: center; padding: 40px; }
+					.titulo-principal { font-size: 24px; font-weight: bold; margin-bottom: 10px; color: #333; }
+					.subtitulo { font-size: 16px; margin-bottom: 30px; color: #666; }
+					.texto-otorga { font-size: 14px; margin-bottom: 20px; }
+					.empresa-nombre { font-size: 20px; font-weight: bold; margin-bottom: 30px; color: #000; }
+					.modalidad { font-size: 12px; margin-bottom: 10px; color: #666; }
+					.fecha { font-size: 12px; margin-bottom: 40px; color: #666; }
+					.descripcion { font-size: 13px; line-height: 1.6; margin: 30px 60px; text-align: justify; }
+					.firma { margin-top: 60px; }
+					.nombre-firma { font-size: 14px; font-weight: bold; border-top: 2px solid #000; padding-top: 10px; display: inline-block; min-width: 200px; }
+					.cargo-firma { font-size: 12px; color: #666; }
+					.logo-academia { font-size: 18px; font-weight: bold; color: #333; margin-top: 40px; }
+				</style>
+				
+				<page>
+					<div class="certificado-container">
+						<div class="titulo-principal">CERTIFICADO DE CAPACITACIÓN</div>
+						<div class="subtitulo">ACADEMIA LIZAMA ABOGADOS</div>
+						
+						<div class="texto-otorga">SE OTORGA EL PRESENTE CERTIFICADO A</div>
+						
+						<div class="empresa-nombre">' . strtoupper($contacto['nombre'] . ' ' . $contacto['apellido']) . '</div>
+						
+						<div class="empresa-nombre">EMPRESA: ' . strtoupper($empresa['razon_social'] ?? $empresa['nombre']) . '</div>
+						
+						<div class="modalidad">MODALIDAD: E-LEARNING</div>
+						<div class="fecha">EFECTUADO CON FECHA ' . date('d/m/Y') . '</div>
+						
+						<div class="descripcion">
+							POR PARTICIPAR SATISFACTORIAMENTE EN EL CURSO DE CAPACITACIÓN<br/>
+							' . strtoupper($curso_titulo) . '
+						</div>
+						
+						<div class="firma">
+							<div class="nombre-firma">LUIS LIZAMA PORTAL</div><br/>
+							<div class="cargo-firma">ACADEMIA LIZAMA ABOGADOS</div>
+						</div>
+						
+						<div class="logo-academia">
+							<div style="margin-top: 20px; border-top: 3px solid #333; display: inline-block; padding: 10px 30px;">
+								<span style="font-size: 16px;">LIZAMA</span><br/>
+								<span style="font-size: 12px;">Abogados</span><br/>
+								<span style="font-size: 14px; font-weight: normal;">ACADEMIA LIZAMA</span>
+							</div>
+						</div>
+					</div>
+				</page>';
+				
+				$html2pdf->writeHTML($html);
+				
+				// Nombre del archivo
+				$nombreArchivo = 'Certificado_' . str_replace(' ', '_', $contacto['nombre'] . '_' . $contacto['apellido']) . '_' . date('Y-m-d') . '.pdf';
+				
+				// Salida del PDF
+				$html2pdf->Output($nombreArchivo, 'I');
+				exit(); // Detener la ejecución después de enviar el PDF
+			}
+			catch (HTML2PDF_exception $e)
+			{
+				// Restaurar error reporting
+				error_reporting(E_ALL);
+				echo 'Error al generar el certificado: ' . $e->getMessage();
+			}
+		}
+		else
+		{
+			redirect(base_url('user/login/'));
+		}
+	}
+
 	public function subir_archivo($id)
 	{
 		if ($this->is_logged_in())

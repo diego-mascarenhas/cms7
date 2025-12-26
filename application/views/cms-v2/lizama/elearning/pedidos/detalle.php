@@ -129,8 +129,9 @@
 				                        <td><?php echo (isset($usuario['ultima_visita']) && $usuario['ultima_visita']) ? formatear_fecha($usuario['ultima_visita'], 'd-m-Y H:i', ' hs', $this->usuario->timezone) : 'Nunca';?></td>
 				                        <td><?php echo $usuario['estado'];?></td>
 				                        <td>
-											<a class="btn btn-primary btn-sm" data-toggle="collapse" data-target="#demo<?php echo $usuario['id'];?>"><i class="fa fa-pencil"></i> Modificar</a> 
-											<a title="Eliminar" id="item" href="#" data-toggle="modal" data-seccion="<?php echo $usuario['nombre'].' '.$usuario['apellido'];?>" data-id="<?php echo $usuario['id'];?>" data-estado="<?php echo $usuario['estado'];?>" data-target="#myModalEliminar" class="sepV_a btn btn-primary btn-sm"><i class="fa fa-minus-circle"></i> Eliminar</a>
+											<a href="<?php echo base_url('cms-v2/elearning/pedidos/generar_certificado/'.$detalle['id'].'/'.$usuario['id']); ?>" title="Generar Certificado" class="btn btn-success btn-xs" target="_blank"><i class="fa fa-certificate"></i> Certificado</a>
+											<a class="btn btn-primary btn-xs" data-toggle="collapse" data-target="#demo<?php echo $usuario['id'];?>"><i class="fa fa-pencil"></i> Modificar</a> 
+											<a title="Eliminar" id="item" href="#" data-toggle="modal" data-seccion="<?php echo $usuario['nombre'].' '.$usuario['apellido'];?>" data-id="<?php echo $usuario['id'];?>" data-estado="<?php echo $usuario['estado'];?>" data-target="#myModalEliminar" class="sepV_a btn btn-primary btn-xs"><i class="fa fa-minus-circle"></i> Eliminar</a>
 										</td>
 				                     </tr>
 				                     <tr id="demo<?php echo $usuario['id'];?>" class="collapse">
