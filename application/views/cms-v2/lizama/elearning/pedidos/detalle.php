@@ -98,12 +98,13 @@
             </div>
 
             <?php if($contacto['tipo_contacto'] == 1) { ?>
-            <div class="row">
+            <div class="row"></div></div>
 		        <div class="col-lg-12 m-b-md">
 	               <div class="ibox-title pull-left full-width">
 	                    <h2 class="bg-muted p-sm">Usuarios 
 							<a title="Ingresar" id="item" href="#" data-toggle="modal" data-target="#myModalUsuario" class="sepV_a btn btn-primary btn-sm pull-right m-l-sm"><i class="fa fa-plus-circle"></i> Ingresar Usuario</a>
-		                    <a title="Subir CSV" href="<?php echo base_url('cms-v2/elearning/pedidos/subir_archivo/'.$detalle['id']);?>" class="sepV_a btn btn-primary btn-sm pull-right m-l-sm"><i class="fa fa-sort-circle"></i> Subir Archivo CSV</a> 		                    
+		                    <a title="Subir CSV" href="<?php echo base_url('cms-v2/elearning/pedidos/subir_archivo/'.$detalle['id']);?>" class="sepV_a btn btn-primary btn-sm pull-right m-l-sm"><i class="fa fa-sort-circle"></i> Subir Archivo CSV</a>
+		                    <a title="Descargar Listado CSV" href="<?php echo base_url('cms-v2/elearning/pedidos/descargar_csv/'.$detalle['id']);?>" class="sepV_a btn btn-success btn-sm pull-right m-l-sm"><i class="fa fa-download"></i> Descargar CSV</a>
 	                    </h2>
 	                </div>
 	                <div class="ibox-content" style="border-top:0;">
@@ -115,6 +116,7 @@
 			                        <th>Nombre</th>
 			                        <th>Apellido</th>
 			                        <th>Email</th>
+			                        <th>Última Visita</th>
 			                        <th>Estado</th>
 			                        <th>Acciones</th>
 			                    </tr>
@@ -125,14 +127,16 @@
 				                        <td><?php echo $usuario['nombre'];?></td>
 				                        <td><?php echo $usuario['apellido'];?></td>
 				                        <td><?php echo $usuario['email'];?></td>
+				                        <td><?php echo (isset($usuario['ultima_visita']) && $usuario['ultima_visita'] && $usuario['ultima_visita'] != '0000-00-00 00:00:00') ? date('d-m-Y H:i', strtotime($usuario['ultima_visita'])) . ' hs' : 'Nunca';?></td>
 				                        <td><?php echo $usuario['estado'];?></td>
 				                        <td>
-											<a class="btn btn-primary btn-sm" data-toggle="collapse" data-target="#demo<?php echo $usuario['id'];?>"><i class="fa fa-pencil"></i> Modificar</a> 
-											<a title="Eliminar" id="item" href="#" data-toggle="modal" data-seccion="<?php echo $usuario['nombre'].' '.$usuario['apellido'];?>" data-id="<?php echo $usuario['id'];?>" data-estado="<?php echo $usuario['estado'];?>" data-target="#myModalEliminar" class="sepV_a btn btn-primary btn-sm"><i class="fa fa-minus-circle"></i> Eliminar</a>
+											<a href="<?php echo base_url('cms-v2/elearning/pedidos/generar_certificado/'.$detalle['id'].'/'.$usuario['id']); ?>" title="Generar Certificado" class="btn btn-success btn-xs" target="_blank"><i class="fa fa-certificate"></i> Certificado</a>
+											<a class="btn btn-primary btn-xs" data-toggle="collapse" data-target="#demo<?php echo $usuario['id'];?>"><i class="fa fa-pencil"></i> Modificar</a> 
+											<a title="Eliminar" id="item" href="#" data-toggle="modal" data-seccion="<?php echo $usuario['nombre'].' '.$usuario['apellido'];?>" data-id="<?php echo $usuario['id'];?>" data-estado="<?php echo $usuario['estado'];?>" data-target="#myModalEliminar" class="sepV_a btn btn-primary btn-xs"><i class="fa fa-minus-circle"></i> Eliminar</a>
 										</td>
 				                     </tr>
 				                     <tr id="demo<?php echo $usuario['id'];?>" class="collapse">
-					                     	<td colspan="5">
+					                     	<td colspan="6">
 										        <form name="eliminar" class="form_ingresar" method="post" action="<?php echo base_url('cms-v2/elearning/pedidos/modificar_usuario/'.$detalle['id']); ?>">
 								                   <input type="hidden" name="id" value="<?php echo $usuario['id'];?>">
 								                   <div class="col-sm-4 m-b-sm">
