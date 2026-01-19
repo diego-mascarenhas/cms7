@@ -74,9 +74,10 @@
                         </div>
                         <div class="ibox-content">
                             <div class="table-responsive">
-                            <?php if($items) { foreach ($items as $item) { ?>
+                            <?php if($items) { ?>
                                 <table class="table shoping-cart-table">
                                     <tbody>
+                                <?php foreach ($items as $item) { ?>
 	                                    <tr>
 	                                        <td width="90">
 	                                        	<?php echo ($item['imagen']) ? '<img src="'.base_url('/multimedia/thumbs/'.$item['imagen']).'" alt="'.$item['titulo'].'" width="90">' : '<div class="no-disponible">sin imagen</div>';?>
@@ -86,10 +87,9 @@
 	                                        </td>
 	                                        <td></td>
 	                                    </tr>
-
                                 <?php }	?> 
-                                </tbody>
-                            </table>
+                                    </tbody>
+                                </table>
                             <?php } else { echo 'No hay items ingresados'; } ?>
                             </div>
                         </div>
@@ -98,16 +98,18 @@
             </div>
 
             <?php if($contacto['tipo_contacto'] == 1) { ?>
-            <div class="row"></div></div>
-		        <div class="col-lg-12 m-b-md">
-	               <div class="ibox-title pull-left full-width">
-	                    <h2 class="bg-muted p-sm">Usuarios 
-							<a title="Ingresar" id="item" href="#" data-toggle="modal" data-target="#myModalUsuario" class="sepV_a btn btn-primary btn-sm pull-right m-l-sm"><i class="fa fa-plus-circle"></i> Ingresar Usuario</a>
-		                    <a title="Subir CSV" href="<?php echo base_url('cms-v2/elearning/pedidos/subir_archivo/'.$detalle['id']);?>" class="sepV_a btn btn-primary btn-sm pull-right m-l-sm"><i class="fa fa-sort-circle"></i> Subir Archivo CSV</a>
-		                    <a title="Descargar Listado CSV" href="<?php echo base_url('cms-v2/elearning/pedidos/descargar_csv/'.$detalle['id']);?>" class="sepV_a btn btn-success btn-sm pull-right m-l-sm"><i class="fa fa-download"></i> Descargar CSV</a>
-	                    </h2>
-	                </div>
-	                <div class="ibox-content" style="border-top:0;">
+            <div class="row">
+		        <div class="col-lg-12">
+	               <div class="ibox">
+		               <div class="ibox-title">
+		                    <h5>Usuarios</h5>
+		                    <div class="ibox-tools">
+								<a title="Descargar Listado CSV" href="<?php echo base_url('cms-v2/elearning/pedidos/descargar_csv/'.$detalle['id']);?>" class="btn btn-success btn-xs"><i class="fa fa-download"></i> Descargar CSV</a>
+			                    <a title="Subir CSV" href="<?php echo base_url('cms-v2/elearning/pedidos/subir_archivo/'.$detalle['id']);?>" class="btn btn-primary btn-xs"><i class="fa fa-upload"></i> Subir CSV</a>
+								<a title="Ingresar" href="#" data-toggle="modal" data-target="#myModalUsuario" class="btn btn-primary btn-xs"><i class="fa fa-plus"></i> Ingresar Usuario</a>
+		                    </div>
+		                </div>
+		                <div class="ibox-content">
 	                    <div class="table-responsive">
 		                    <?php if(isset($usuarios)) { ?>
 		                    <table class="table table-striped table-bordered table-hover">
@@ -178,6 +180,7 @@
 				   	</div>
 		       </div>
 		    </div>
+		  </div>
 		  <?php } ?>	
 		 </div>
 
