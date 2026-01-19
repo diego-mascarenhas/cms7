@@ -2,7 +2,7 @@
 <link href="<?php echo base_url('assets/css/plugins/dataTables/datatables.min.css'); ?>" rel="stylesheet" type="text/css">
 
         <div class="row wrapper border-bottom white-bg page-heading">
-            <div class="col-lg-12">
+            <div class="col-lg-8">
                 <h2>eLearning Pedidos</h2>
                 <ol class="breadcrumb">
                     <li>
@@ -15,6 +15,12 @@
                         <strong>Listado</strong>
                     </li>
                 </ol>
+            </div>
+            <div class="col-lg-4">
+                <div class="title-action">
+                    <a href="<?php echo base_url('cms-v2/elearning/usuarios/empresas'); ?>" class="btn btn-primary btn-sm"><i class="fa fa-building"></i> Ir a Empresas</a>
+                    <a href="<?php echo base_url('cms-v2/elearning/usuarios/individuos'); ?>" class="btn btn-primary btn-sm"><i class="fa fa-user"></i> Ir a Individuos</a>
+                </div>
             </div>
         </div>
             

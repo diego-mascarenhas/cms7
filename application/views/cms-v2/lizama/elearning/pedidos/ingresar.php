@@ -38,10 +38,10 @@
 	                    <div class="col-sm-12">
 						 	<h2>Datos del pedido</h2>
 		                 	<div class="form-group full-width" style="float-left; margin-bottom:30px;">
-			                    <label class="col-sm-1 control-label">Referencia</label>
-			                    <div class="col-sm-3"><input type="text" name="observaciones" class="form-control" value="<?php echo (isset($item['observaciones'])) ? $item['observaciones']: null; ?>"></div>
-			                    <label class="col-sm-1 control-label">Estado</label>
-			                    <div class="col-sm-3"><?php echo (isset($item['estado'])) ? form_dropdown('estado', $estados, $item['estado'], array('class'=>'form-control m-b')) : form_dropdown('estado', $estados, null, array('class'=>'form-control m-b')); ?></div>
+			                    <label class="col-sm-1 control-label">Referencia *</label>
+			                    <div class="col-sm-3"><input type="text" name="observaciones" class="form-control" value="<?php echo (isset($item['observaciones'])) ? $item['observaciones']: null; ?>" required></div>
+			                    <label class="col-sm-1 control-label">Estado *</label>
+			                    <div class="col-sm-3"><?php echo (isset($item['estado'])) ? form_dropdown('estado', $estados, $item['estado'], array('class'=>'form-control m-b')) : form_dropdown('estado', $estados, 7, array('class'=>'form-control m-b')); ?></div>
 		                 	</div>							
 					 	<div class="hr-line-dashed"></div><br>
 						 	<h2>Cursos</h2>

@@ -46,8 +46,9 @@ class Pedidos extends MY_Controller {
 			$data['configuracion'] = $this->Configuracion_model->detalleConfiguracion($this->usuario->id_empresa);
 			$this->load->helper('form');
 			$this->load->library('form_validation');
-			$this->form_validation->set_rules('observaciones', 'Nombre', 'required');
+			$this->form_validation->set_rules('observaciones', 'Referencia', 'required', array('required' => 'El campo Referencia es obligatorio.'));
 			$this->form_validation->set_rules('items[]', 'Cursos', 'required', array('required' => 'Debe seleccionar al menos un curso.'));
+			$this->form_validation->set_rules('estado', 'Estado', 'required', array('required' => 'Debe seleccionar un estado.'));
 			
 			if ($this->form_validation->run() === false)
 			{
@@ -62,16 +63,25 @@ class Pedidos extends MY_Controller {
 			}
 			else
 			{
-				if ($datos = $this->Pedidos_model->ingresarPedido($this->input->post()))
+				// Debug: Log de datos recibidos
+				log_message('debug', 'Pedido - Datos POST: ' . print_r($this->input->post(), true));
+				
+				$datos = $this->Pedidos_model->ingresarPedido($this->input->post());
+				
+				// Debug: Log del resultado
+				log_message('debug', 'Pedido - Resultado ingresarPedido: ' . print_r($datos, true));
+				
+				if ($datos && isset($datos['id']))
 		        {
-					redirect(base_url('cms-v2/elearning/pedidos/modificar/'.$datos['id']));
+					$this->session->set_flashdata('resultado', '1');
+					$this->session->set_flashdata('mensaje', 'El pedido fue creado correctamente con ID: ' . $datos['id']);
+					redirect(base_url('cms-v2/elearning/pedidos/detalle/'.$datos['id']));
 		        }
 		        else
 		        {
-					$data['mensaje'] = array("mensaje" =>"No se pudo modificar el pedido", "link" =>"pedidos", "texto_link" => "Volver a Pedidos");
-					$this->load->view('header');
-					$this->load->view('cms-v2/'.$data['configuracion']['template'].'/elearning/error', $data);
-					$this->load->view('footer');
+					$this->session->set_flashdata('resultado', '0');
+					$this->session->set_flashdata('mensaje', 'No se pudo crear el pedido. Revise los datos e intente nuevamente.');
+					redirect(base_url('cms-v2/elearning/usuarios/empresas'));
 		        }
 			}
 		}
