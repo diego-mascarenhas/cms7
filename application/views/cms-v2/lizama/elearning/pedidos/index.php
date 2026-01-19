@@ -95,7 +95,8 @@ $(document).ready(function(){
 		    }
         },
         pageLength: 25,
-        responsive: true
+        responsive: true,
+        order: [[0, 'desc']]
     });
 });
 </script>
