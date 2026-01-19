@@ -434,6 +434,16 @@ class Pedidos extends MY_Controller {
 		if ($this->is_logged_in())
 		{
 			$data['configuracion'] = $this->Configuracion_model->detalleConfiguracion($this->usuario->id_empresa);
+			
+			// Verificar que la configuración existe
+			if (!$data['configuracion'] || !isset($data['configuracion']['id']))
+			{
+				$this->session->set_flashdata('resultado', '0');
+				$this->session->set_flashdata('mensaje', 'No se encontró la configuración de su empresa. Contacte al administrador.');
+				redirect(base_url('cms-v2/elearning/pedidos/'));
+				return;
+			}
+			
 			$this->load->helper('form');
 			$this->load->library('form_validation');
 			$this->config->set_item('language', $this->usuario->idioma);
@@ -459,7 +469,27 @@ class Pedidos extends MY_Controller {
 			{
 				$parametros['id_pedido'] = $id;
 				$data['detalle'] = $this->Pedidos_model->detallePedido($parametros);
+				
+				// Verificar que el pedido existe
+				if (!$data['detalle'] || !isset($data['detalle']['id_contacto']))
+				{
+					$this->session->set_flashdata('resultado', '0');
+					$this->session->set_flashdata('mensaje', 'No se encontró el pedido solicitado.');
+					redirect(base_url('cms-v2/elearning/pedidos/'));
+					return;
+				}
+				
 				$data['contacto'] = $this->contacto_model->detalleContacto($data['detalle']['id_contacto']);
+				
+				// Verificar que el contacto existe
+				if (!$data['contacto'])
+				{
+					$this->session->set_flashdata('resultado', '0');
+					$this->session->set_flashdata('mensaje', 'No se encontró el contacto asociado al pedido.');
+					redirect(base_url('cms-v2/elearning/pedidos/'));
+					return;
+				}
+				
 				$this->load->view('header', array('buscador'=>true));
 				$this->load->view('cms-v2/'.$data['configuracion']['template'].'/elearning/pedidos/subir_archivo', $data);
 				$this->load->view('footer');
@@ -473,7 +503,10 @@ class Pedidos extends MY_Controller {
 		         {
 					$filename = $_FILES['archivo']['tmp_name'];
 					$handle = fopen($filename, "r");
-					if(strpos(fgets($handle), ';'))
+					
+					// Detectar el separador sin consumir la primera línea
+					$primera_linea = fgets($handle);
+					if(strpos($primera_linea, ';'))
 					{
 						$separador = ';';
 					}
@@ -481,6 +514,9 @@ class Pedidos extends MY_Controller {
 					{
 						$separador = ',';
 					}
+					
+					// Volver al inicio del archivo para procesar todas las líneas
+					rewind($handle);
 
 					while (($data = fgetcsv($handle, 1000, $separador)) !== FALSE)
 					{ 
