@@ -1050,4 +1050,71 @@ class Pedidos_model extends CI_Model {
 		return (!empty($res2)) ? $res2 : null;
 	}
 
+	//REGISTRAR INGRESO A VIDEO
+	public function registrarIngresoVideo($variables)
+	{
+		// Buscar el registro en con_rel_pedido_contactos
+		$sql = "SELECT id FROM con_rel_pedido_contactos";
+		$sql .= " WHERE id_pedido = ?";
+		$sql .= " AND id_contacto = ?";
+		$sql .= " AND id_producto = ?";
+		$placeholders = array(
+			$variables['id_pedido'],
+			$variables['id_contacto'],
+			$variables['id_producto']
+		);
+		$query = $this->db->query($sql, $placeholders);
+		$registro = $query->row_array();
+
+		if ($registro && $registro['id'])
+		{
+			// Actualizar fecha_ingreso_video solo si aún no está registrada
+			$sql_check = "SELECT fecha_ingreso_video FROM con_rel_pedido_contactos WHERE id = ?";
+			$query_check = $this->db->query($sql_check, array($registro['id']));
+			$check = $query_check->row_array();
+			
+			if (!$check['fecha_ingreso_video'])
+			{
+				$datos['fecha_ingreso_video'] = date('Y-m-d H:i:s');
+				$where = "id = " . $registro['id'];
+				$res = $this->db->update('con_rel_pedido_contactos', $datos, $where);
+				return ($res) ? array('id' => $registro['id'], 'actualizado' => 1) : array('error' => 'No se pudo actualizar');
+			}
+			else
+			{
+				return array('id' => $registro['id'], 'actualizado' => 0, 'mensaje' => 'Ya existe fecha de ingreso');
+			}
+		}
+		else
+		{
+			return array('error' => 'No se encontró la relación pedido-contacto-producto');
+		}
+	}
+
+	//OBTENER PROGRESO DE USUARIOS EN PEDIDO
+	public function obtenerProgresoUsuarios($id_pedido)
+	{
+		$sql = "SELECT ";
+		$sql .= " contactos.id as id_contacto,";
+		$sql .= " contactos.nombre,";
+		$sql .= " contactos.apellido,";
+		$sql .= " contactos.email,";
+		$sql .= " con_rel_pedido_contactos.id_producto,";
+		$sql .= " con_rel_pedido_contactos.fecha_ingreso_video,";
+		$sql .= " con_rel_pedido_contactos.fecha_completo_encuesta,";
+		$sql .= " con_rel_pedido_contactos.certificado,";
+		$sql .= " con_elearning_items.titulo as curso_titulo";
+		$sql .= " FROM con_rel_pedido_contactos";
+		$sql .= " LEFT JOIN contactos ON contactos.id = con_rel_pedido_contactos.id_contacto";
+		$sql .= " LEFT JOIN con_elearning_items ON con_elearning_items.id_elearning = con_rel_pedido_contactos.id_producto";
+		$sql .= " WHERE con_rel_pedido_contactos.id_pedido = ?";
+		$sql .= " ORDER BY contactos.apellido ASC, contactos.nombre ASC";
+
+		$placeholders = array($id_pedido);
+		$query = $this->db->query($sql, $placeholders);
+		$res = $query->result_array();
+
+		return (!empty($res)) ? $res : null;
+	}
+
 }

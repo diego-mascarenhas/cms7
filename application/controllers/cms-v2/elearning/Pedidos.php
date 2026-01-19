@@ -586,4 +586,45 @@ class Pedidos extends MY_Controller {
 			redirect(base_url('user/login/'));
 		}
 	}
+
+	public function seguimiento($id)
+	{
+		if ($this->is_logged_in())
+		{
+			$data['configuracion'] = $this->Configuracion_model->detalleConfiguracion($this->usuario->id_empresa);
+			
+			// Verificar configuración
+			if (!$data['configuracion'] || !isset($data['configuracion']['id']))
+			{
+				$this->session->set_flashdata('resultado', '0');
+				$this->session->set_flashdata('mensaje', 'No se encontró la configuración de su empresa.');
+				redirect(base_url('cms-v2/elearning/pedidos/'));
+				return;
+			}
+
+			// Obtener detalle del pedido
+			$parametros['id_pedido'] = $id;
+			$data['detalle'] = $this->Pedidos_model->detallePedido($parametros);
+			
+			if (!$data['detalle'] || !isset($data['detalle']['id']))
+			{
+				$this->session->set_flashdata('resultado', '0');
+				$this->session->set_flashdata('mensaje', 'No se encontró el pedido solicitado.');
+				redirect(base_url('cms-v2/elearning/pedidos/'));
+				return;
+			}
+
+		// Obtener progreso de usuarios
+		$data['progreso'] = $this->Pedidos_model->obtenerProgresoUsuarios($id);
+		
+		// Cargar vista
+		$this->load->view('header');
+		$this->load->view('cms-v2/'.$data['configuracion']['template'].'/elearning/pedidos/seguimiento', $data);
+		$this->load->view('footer');
+		}
+		else
+		{
+			redirect(base_url('user/login/'));
+		}
+	}
 }

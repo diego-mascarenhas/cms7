@@ -729,12 +729,62 @@ class CmsElearning extends REST_Controller {
         }
     }
 
+	//REGISTRAR INGRESO A VIDEO
+	public function registrar_ingreso_video_post()
+	{
+		$this->load->model('cms-v2/elearning/pedidos_model');
+		$this->db->trans_begin();
+		
+		$data = $this->pedidos_model->registrarIngresoVideo($this->post());
+		
+		if ($this->db->trans_status() === false)
+		{
+			$this->db->trans_rollback();
+			$this->response([
+				'status' => false,
+				'message' => 'Error al registrar ingreso a video'
+			], REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
+		}
+		else
+		{
+			$this->db->trans_commit();
+			if (isset($data['error']))
+			{
+				$this->response([
+					'status' => false,
+					'message' => $data['error']
+				], REST_Controller::HTTP_BAD_REQUEST);
+			}
+			else
+			{
+				$this->response([
+					'status' => true,
+					'message' => 'Ingreso a video registrado correctamente',
+					'data' => $data
+				], REST_Controller::HTTP_OK);
+			}
+		}
+	}
+
 	public function certificar_post()
 	{		
 		// models
 		$this->load->model('cms-v2/elearning/pedidos_model');
 		$this->db->trans_begin();
 		$data = $this->pedidos_model->ingresarCertificado($this->post());
+
+		// Actualizar fecha_completo_encuesta cuando se certifica
+		if ($data && !isset($data['error']))
+		{
+			$variables_post = $this->post();
+			if (isset($variables_post['id_tipo']) && $variables_post['id_tipo'] == 2)
+			{
+				// Para tipo 2 (empresa), actualizar en con_rel_pedido_contactos
+				$sql = "UPDATE con_rel_pedido_contactos SET fecha_completo_encuesta = NOW() ";
+				$sql .= "WHERE id_contacto = ? AND id_producto = ? AND fecha_completo_encuesta IS NULL";
+				$this->db->query($sql, array($variables_post['id_contacto'], $variables_post['id_producto']));
+			}
+		}
 
 		if ($this->db->trans_status() === false)
 		{

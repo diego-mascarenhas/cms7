@@ -15,6 +15,7 @@
             </div>
             <div class="col-xs-4 col-sm-4 col-md-6 col-lg-6">
                 <div class="title-action">
+			        <a href="<?php echo base_url('cms-v2/elearning/pedidos/seguimiento/' . $detalle['id']); ?>" class="btn btn-info btn-sm"><i class="fa fa-bar-chart"></i> Ver Seguimiento</a>
 			        <a href="<?php echo base_url('cms-v2/elearning/pedidos/modificar/' . $detalle['id']); ?>" class="btn btn-primary btn-sm">Modificar Pedido</a>
                 </div>
             </div>
