@@ -6,16 +6,18 @@
 </style>
      <link href="<?php echo base_url('assets/css/plugins/dataTables/datatables.min.css'); ?>" rel="stylesheet" type="text/css">
            <div class="row wrapper border-bottom white-bg page-heading">
-                <div class="col-lg-8 col-sm-8 col-xs-8">
-                    <h2>Clientes Individuos</h2>
+                <div class="col-xs-8 col-sm-8 col-md-6 col-lg-6">
+                    <h2>eLearning Usuarios - Individuos</h2>
                     <ol class="breadcrumb">
                         <li><a href="/micuenta">Home</a></li>
                         <li>Usuarios</li>
                         <li class="active"><strong>Individuos</strong></li>
                     </ol>
                 </div>
-                <div class="col-xs-4 col-sm-4 col-lg-4" style="margin-top:34px; text-align:right;">
-                    <a href="<?php echo base_url('cms-v2/elearning/usuarios/ingresar/individuos/'); ?>" class="btn btn-primary">Ingresar</a>
+                <div class="col-xs-4 col-sm-4 col-md-6 col-lg-6">
+                    <div class="title-action">
+                        <a href="<?php echo base_url('cms-v2/elearning/usuarios/ingresar/individuos/'); ?>" class="btn btn-primary">Ingresar</a>
+                    </div>
                 </div>
             </div>
             
