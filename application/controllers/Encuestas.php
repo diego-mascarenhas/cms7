@@ -13,8 +13,11 @@ class Encuestas extends MY_Controller {
 	{
 		if ($this->is_logged_in())
 		{
-			$this->config->set_item('language', $this->usuario->idioma);
-			$data['listado'] = $this->evento_model->getEventos();
+		$this->config->set_item('language', $this->usuario->idioma);
+		$parametros['order_by'] = 'eventos.id';
+		$parametros['order'] = 'DESC';
+		$parametros['per_page'] = 9999;
+		$data['listado'] = $this->evento_model->getEventos($parametros);
 		
 			$this->load->view('header', array('buscador'=>true));
 			$this->load->view('encuestas/index', $data);

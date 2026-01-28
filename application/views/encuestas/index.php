@@ -39,6 +39,7 @@
 				                    <table class="table table-striped table-bordered table-hover dataTables-listados">
 					                    <thead>
 					                    <tr>
+					                        <th style="display:none;">ID</th>
 					                        <th class="titulo-lista">Nombre Evento</th>
 					                        <th class="ocultar">Código</th>
 					                        <th class="ocultar">Fecha de vencimiento</th>
@@ -51,6 +52,7 @@
 						                <?php if (isset($listado)) { ?>
 											<?php foreach($listado as $lista) { ?>	
 						                   		<tr class="gradeX">
+													<td style="display:none;"><?php echo $lista['id']; ?></td>
 													<td class="titulo-lista"><?php echo $lista['titulo']; ?></td>
 													<td class="ocultar"><?php echo $lista['codigo']; ?></td>
 													<td class="ocultar"><?php echo $lista['fecha_vencimiento']; ?></td>
@@ -136,7 +138,18 @@ $(document).ready(function(){
 		    }
         },
         pageLength: 25,
-        responsive: false
+        responsive: false,
+        order: [[0, 'desc']],
+        orderFixed: [[0, 'desc']],
+        searching: true,
+        paging: true,
+        info: true,
+        autoWidth: false,
+        deferRender: true,
+        columnDefs: [
+            { orderable: false, targets: 5 },
+            { type: 'num', targets: 0 }
+        ]
     });
 });
 
